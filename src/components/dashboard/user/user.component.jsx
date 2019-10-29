@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
+import NavUser from "./navUser.component";
 
 class UserDashboard extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class UserDashboard extends Component {
     return (
       <section>
         <NavBar />
-        <div>User Dashboard</div>
+        <NavUser />
       </section>
     );
   }

@@ -9,18 +9,15 @@ class NavBar extends Component {
   render() {
     return (
       <div>
-        <Navbar bg='dark' variant='dark'>
-          <Navbar.Brand href='#home'>Navbar</Navbar.Brand>
-          <Nav className='mr-auto'>
-            <Nav.Link href='#home'>Home</Nav.Link>
-            <Nav.Link href='#features'>Features</Nav.Link>
-            <Nav.Link href='#pricing'>Pricing</Nav.Link>
-          </Nav>
+        <Navbar bg='light' expand='lg'>
+          <Navbar.Brand href='#home'>ClinDesign</Navbar.Brand>
+          <Nav className='mr-auto'></Nav>
           <Form inline>
             <FormControl type='text' placeholder='Search' className='mr-sm-2' />
             <Button variant='outline-info'>Search</Button>
           </Form>
         </Navbar>
+        {/* <nav class='navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow'></nav> */}
       </div>
     );
   }

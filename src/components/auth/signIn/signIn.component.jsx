@@ -34,6 +34,7 @@ class SignIn extends Component {
   saveUserInfo = data => {
     localStorage.setItem("email", JSON.stringify(data.user.email));
     localStorage.setItem("token", JSON.stringify(data.token));
+    localStorage.setItem("user", JSON.stringify(data.user.username));
     let role;
     role =
       data.user.is_staff === true ? (role = "is_staff") : (role = "is_simple");
