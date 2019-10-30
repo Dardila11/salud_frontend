@@ -1,0 +1,32 @@
+@media all and (min-width: 480px) {
+  .Login {
+    padding: 60px 0;
+  }
+
+  .Login .form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
+
+  .logo {
+    width: 280px;
+    height: 165px;
+    align-self: center;
+    left: 40%;
+  }
+
+  .box {
+    position: absolute;
+    margin: 0 auto;
+    width: 460px;
+    height: auto;
+    border: 3px solid rgb(222, 221, 228);
+    border-radius: 10px;
+    left: 35%;
+    top: 30%;
+  }
+
+  .vertically {
+    vertical-align: middle;
+  }
+}
