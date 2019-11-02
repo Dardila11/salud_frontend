@@ -40,10 +40,12 @@ class SignIn extends Component {
         .post(URL + "/users/login/", { email, password })
         .then(response => {
           //console.table(response.data);
+          console.warn(response.status);
           this.setState({ isLoggedIn: true });
           this.saveUserInfo(response.data);
         })
         .catch(error => {
+          console.warn(error.status);
           console.warn(error.response.data.error);
           this.setState({
             isVisible: true,
@@ -90,52 +92,53 @@ class SignIn extends Component {
 
   render() {
     if (this.state.adminDashboard) {
-      return <Redirect to='/admin' />;
+      return <Redirect to="/admin" />;
     } else if (this.state.userDashboard) {
-      return <Redirect to='/user' />;
+      return <Redirect to="/user" />;
     }
 
     return (
       <>
-        <div className='vertically'>
-          <img className='logo' src={logo} alt='logo' />
-          <div className='box Login'>
-            <Form onSubmit={this.onLogin} className='form'>
-              <Form.Group controlId='formBasicEmail'>
+        <div className="vertically">
+          <img className="logo" src={logo} alt="logo" />
+          <div className="box Login">
+            <Form onSubmit={this.onLogin} className="form" autoComplete="on">
+              <Form.Group controlId="formBasicEmail">
                 <Form.Label>Usuario</Form.Label>
                 <Form.Control
-                  name='email'
-                  type='email'
-                  placeholder='Ingrese su email'
+                  name="email"
+                  type="email"
+                  placeholder="Ingrese su email"
                   value={this.state.email}
                   onChange={this.handleChange}
                 />
               </Form.Group>
-              <Form.Group controlId='formBasicPassword'>
+              <Form.Group controlId="formBasicPassword">
                 <Form.Label>Contraseña</Form.Label>
                 <Form.Control
-                  name='password'
-                  type='password'
-                  placeholder='Contraseña'
+                  name="password"
+                  type="password"
+                  placeholder="Contraseña"
                   value={this.state.password}
                   onChange={this.handleChange}
                 />
               </Form.Group>
-              <Form.Group controlId='formBasicCheckbox'>
-                <Form.Check type='checkbox' label='Recordar Contraseña' />
+              <Form.Group controlId="formBasicCheckbox">
+                <Form.Check type="checkbox" label="Recordar Contraseña" />
               </Form.Group>
-              <Button variant='primary' type='submit'>
+              <Button variant="primary" type="submit">
                 Ingresar
               </Button>
             </Form>
           </div>
           <div>
             <Alert
-              className='alert'
+              className="alert"
               variant={this.state.alertVariant}
               show={this.state.isVisible}
               onClose={this.handleDismiss}
-              dismissible>
+              dismissible
+            >
               <span>{this.state.message}</span>
             </Alert>
           </div>

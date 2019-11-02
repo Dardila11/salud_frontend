@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
-import NavAdmin from "./navAdmin.component";
+import NavAdmin from "../administrator/navAdmin/navAdmin.component";
 
 class AdminDashboard extends Component {
   constructor(props) {
