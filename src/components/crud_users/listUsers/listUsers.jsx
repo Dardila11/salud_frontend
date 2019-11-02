@@ -1,22 +1,33 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Button, Modal } from "react-bootstrap";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { URL } from "../../utils/URLSever";
-import { cloneNode } from "@babel/types";
+import CreateUser from "../createUser/createUser";
 
 // TODO
-// - Obtener todos los usuarios del api /users/all/
-// - listarlos apropiadamente en la tabla
+// - Arreglar los Modals (mostrarlos y cerrarlos)
+// - agregar codigo para que funcionen todo los Modals (Create, View, Delete, etc)
 
 class ListUsers extends Component {
   constructor(props) {
     super(props);
     this.state = {
       info: [],
-      infoUsers: []
+      infoUsers: [],
+      show: false,
+      setShow: false
     };
   }
+
+  handleClose = () => {
+    this.setState({ setShow: false });
+  };
+
+  handleShow = () => {
+    this.setState({ setShow: true });
+  };
 
   getUsers = () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
@@ -29,17 +40,8 @@ class ListUsers extends Component {
       .then(response => {
         //console.log(response.data["2"].fields.first_name);
         //console.table(response.data);
-        var data_array = [];
         this.setState({ info: response.data }, () => {
           console.log(this.state.info);
-          for (let index = 0; index < this.state.info.length; index++) {
-            console.log(this.state.info[index].fields.first_name);
-            data_array.push(this.state.info[index].fields);
-          }
-        });
-        console.log(data_array[0]);
-        this.setState({ infoUsers: data_array }, () => {
-          console.log(this.state.infoUsers);
         });
       });
   };
@@ -72,13 +74,13 @@ class ListUsers extends Component {
       },
       {
         Header: "Centro",
-        accessor: "my_center",
+        accessor: "my_center__name",
         sortable: false,
         filterable: false
       },
       {
         Header: "Departamentos",
-        accessor: "my_department",
+        accessor: "my_department__name",
         sortable: false,
         filterable: false
       },
@@ -88,8 +90,8 @@ class ListUsers extends Component {
         filterable: false,
         width: 100,
         maxWidth: 100,
-        minWidth: 100,
-        Cell: props => {
+        minWidth: 100
+        /*Cell: props => {
           return (
             <button
               onClick={() => {
@@ -98,18 +100,32 @@ class ListUsers extends Component {
               Editar
             </button>
           );
-        }
+        }*/
       }
     ];
     return (
       <>
         <h1>Esto es una tabla para listar los usuarios</h1>
+        <button onClick={this.handleShow}>Crear usuario</button>
         <ReactTable
           columns={columns}
-          data={this.state.infoUsers}
+          data={this.state.info}
           defaultPageSize={10}
           noDataText={"No existen usuarios"}
           filterable></ReactTable>
+
+        <Modal show={this.state.setShow} onHide={this.handleClose}>
+          {/* Crear Usuario */}
+          <CreateUser />
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={this.handleClose}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </>
     );
   }

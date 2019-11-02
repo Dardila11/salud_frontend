@@ -51,7 +51,7 @@ class NavAdmin extends Component {
                 <Nav.Item>
                   <Nav.Link eventKey="1" name="1">
                     <div className="nav-link">
-                      <span>Crear Usuarios</span>
+                      <span>Usuarios</span>
                     </div>
                   </Nav.Link>
                 </Nav.Item>
@@ -59,7 +59,7 @@ class NavAdmin extends Component {
                   <Nav.Link eventKey="2" name="2">
                     <li className="nav-item active">
                       <div className="nav-link">
-                        <span>Eliminar Usuarios</span>
+                        <span>Proyectos</span>
                       </div>
                     </li>
                   </Nav.Link>
