@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { URL } from "../../utils/URLSever";
 import CreateUser from "../createUser/createUser";
+import UpdateUser from "../updateUser/updateUser";
 
 // TODO
 // - Arreglar los Modals (mostrarlos y cerrarlos)
@@ -17,16 +18,36 @@ class ListUsers extends Component {
       info: [],
       infoUsers: [],
       show: false,
-      setShow: false
+      showCreate: false,
+      showUpdate: false,
+      showView: false,
+      showDelete: false,
+      showAlert: false
     };
   }
 
   handleClose = () => {
-    this.setState({ setShow: false });
+    this.setState({ showCreate: false });
   };
 
   handleShow = () => {
-    this.setState({ setShow: true });
+    this.setState({ show: true });
+  };
+
+  handleCreate = () => {
+    this.setState({ showCreate: true });
+  };
+
+  handleUpdate = () => {
+    this.setState({ showUpdate: true });
+  };
+
+  handleView = () => {
+    this.setState({ showView: true });
+  };
+
+  handleDelete = () => {
+    // este solo confirma al usuario la accion que se llevará a cabo
   };
 
   getUsers = () => {
@@ -40,9 +61,7 @@ class ListUsers extends Component {
       .then(response => {
         //console.log(response.data["2"].fields.first_name);
         //console.table(response.data);
-        this.setState({ info: response.data }, () => {
-          console.log(this.state.info);
-        });
+        this.setState({ info: response.data });
       });
   };
   componentDidMount() {
@@ -73,6 +92,13 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
+        Header: "Email",
+        accessor: "email",
+        width: 200,
+        maxWidth: 200,
+        minWidth: 100
+      },
+      {
         Header: "Centro",
         accessor: "my_center__name",
         sortable: false,
@@ -90,23 +116,16 @@ class ListUsers extends Component {
         filterable: false,
         width: 100,
         maxWidth: 100,
-        minWidth: 100
-        /*Cell: props => {
-          return (
-            <button
-              onClick={() => {
-                this.deleteRow(props.original.id);
-              }}>
-              Editar
-            </button>
-          );
-        }*/
+        minWidth: 100,
+        Cell: props => {
+          return <button onClick={this.handleUpdate}>Editar</button>;
+        }
       }
     ];
     return (
       <>
         <h1>Esto es una tabla para listar los usuarios</h1>
-        <button onClick={this.handleShow}>Crear usuario</button>
+        <button onClick={this.handleCreate}>Crear usuario</button>
         <ReactTable
           columns={columns}
           data={this.state.info}
@@ -114,17 +133,13 @@ class ListUsers extends Component {
           noDataText={"No existen usuarios"}
           filterable></ReactTable>
 
-        <Modal show={this.state.setShow} onHide={this.handleClose}>
+        <Modal show={this.state.showCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
           <CreateUser />
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={this.handleClose}>
-              Save Changes
-            </Button>
-          </Modal.Footer>
+        </Modal>
+        <Modal show={this.state.showUpdate} onHide={this.handleClose}>
+          {/* Actualizar Usuario */}
+          <UpdateUser />
         </Modal>
       </>
     );
