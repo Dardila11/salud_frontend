@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { URL } from "../../utils/URLSever";
@@ -9,12 +9,14 @@ import UpdateUser from "../updateUser/updateUser";
 
 // TODO
 // - Arreglar los Modals (mostrarlos y cerrarlos)
+// - Arreglar que se está mostrando usuarios duplicados por los permisos
 // - agregar codigo para que funcionen todo los Modals (Create, View, Delete, etc)
 
 class ListUsers extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      emailToEdit: "",
       info: [],
       infoUsers: [],
       show: false,
@@ -25,6 +27,11 @@ class ListUsers extends Component {
       showAlert: false
     };
   }
+
+  handleCloseCreate = () => {
+    // mostrar mensaje usuario creado
+    this.handleClose();
+  };
 
   handleClose = () => {
     this.setState({ showCreate: false });
@@ -38,7 +45,7 @@ class ListUsers extends Component {
     this.setState({ showCreate: true });
   };
 
-  handleUpdate = () => {
+  handleUpdate = email => {
     this.setState({ showUpdate: true });
   };
 
@@ -61,19 +68,24 @@ class ListUsers extends Component {
       .then(response => {
         //console.log(response.data["2"].fields.first_name);
         //console.table(response.data);
-        this.setState({ info: response.data });
+        this.setState({ info: response.data }, () => {
+          //console.log(this.state.info);
+        });
       });
   };
   componentDidMount() {
     this.getUsers();
   }
 
-  /*deleteRow = id => {
-    const index = this.state.posts.findIndex(post => {
-      return post.id === id;
+  updateRow = email => {
+    /*const index = this.state.info.findIndex(info => {
+      console.log(info.email);
+      return info.email === email;
     });
-    console.log(index);
-  };*/
+    console.log(index);*/
+    this.setState({ emailToEdit: email });
+    this.handleUpdate(email);
+  };
 
   render() {
     const columns = [
@@ -118,14 +130,23 @@ class ListUsers extends Component {
         maxWidth: 100,
         minWidth: 100,
         Cell: props => {
-          return <button onClick={this.handleUpdate}>Editar</button>;
+          //return <button onClick={this.handleUpdate}>Editar</button>;
+          return (
+            <Button
+              onClick={() => {
+                //console.log(props.original.email);
+                this.updateRow(props.original.email);
+              }}>
+              Edit
+            </Button>
+          );
         }
       }
     ];
     return (
       <>
         <h1>Esto es una tabla para listar los usuarios</h1>
-        <button onClick={this.handleCreate}>Crear usuario</button>
+        <Button onClick={this.handleCreate}>Crear usuario</Button>
         <ReactTable
           columns={columns}
           data={this.state.info}
@@ -135,11 +156,14 @@ class ListUsers extends Component {
 
         <Modal show={this.state.showCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
-          <CreateUser />
+          <CreateUser
+            handleCloseCreate={this.handleCloseCreate}
+            handleClose={this.handleClose}
+          />
         </Modal>
         <Modal show={this.state.showUpdate} onHide={this.handleClose}>
           {/* Actualizar Usuario */}
-          <UpdateUser />
+          <UpdateUser email={this.state.emailToEdit} />
         </Modal>
       </>
     );

@@ -30,6 +30,14 @@ class CreateUser extends Component {
     };
   }
 
+  handleClose = () => {
+    this.props.handleClose();
+  };
+
+  handleCloseCreate = () => {
+    this.props.handleCloseCreate();
+  };
+
   componentDidMount() {
     this.loadCenters();
     this.loadDepartaments();
@@ -253,16 +261,16 @@ class CreateUser extends Component {
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
-            <Button type="submit">Submit form</Button>
+            <Button type="submit">Crear Usuario</Button>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose}>
-            Close
+          <Button variant="secondary" onClick={this.handleCloseCreate}>
+            Cancelar
           </Button>
-          <Button variant="primary" onClick={this.handleClose}>
+          {/* <Button variant="primary" onClick={this.handleClose}>
             Save Changes
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </>
     );
