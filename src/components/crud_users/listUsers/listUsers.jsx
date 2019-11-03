@@ -6,6 +6,7 @@ import "react-table/react-table.css";
 import { URL } from "../../utils/URLSever";
 import CreateUser from "../createUser/createUser";
 import UpdateUser from "../updateUser/updateUser";
+import ViewUser from "../viewUser/viewUser";
 
 // TODO
 // - Arreglar los Modals (mostrarlos y cerrarlos)
@@ -49,7 +50,7 @@ class ListUsers extends Component {
     this.setState({ showUpdate: true });
   };
 
-  handleView = () => {
+  handleView = email => {
     this.setState({ showView: true });
   };
 
@@ -85,6 +86,11 @@ class ListUsers extends Component {
     console.log(index);*/
     this.setState({ emailToEdit: email });
     this.handleUpdate(email);
+  };
+
+  viewRow = email => {
+    this.setState({ emailToEdit: email });
+    this.handleView(email);
   };
 
   render() {
@@ -126,19 +132,27 @@ class ListUsers extends Component {
         Header: "Acciones",
         sortable: false,
         filterable: false,
-        width: 100,
-        maxWidth: 100,
-        minWidth: 100,
+        width: 200,
+        maxWidth: 200,
+        minWidth: 200,
         Cell: props => {
           //return <button onClick={this.handleUpdate}>Editar</button>;
           return (
-            <Button
-              onClick={() => {
-                //console.log(props.original.email);
-                this.updateRow(props.original.email);
-              }}>
-              Edit
-            </Button>
+            <>
+              <Button
+                onClick={() => {
+                  this.updateRow(props.original.email);
+                }}>
+                Editar
+              </Button>
+              <Button
+                className="ml-1"
+                onClick={() => {
+                  this.viewRow(props.original.email);
+                }}>
+                Ver
+              </Button>
+            </>
           );
         }
       }
@@ -164,6 +178,10 @@ class ListUsers extends Component {
         <Modal show={this.state.showUpdate} onHide={this.handleClose}>
           {/* Actualizar Usuario */}
           <UpdateUser email={this.state.emailToEdit} />
+        </Modal>
+        <Modal show={this.state.showView} onHide={this.handleClose}>
+          {/* Ver Usuario */}
+          <ViewUser email={this.state.emailToEdit} />
         </Modal>
       </>
     );
