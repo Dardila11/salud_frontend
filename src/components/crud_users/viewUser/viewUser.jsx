@@ -26,6 +26,14 @@ class ViewUser extends Component {
       setValidated: false
     };
   }
+
+  handleClose = () => {
+    this.props.handleClose();
+  };
+
+  handleCloseView = () => {
+    this.props.handleCloseView();
+  };
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -209,12 +217,11 @@ class ViewUser extends Component {
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
-            <Button type="submit">Submit form</Button>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose}>
-            Cancelar
+          <Button variant="secondary" onClick={this.handleCloseView}>
+            Cerrar
           </Button>
         </Modal.Footer>
       </>

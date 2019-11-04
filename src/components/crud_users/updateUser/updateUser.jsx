@@ -26,6 +26,14 @@ class UpdateUser extends Component {
     };
   }
 
+  handleClose = () => {
+    this.props.handleClose();
+  };
+
+  handleCloseUpdate = () => {
+    this.props.handleCloseUpdate();
+  };
+
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -149,6 +157,7 @@ class UpdateUser extends Component {
         </Modal.Header>
         <Modal.Body>
           <Form
+            id="formUpdate"
             noValidate
             validated={this.state.validated}
             onSubmit={this.handleSubmit}>
@@ -284,12 +293,14 @@ class UpdateUser extends Component {
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
-            <Button type="submit">Submit form</Button>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose}>
+          <Button variant="secondary" onClick={this.handleCloseUpdate}>
             Cancelar
+          </Button>
+          <Button form="formUpdate" type="submit">
+            Submit form
           </Button>
         </Modal.Footer>
       </>

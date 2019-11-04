@@ -6,7 +6,8 @@ class DeleteUser extends Component {
     super(props);
     this.state = {
       emailToEdit: props.email,
-      setShow: false
+      setShow: false,
+      show: false
     };
   }
   handleClose = () => {
@@ -24,7 +25,7 @@ class DeleteUser extends Component {
     return (
       <>
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Eliminar Usuario</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -32,8 +33,12 @@ class DeleteUser extends Component {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary">Close</Button>
-          <Button variant="primary">Save changes</Button>
+          <Button onClick={this.handleCloseDelete} variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={this.handleCloseDelete} variant="danger">
+            Eliminar
+          </Button>
         </Modal.Footer>
       </>
     );

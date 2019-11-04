@@ -36,8 +36,28 @@ class ListUsers extends Component {
     this.handleClose();
   };
 
+  handleCloseView = () => {
+    // mostrar mensaje usuario creado
+    this.handleClose();
+  };
+  handleCloseUpdate = () => {
+    // mostrar mensaje usuario creado
+    this.handleClose();
+  };
+  handleCloseDelete = () => {
+    // mostrar mensaje usuario creado
+    this.handleClose();
+  };
+
   handleClose = () => {
-    this.setState({ showCreate: false });
+    this.setState({
+      showAlert: false,
+      showCreate: false,
+      showUpdate: false,
+      showDelete: false,
+      showView: false
+    });
+    this.getUsers();
   };
 
   handleShow = () => {
@@ -208,16 +228,27 @@ class ListUsers extends Component {
         </Modal>
         <Modal show={this.state.showUpdate} onHide={this.handleClose}>
           {/* Actualizar Usuario */}
-          <UpdateUser email={this.state.emailToEdit} />
+          <UpdateUser
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            email={this.state.emailToEdit}
+          />
         </Modal>
         <Modal show={this.state.showView} onHide={this.handleClose}>
           {/* Ver Usuario */}
-          <ViewUser email={this.state.emailToEdit} />
+          <ViewUser
+            handleCloseView={this.handleCloseView}
+            handleClose={this.handleClose}
+            email={this.state.emailToEdit}
+          />
         </Modal>
         <Modal show={this.state.showDelete} onHide={this.handleClose}>
           {/* Eliminar Usuario */}
-
-          <DeleteUser email={this.state.emailToEdit} />
+          <DeleteUser
+            handleCloseDelete={this.handleCloseDelete}
+            handleClose={this.handleClose}
+            email={this.state.emailToEdit}
+          />
         </Modal>
       </>
     );

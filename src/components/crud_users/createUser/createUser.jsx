@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { URL } from "../../utils/URLSever";
-import { Button, Modal, Form, Col } from "react-bootstrap";
+import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
 
 // TODO
 // - Arreglar las accioens de mostrar y esconder del modal apropiadamente. los botones deben ir en este archivo
@@ -151,6 +151,7 @@ class CreateUser extends Component {
       })
       .then(response => {
         console.log(response.status);
+        this.handleCloseCreate();
       })
       .catch(error => {
         console.log("oh no, hubo un error!");
@@ -164,12 +165,6 @@ class CreateUser extends Component {
   handleSubmit = event => {
     event.preventDefault();
     this.saveNewUserInfo();
-    // const form = event.currentTarget;
-    // if (form.checkValidity() === false) {
-
-    //   event.stopPropagation();
-    // }
-    // this.setState({ setValidated: true });
   };
   handleClose = () => {
     this.setState({ setShow: false });
@@ -179,6 +174,7 @@ class CreateUser extends Component {
     this.setState({ setShow: true });
   };
   render() {
+    const handleDismiss = () => this.setState({ show: false });
     return (
       <>
         <Modal.Header closeButton>
@@ -186,6 +182,7 @@ class CreateUser extends Component {
         </Modal.Header>
         <Modal.Body>
           <Form
+            id="formCreateUser"
             noValidate
             validated={this.state.validated}
             onSubmit={this.handleSubmit}>
@@ -313,17 +310,26 @@ class CreateUser extends Component {
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
-            <Button type="submit">Crear Usuario</Button>
           </Form>
         </Modal.Body>
+
         <Modal.Footer>
           <Button variant="secondary" onClick={this.handleCloseCreate}>
             Cancelar
           </Button>
-          {/* <Button variant="primary" onClick={this.handleClose}>
-            Save Changes
-          </Button> */}
+          <Button form="formCreateUser" type="submit">
+            Crear Usuario
+          </Button>
         </Modal.Footer>
+        <div>
+          <Alert
+            variant="danger"
+            show={this.state.show}
+            onClose={handleDismiss}
+            dismissible>
+            <p className="mb-0">{this.state.message}</p>
+          </Alert>
+        </div>
       </>
     );
   }
