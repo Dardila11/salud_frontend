@@ -11,6 +11,7 @@ import DeleteUser from "../deleteUser/deleteUser";
 
 // TODO:
 // - Arreglar el ancho de la tabla
+// - Que solo sea una columna para el Rol
 
 class ListUsers extends Component {
   constructor(props) {
@@ -48,14 +49,19 @@ class ListUsers extends Component {
   };
 
   handleClose = () => {
-    this.setState({
-      showAlert: false,
-      showCreate: false,
-      showUpdate: false,
-      showDelete: false,
-      showView: false
-    });
-    this.getUsers();
+    this.setState(
+      {
+        showAlert: false,
+        showCreate: false,
+        showUpdate: false,
+        showDelete: false,
+        showView: false
+      },
+      () => {
+        console.log("se actualizan los usuarios nuevamente");
+        this.getUsers();
+      }
+    );
   };
 
   handleShow = () => {
@@ -79,7 +85,7 @@ class ListUsers extends Component {
     this.setState({ showDelete: true });
   };
 
-  getUsers = () => {
+  getUsers = async () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
     axios
       .get(URL + "/users/all/", {
@@ -89,45 +95,29 @@ class ListUsers extends Component {
       })
       .then(response => {
         //console.log(response.data["2"].fields.first_name);
-        //console.table(response.data);
+        console.log(response.data);
         this.setState({ info: response.data }, () => {
-          //this.getU(this.state.Allinfo);
-          //this.setState({ info: this.state.Allinfo });
+          console.log("Todos los usuarios: " + this.state.info["2"].is_simple);
+          for (let index = 0; index < this.state.info.length; index++) {
+            console.log(this.state.info[index]);
+          }
         });
       });
-  };
-
-  getU = info => {
-    var unique = info.filter((elem, index, self) => {
-      return index === self.indexOf(elem);
-    });
-    /*for (let index = 0; index < info.length; index++) {
-      console.log(info[index].email);
-      if (index + 1 !== info.length) {
-        if (info[index + 1].email === info[index].email) {
-          info.splice(index, 1);
-        }
-      }
-    }*/
-    console.log(unique);
   };
   componentDidMount() {
     this.getUsers();
   }
 
   updateRow = email => {
-    /*const index = this.state.info.findIndex(info => {
-      console.log(info.email);
-      return info.email === email;
-    });
-    console.log(index);*/
     this.setState({ emailToEdit: email });
     this.handleUpdate(email);
   };
 
   viewRow = email => {
-    this.setState({ emailToEdit: email });
-    this.handleView(email);
+    this.setState({ emailToEdit: email }, () => {
+      console.log("viewRow: " + this.state.emailToEdit);
+      this.handleView(email);
+    });
   };
 
   deleteRow = email => {
@@ -140,14 +130,14 @@ class ListUsers extends Component {
       {
         Header: "Nombres",
         accessor: "first_name",
-        width: 200,
+        width: 150,
         maxWidth: 200,
         minWidth: 100
       },
       {
         Header: "Apellidos",
         accessor: "last_name",
-        width: 200,
+        width: 150,
         maxWidth: 200,
         minWidth: 100
       },
@@ -162,23 +152,65 @@ class ListUsers extends Component {
         Header: "Centro",
         accessor: "my_center__name",
         sortable: false,
-        filterable: false
+        filterable: false,
+        width: 100,
+        maxWidth: 100,
+        minWidth: 100
       },
       {
         Header: "Departamentos",
         accessor: "my_department__name",
         sortable: false,
-        filterable: false
+        filterable: false,
+        width: 150,
+        maxWidth: 150,
+        minWidth: 100
+      },
+      {
+        id: "is_staff",
+        Header: "Administrador",
+        //accessor: "is_staff",
+        accessor: d => {
+          return d.is_staff ? "Si" : "No";
+        },
+        sortable: false,
+        filterable: false,
+        width: 150,
+        maxWidth: 150,
+        minWidth: 100
+      },
+      {
+        id: "is_simple",
+        Header: "Usuario Simple",
+        accessor: d => {
+          return d.is_simple ? "Si" : "No";
+        },
+        sortable: false,
+        filterable: false,
+        width: 150,
+        maxWidth: 150,
+        minWidth: 100
+      },
+      {
+        id: "is_active",
+        Header: "Activo",
+        accessor: d => {
+          return d.is_active ? "Si" : "No";
+        },
+        sortable: false,
+        filterable: false,
+        width: 150,
+        maxWidth: 150,
+        minWidth: 100
       },
       {
         Header: "Acciones",
         sortable: false,
         filterable: false,
-        width: 200,
-        maxWidth: 200,
+        width: 250,
+        maxWidth: 250,
         minWidth: 200,
         Cell: props => {
-          //return <button onClick={this.handleUpdate}>Editar</button>;
           return (
             <>
               <Button
@@ -190,6 +222,7 @@ class ListUsers extends Component {
               <Button
                 className="ml-1"
                 onClick={() => {
+                  console.log(props.original.email);
                   this.viewRow(props.original.email);
                 }}>
                 Ver
@@ -209,11 +242,13 @@ class ListUsers extends Component {
     return (
       <>
         <h1>Esto es una tabla para listar los usuarios</h1>
-        <Button onClick={this.handleCreate}>Crear usuario</Button>
+        <Button className="mb-2" onClick={this.handleCreate}>
+          Crear usuario
+        </Button>
         <ReactTable
           columns={columns}
           data={this.state.info}
-          defaultPageSize={5}
+          defaultPageSize={6}
           noDataText={"No existen usuarios"}
           filterable></ReactTable>
 

@@ -48,12 +48,13 @@ class ViewUser extends Component {
   }
   getUserByEmail = () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    console.log(this.state.emailToView);
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT " + token
     };
     axios
-      .get(URL + "/users/" + this.state.emailToEdit, {
+      .get(URL + "/users/" + this.state.emailToView, {
         headers: headers
       })
       .then(response => {
@@ -79,7 +80,6 @@ class ViewUser extends Component {
   render() {
     return (
       <>
-        {/* <h2>{this.props.email}</h2> */}
         <Modal.Header closeButton>
           <Modal.Title>Actualizar Usuario</Modal.Title>
         </Modal.Header>
@@ -106,18 +106,6 @@ class ViewUser extends Component {
                     Usuario Simple
                   </option>
                 </Form.Control>
-                <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom01">
-                <Form.Label>Identificación</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  name="userId"
-                  placeholder="Identificación"
-                  defaultValue={this.state.userId}
-                  onChange={this.handleChange}
-                />
                 <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
               </Form.Group>
             </Form.Row>

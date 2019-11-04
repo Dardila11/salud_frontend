@@ -4,7 +4,6 @@ import { Form, Button, Alert } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import "./signIn.styles.css";
 import { URL } from "../../utils/URLSever";
-import logo from "../../../img/logo.png";
 
 // TODO
 // - Diseñar el login correctamente
@@ -39,8 +38,6 @@ class SignIn extends Component {
       axios
         .post(URL + "/users/login/", { email, password })
         .then(response => {
-          //console.table(response.data);
-          console.warn(response.status);
           this.setState({ isLoggedIn: true });
           this.saveUserInfo(response.data);
         })
@@ -110,29 +107,62 @@ class SignIn extends Component {
                     <div className="logo-sge"></div>
                   </div>
                   {/* <span className="SGE">ClinDesign</span><br /> */}
-                  <Form.Label className="mb-0"><h3 className="title-login mt-2">Iniciar Sesión</h3></Form.Label>
-                  <Form.Control className="mb-2" type="text" name="email" value={this.state.email} onChange={this.handleChange} placeholder="Usuario" required />
-                  <Form.Control className="mb-2" type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Contraseña" required />
-                  <a href="" className="link">Olvide mi contraseña</a> <br/>
-                  <Button variant="primary" type="submit">Ingresar</Button>                  
+                  <Form.Label className="mb-0">
+                    <h3 className="title-login mt-2">Iniciar Sesión</h3>
+                  </Form.Label>
+                  <Form.Control
+                    className="mb-2"
+                    type="text"
+                    name="email"
+                    value={this.state.email}
+                    onChange={this.handleChange}
+                    placeholder="Usuario"
+                    required
+                  />
+                  <Form.Control
+                    className="mb-2"
+                    type="password"
+                    name="password"
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                    placeholder="Contraseña"
+                    required
+                  />
+                  <a href="#home" className="link">
+                    Olvide mi contraseña
+                  </a>{" "}
+                  <br />
+                  <Button variant="primary" type="submit">
+                    Ingresar
+                  </Button>
                 </Form>
               </div>
             </div>
             <div className="footer-login p-3">
-              <span>2019 | División de las Tecnologías de la Información y las Comunicaciones</span><br />
-              <span>Universidad del Cauca | clindesignunicauca@gmail.com</span> <br />
+              <span>
+                2019 | División de las Tecnologías de la Información y las
+                Comunicaciones
+              </span>
+              <br />
+              <span>
+                Universidad del Cauca | clindesignunicauca@gmail.com
+              </span>{" "}
+              <br />
               <span>Version 1.0</span>
             </div>
           </div>
           <div className="no-login time">
-            <Alert variant="danger" show={this.state.show} onClose={handleDismiss} dismissible>
+            <Alert
+              variant="danger"
+              show={this.state.show}
+              onClose={handleDismiss}
+              dismissible>
               <p className="mb-0">{this.state.message}</p>
             </Alert>
           </div>
           <div className="antorcha"></div>
           <div className="bandera"></div>
         </div>
-
       </>
     );
   }

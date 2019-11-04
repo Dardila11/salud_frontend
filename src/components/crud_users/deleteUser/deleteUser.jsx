@@ -22,7 +22,6 @@ class DeleteUser extends Component {
 
   handleDelete = () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
-    const { isActive } = this.state;
     var json = {
       email_instance: this.state.emailToDelete,
       is_active: 0
@@ -55,7 +54,7 @@ class DeleteUser extends Component {
         </Modal.Header>
 
         <Modal.Body>
-          <p>Modal body text goes here.</p>
+          <p>¿Esta seguro que desea eliminar al usuario?</p>
         </Modal.Body>
 
         <Modal.Footer>

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Navbar, Nav, Form, FormControl, Button } from "react-bootstrap";
-import "./navbar.styles.css"
+import { Navbar, Nav } from "react-bootstrap";
+import "./navbar.styles.css";
 
 class NavBar extends Component {
   constructor(props) {
@@ -9,9 +9,12 @@ class NavBar extends Component {
   }
   render() {
     return (
-      <Navbar expand='lg' className="h-100 color-custom">
-        <Navbar.Brand href='#home'> <div className="logo"></div> </Navbar.Brand>
-        <Nav className='mr-auto'></Nav>
+      <Navbar expand="lg" className="h-100 color-custom">
+        <Navbar.Brand href="#home">
+          {" "}
+          <div className="logo"></div>{" "}
+        </Navbar.Brand>
+        <Nav className="mr-auto"></Nav>
       </Navbar>
     );
   }

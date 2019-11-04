@@ -21,8 +21,8 @@ class UpdateUser extends Component {
       email: "",
       password: "",
       confEmail: "",
-      myCenter: -1,
-      myDepartment: -1,
+      myCenter: "",
+      myDepartment: "",
       infoCenters: [],
       optionsCenters: [],
       optionsDepartments: [],
@@ -59,19 +59,22 @@ class UpdateUser extends Component {
     for (let index = 0; index < this.state.infoCenters.length; index++) {
       var name = this.state.infoCenters[index].fields.name;
       var pk = this.state.infoCenters[index].pk;
-      console.log("Nombre del centro: " + name + " pk: " + pk);
+      //console.log("Nombre del centro: " + name + " pk: " + pk);
       optionsCentersArray.push({ myPk: pk, myName: name });
-      var op = JSON.stringify(optionsCentersArray);
-      console.log(op);
+      //var op = JSON.stringify(optionsCentersArray);
+      //console.log(op);
       // llenamos el select de centros
     }
 
     this.setState({ optionsCenters: optionsCentersArray }, () => {
-      console.log(this.state.optionsCenters);
+      // console.log(
+      //   "se guardaron los pk y name de los centros: " +
+      //     this.state.optionsCenters
+      // );
     });
   };
 
-  loadCenters = async () => {
+  loadCenters = () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
     axios
       .get(URL + "/places/center/all/", {
@@ -87,7 +90,7 @@ class UpdateUser extends Component {
       });
   };
 
-  loadDepartaments = async () => {
+  loadDepartaments = () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
     axios
       .get(URL + "/places/department/all/", {
@@ -98,7 +101,6 @@ class UpdateUser extends Component {
       .then(response => {
         this.setState({ infoDepartaments: response.data }, () => {
           this.viewDepartmentsInfo();
-          console.log(this.state.infoDepartaments);
         });
       });
   };
@@ -110,15 +112,15 @@ class UpdateUser extends Component {
     for (let index = 0; index < this.state.infoDepartaments.length; index++) {
       var name = this.state.infoDepartaments[index].fields.name;
       var pk = this.state.infoDepartaments[index].pk;
-      console.log("Nombre del departamento: " + name + " pk: " + pk);
+      //console.log("Nombre del departamento: " + name + " pk: " + pk);
       optionsDepArray.push({ myPk: pk, myName: name });
-      console.log("valor de optionDepArray " + optionsDepArray);
+      //console.log("valor de optionDepArray " + optionsDepArray);
     }
 
     this.setState({ optionsDepartments: optionsDepArray }, () => {
-      console.log(
-        "valor de optionDepartments " + this.state.optionsDepartments
-      );
+      // console.log(
+      //   "valor de optionDepartments " + this.state.optionsDepartments
+      // );
     });
   };
 
@@ -151,7 +153,7 @@ class UpdateUser extends Component {
       permissions_remove: [{ name: "add_user" }, { name: "change_user" }]
     };
     var myJson = JSON.stringify(json);
-    console.log(myJson);
+    console.log("LO QUE SE ESTÄ GUARDANDO " + myJson);
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT " + token
@@ -162,7 +164,7 @@ class UpdateUser extends Component {
         headers: headers
       })
       .then(response => {
-        console.log(response.data);
+        console.log(response.status);
       });
   };
 
@@ -189,7 +191,8 @@ class UpdateUser extends Component {
             myDepartment: response.data[0].my_department__name
           },
           () => {
-            console.log(this.state.type);
+            //console.log(this.state.type);
+            //console.log("Ha sido asignado el centro: " + this.state.myCenter);
           }
         );
       });
@@ -293,14 +296,19 @@ class UpdateUser extends Component {
                   onChange={this.handleChange}>
                   <option>...</option>
                   {this.state.optionsCenters.map((option, index) => {
-                    return (
-                      <option
-                        key={index}
-                        value={option.myPk}
-                        defaultValue={this.state.myCenter}>
-                        {option.myName}
-                      </option>
-                    );
+                    if (option.myName === this.state.myCenter) {
+                      return (
+                        <option defaultValue key={index} value={option.myPk}>
+                          {option.myName}
+                        </option>
+                      );
+                    } else {
+                      return (
+                        <option key={index} value={option.myPk}>
+                          {option.myName}
+                        </option>
+                      );
+                    }
                   })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
