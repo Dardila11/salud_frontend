@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
-import NavUser from "./navUser.component";
+import NavUser from "./navUser/navUser.component";
 
 class UserDashboard extends Component {
   constructor(props) {

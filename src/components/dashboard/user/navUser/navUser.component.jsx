@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../../../css/sb-admin-2.min.css";
+// import "../../../css/sb-admin-2.min.css";
 import { Row, Col, Nav, Tab, Container } from "react-bootstrap";
 
 class NavUser extends Component {

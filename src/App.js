@@ -12,8 +12,8 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/" component={SignIn} />
-          <Route exact path="/admin" component={AdminDashboard} />
-          <Route exact path="/user" component={UserDashboard} />
+          <Route exact path="/admin/" component={AdminDashboard} />
+          <Route exact path="/user/" component={UserDashboard} />
           <Route component={PageNotFound} />
         </Switch>
       </Router>

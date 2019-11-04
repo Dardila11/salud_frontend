@@ -1,0 +1,40 @@
+.hf-100 {
+    height: 100%;
+}
+
+.navadmin-custom {
+    background: #004179;
+    display: inline-block;
+}
+
+.navadmin-custom ul {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.navadmin-custom a {
+    text-decoration: none;
+    color: white;
+}
+
+.navadmin-custom .sidebar-brand {
+    padding: 10px 10px 10px 10px;
+    margin: 5px;
+    border-bottom: 1px solid white
+}
+
+.navadmin-custom .nav-item {
+    padding: 0 10px 0 10px;
+    margin: 5px;
+}
+
+.navadmin-custom .nav-link {
+    margin: 0;
+}
+
+.nav-item:hover  {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+}
