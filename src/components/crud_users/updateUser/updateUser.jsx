@@ -294,7 +294,10 @@ class UpdateUser extends Component {
                   <option>...</option>
                   {this.state.optionsCenters.map((option, index) => {
                     return (
-                      <option key={index} value={option.myPk}>
+                      <option
+                        key={index}
+                        value={option.myPk}
+                        defaultValue={this.state.myCenter}>
                         {option.myName}
                       </option>
                     );

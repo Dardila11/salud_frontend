@@ -10,7 +10,7 @@ import ViewUser from "../viewUser/viewUser";
 import DeleteUser from "../deleteUser/deleteUser";
 
 // TODO:
-// - Arreglar que se está mostrando usuarios duplicados por los permisos
+// - Arreglar el ancho de la tabla
 
 class ListUsers extends Component {
   constructor(props) {
@@ -213,7 +213,7 @@ class ListUsers extends Component {
         <ReactTable
           columns={columns}
           data={this.state.info}
-          defaultPageSize={10}
+          defaultPageSize={5}
           noDataText={"No existen usuarios"}
           filterable></ReactTable>
 

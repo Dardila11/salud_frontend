@@ -2,13 +2,17 @@ import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
 import NavAdmin from "../administrator/navAdmin/navAdmin.component";
 import { URL } from "../../utils/URLSever";
+import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
+// TODO:
+// - Falta agregar sesión expirada por inactividad
 class AdminDashboard extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
 
-  role = localStorage.getItem("role").replace(/[""]+/g, "");
+  role = JSON.parse(localStorage.getItem("role"));
   constructor(props) {
     super(props);
     this.state = {
@@ -17,26 +21,42 @@ class AdminDashboard extends Component {
     };
   }
   vertification = () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
-    const headers = {
-      "Content-Type":
-        "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-      Authorization: "JWT " + token
-    };
+    var token = JSON.parse(localStorage.getItem("token"));
     if (this.role !== null) {
       if (this.role === "is_staff") {
-        axios.post(
-          URL + "/users/verificate/administrator/",
-          {
-            headers: headers
-          },
-          { cancelToken: this.source.token }
-        );
+        axios
+          .post(URL + "/users/verificate/administrator/", {
+            headers: {
+              "Content-Type":
+                "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+              Authorization: "JWT " + token
+            }
+          })
+          .then(response => {
+            console.log("El servidor dice: " + response.status);
+            this.setState({ isLogged: true });
+          })
+          .catch(error => {
+            //closeSession();
+            console.warn(JSON.parse(error.request.response));
+            alert("Sesión expirado por inactividad");
+            this.setState({ isLogged: false });
+          });
+      } else {
+        closeSession();
+        alert("Sesión expirada por politicas de seguridad");
+        this.setState({ isLogged: false });
       }
-      // TODO: TERMINAR ESTO
     }
   };
+
+  componentDidMount() {
+    //this.vertification();
+  }
   render() {
+    if (!this.state.isLogged) {
+      return <Redirect to="/" />;
+    }
     return (
       <section>
         <NavBar />
