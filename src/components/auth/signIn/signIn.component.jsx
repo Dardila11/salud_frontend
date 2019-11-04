@@ -45,12 +45,11 @@ class SignIn extends Component {
           this.saveUserInfo(response.data);
         })
         .catch(error => {
-          console.warn(error.status);
-          console.warn(error.response.data.error);
+          console.warn(JSON.parse(error.request.response)); 
           this.setState({
             isVisible: true,
             alertVariant: "danger",
-            message: "Usuario o Clave incorrectos."
+            message: JSON.parse(error.request.response).detail
           });
         });
     } else {
