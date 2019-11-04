@@ -45,9 +45,9 @@ class SignIn extends Component {
           this.saveUserInfo(response.data);
         })
         .catch(error => {
-          console.warn(JSON.parse(error.request.response)); 
+          console.warn(JSON.parse(error.request.response));
           this.setState({
-            isVisible: true,
+            show: true,
             alertVariant: "danger",
             message: JSON.parse(error.request.response).detail
           });
@@ -95,53 +95,43 @@ class SignIn extends Component {
     } else if (this.state.userDashboard) {
       return <Redirect to="/user" />;
     }
-
+    const handleDismiss = () => this.setState({ show: false });
     return (
       <>
-        <div className="vertically">
-          <img className="logo" src={logo} alt="logo" />
-          <div className="box Login">
-            <Form onSubmit={this.onLogin} className="form" autoComplete="on">
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>Usuario</Form.Label>
-                <Form.Control
-                  name="email"
-                  type="email"
-                  placeholder="Ingrese su email"
-                  value={this.state.email}
-                  onChange={this.handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label>Contraseña</Form.Label>
-                <Form.Control
-                  name="password"
-                  type="password"
-                  placeholder="Contraseña"
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="Recordar Contraseña" />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                Ingresar
-              </Button>
-            </Form>
+        <div className="app-secretary container-login">
+          <div className="center">
+            <header className="app-header">
+              {/* <img src={logo} alt="logo" /> */}
+            </header>
+            <div className="content-caja d-flex justify-content-center">
+              <div className="caja">
+                <Form onSubmit={this.onLogin}>
+                  <div className="justify-content-center d-flex containt-logo">
+                    <div className="logo-sge"></div>
+                  </div>
+                  <span className="SGE">ClinDesign</span><br />
+                  <Form.Label className="mb-0"><h3 className="title-login mt-2">Iniciar Sesión</h3></Form.Label>
+                  <Form.Control className="mb-2" type="text" name="email" value={this.state.email} onChange={this.handleChange} placeholder="Usuario" required />
+                  <Form.Control className="mb-2" type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Contraseña" required />
+                  <Button variant="primary" type="submit">Ingresar</Button>
+                </Form>
+              </div>
+            </div>
+            <div className="footer-login p-3">
+              <span>2019 | División de las Tecnologías de la Información y las Comunicaciones</span><br />
+              <span>Universidad del Cauca | sgeunicauca@gmail.com</span> <br />
+              <span>Version 1.0</span>
+            </div>
           </div>
-          <div>
-            <Alert
-              className="alert"
-              variant={this.state.alertVariant}
-              show={this.state.isVisible}
-              onClose={this.handleDismiss}
-              dismissible
-            >
-              <span>{this.state.message}</span>
+          <div className="no-login time">
+            <Alert variant="danger" show={this.state.show} onClose={handleDismiss} dismissible>
+              <p className="mb-0">{this.state.message}</p>
             </Alert>
           </div>
+          <div className="antorcha"></div>
+          <div className="bandera"></div>
         </div>
+
       </>
     );
   }
