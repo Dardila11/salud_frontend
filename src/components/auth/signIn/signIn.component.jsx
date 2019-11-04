@@ -109,17 +109,18 @@ class SignIn extends Component {
                   <div className="justify-content-center d-flex containt-logo">
                     <div className="logo-sge"></div>
                   </div>
-                  <span className="SGE">ClinDesign</span><br />
+                  {/* <span className="SGE">ClinDesign</span><br /> */}
                   <Form.Label className="mb-0"><h3 className="title-login mt-2">Iniciar Sesión</h3></Form.Label>
                   <Form.Control className="mb-2" type="text" name="email" value={this.state.email} onChange={this.handleChange} placeholder="Usuario" required />
                   <Form.Control className="mb-2" type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Contraseña" required />
-                  <Button variant="primary" type="submit">Ingresar</Button>
+                  <a href="" className="link">Olvide mi contraseña</a> <br/>
+                  <Button variant="primary" type="submit">Ingresar</Button>                  
                 </Form>
               </div>
             </div>
             <div className="footer-login p-3">
               <span>2019 | División de las Tecnologías de la Información y las Comunicaciones</span><br />
-              <span>Universidad del Cauca | sgeunicauca@gmail.com</span> <br />
+              <span>Universidad del Cauca | clindesignunicauca@gmail.com</span> <br />
               <span>Version 1.0</span>
             </div>
           </div>

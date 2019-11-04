@@ -1,0 +1,15 @@
+.h-10 {
+    height: 50px;
+}
+
+.color-custom {
+    background: #F2F3F4;
+}
+
+.logo {
+    background: url("../../../img/banner.svg");
+    height: 40px;
+    width: 160px;
+    background-size: 100%;
+    background-repeat: no-repeat;   
+}

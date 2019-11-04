@@ -5,6 +5,7 @@ import { URL } from "../../utils/URLSever";
 import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import "./admin.styles.css";
 
 // TODO:
 // - Falta agregar sesión expirada por inactividad
@@ -58,9 +59,13 @@ class AdminDashboard extends Component {
       return <Redirect to="/" />;
     }
     return (
-      <section>
-        <NavBar />
-        <NavAdmin />
+      <section className="h-100 container-fluid p-0">
+        <div className="navbar-custom">
+          <NavBar />
+        </div>
+        <div className="navbody-custom">
+          <NavAdmin />
+        </div>
       </section>
     );
   }
