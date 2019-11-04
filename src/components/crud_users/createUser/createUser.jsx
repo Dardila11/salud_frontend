@@ -3,10 +3,10 @@ import axios from "axios";
 import { URL } from "../../utils/URLSever";
 import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
 
-// TODO
-// - Arreglar las accioens de mostrar y esconder del modal apropiadamente. los botones deben ir en este archivo
-// - Agregar el formulario para crear nuevos usuarios
-// - Implementar la peticion al API para crear nuevos usuarios
+// TODO:
+// - Actualizar el formulario. agregar los permisos para cada usuario
+// - Agregar mensajes de Alerta
+// - Validar formulario
 class CreateUser extends Component {
   constructor(props) {
     super(props);
@@ -71,14 +71,10 @@ class CreateUser extends Component {
       var pk = this.state.infoCenters[index].pk;
       console.log("Nombre del centro: " + name + " pk: " + pk);
       optionsCentersArray.push({ myPk: pk, myName: name });
-      var op = JSON.stringify(optionsCentersArray);
-      console.log(op);
       // llenamos el select de centros
     }
 
-    this.setState({ optionsCenters: optionsCentersArray }, () => {
-      console.log(this.state.optionsCenters);
-    });
+    this.setState({ optionsCenters: optionsCentersArray });
   };
 
   viewDepartmentsInfo = () => {
@@ -90,9 +86,6 @@ class CreateUser extends Component {
       var pk = this.state.infoDepartaments[index].pk;
       console.log("Nombre del departamento: " + name + " pk: " + pk);
       optionsDepArray.push({ myPk: pk, myName: name });
-      var op = JSON.stringify(optionsDepArray);
-      console.log(op);
-      // llenamos el select de centros
     }
 
     this.setState({ optionsDepartments: optionsDepArray }, () => {

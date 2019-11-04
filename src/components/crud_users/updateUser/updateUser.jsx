@@ -3,6 +3,12 @@ import axios from "axios";
 import { URL } from "../../utils/URLSever";
 import { Button, Modal, Form, Col } from "react-bootstrap";
 
+// TODO:
+// - Asignar correctamente el centro y departamento. el api retorna el nombre, pero necesitamos el id
+//   debemos crear un metodo para poder asignarlo correctamente
+// - Si el usuario no tiene asignado ningun centro ni departamento, se debe poder dejarlo en blanco. sin errores
+// - adicionar la logica de comparacion de los cambios email
+// - validacion de formulario
 class UpdateUser extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +24,8 @@ class UpdateUser extends Component {
       myCenter: -1,
       myDepartment: -1,
       infoCenters: [],
+      optionsCenters: [],
+      optionsDepartments: [],
       infoDepartaments: [],
       show: false,
       setShow: false,
@@ -39,10 +47,29 @@ class UpdateUser extends Component {
   };
 
   componentDidMount() {
-    //this.loadCenters();
-    //this.loadDepartaments();
+    this.loadCenters();
+    this.loadDepartaments();
     this.getUserByEmail();
   }
+
+  viewCentersInfo = () => {
+    console.log(this.state.infoCenters);
+    var optionsCentersArray = [];
+    // recorremos todo los centros y sacamos el nombre y el id
+    for (let index = 0; index < this.state.infoCenters.length; index++) {
+      var name = this.state.infoCenters[index].fields.name;
+      var pk = this.state.infoCenters[index].pk;
+      console.log("Nombre del centro: " + name + " pk: " + pk);
+      optionsCentersArray.push({ myPk: pk, myName: name });
+      var op = JSON.stringify(optionsCentersArray);
+      console.log(op);
+      // llenamos el select de centros
+    }
+
+    this.setState({ optionsCenters: optionsCentersArray }, () => {
+      console.log(this.state.optionsCenters);
+    });
+  };
 
   loadCenters = async () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
@@ -54,7 +81,8 @@ class UpdateUser extends Component {
       })
       .then(response => {
         this.setState({ infoCenters: response.data }, () => {
-          console.log(this.state.infoCenters);
+          this.viewCentersInfo();
+          //console.log(this.state.infoCenters);
         });
       });
   };
@@ -69,9 +97,29 @@ class UpdateUser extends Component {
       })
       .then(response => {
         this.setState({ infoDepartaments: response.data }, () => {
+          this.viewDepartmentsInfo();
           console.log(this.state.infoDepartaments);
         });
       });
+  };
+
+  viewDepartmentsInfo = () => {
+    console.log(this.state.infoDepartaments);
+    var optionsDepArray = [];
+    // recorremos todo los centros y sacamos el nombre y el id
+    for (let index = 0; index < this.state.infoDepartaments.length; index++) {
+      var name = this.state.infoDepartaments[index].fields.name;
+      var pk = this.state.infoDepartaments[index].pk;
+      console.log("Nombre del departamento: " + name + " pk: " + pk);
+      optionsDepArray.push({ myPk: pk, myName: name });
+      console.log("valor de optionDepArray " + optionsDepArray);
+    }
+
+    this.setState({ optionsDepartments: optionsDepArray }, () => {
+      console.log(
+        "valor de optionDepartments " + this.state.optionsDepartments
+      );
+    });
   };
 
   handleSubmit = event => {
@@ -129,8 +177,6 @@ class UpdateUser extends Component {
         headers: headers
       })
       .then(response => {
-        console.log(response.data);
-        console.log(response.data[0].first_name);
         let role;
         role = response.data[0].is_staff === true ? (role = "1") : (role = "2");
         this.setState(
@@ -179,18 +225,6 @@ class UpdateUser extends Component {
                     Usuario Simple
                   </option>
                 </Form.Control>
-                <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom01">
-                <Form.Label>Identificación</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  name="userId"
-                  placeholder="Identificación"
-                  defaultValue={this.state.userId}
-                  onChange={this.handleChange}
-                />
                 <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
@@ -257,15 +291,14 @@ class UpdateUser extends Component {
                   name="myCenter"
                   value={this.state.myCenter}
                   onChange={this.handleChange}>
-                  <option key={-1} value={-1}>
-                    ...
-                  </option>
-                  <option key={1} value={1}>
-                    Psicologia
-                  </option>
-                  <option key={2} value={2}>
-                    Otro
-                  </option>
+                  <option>...</option>
+                  {this.state.optionsCenters.map((option, index) => {
+                    return (
+                      <option key={index} value={option.myPk}>
+                        {option.myName}
+                      </option>
+                    );
+                  })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
                   Porfavor, elija un centro
@@ -278,15 +311,14 @@ class UpdateUser extends Component {
                   name="myDepartment"
                   value={this.state.myDepartment}
                   onChange={this.handleChange}>
-                  <option key={-1} value={-1}>
-                    ...
-                  </option>
-                  <option key={1} value={1}>
-                    Salud
-                  </option>
-                  <option key={2} value={2}>
-                    Otro
-                  </option>
+                  <option>...</option>
+                  {this.state.optionsDepartments.map((option, index) => {
+                    return (
+                      <option key={index} value={option.myPk}>
+                        {option.myName}
+                      </option>
+                    );
+                  })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
                   Porfavor, elija un departamento
@@ -300,7 +332,7 @@ class UpdateUser extends Component {
             Cancelar
           </Button>
           <Button form="formUpdate" type="submit">
-            Submit form
+            Guardar Cambios
           </Button>
         </Modal.Footer>
       </>
