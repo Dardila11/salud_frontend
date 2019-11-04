@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import "../../../../css/sb-admin-2.min.css";
+import "./navAdmin.component.css"
 import { Row, Col, Nav, Tab, Container } from "react-bootstrap";
 
 import ListUsers from "../../../crud_users/listUsers/listUsers";
@@ -27,11 +28,11 @@ class NavAdmin extends Component {
   };
   render() {
     return (
-      <Tab.Container
+      <Tab.Container class="p-0"
         id="left-tabs-example"
         activeKey={this.state.tab}
         onSelect={this.handleSelect}>
-        <Row>
+        <Row className="m-0 p-0">
           <Col sm={3}>
             <div
               className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
@@ -49,15 +50,15 @@ class NavAdmin extends Component {
 
                 {/* Opciones de navegacion */}
                 <Nav.Item>
-                  <Nav.Link eventKey="1" name="1">
+                  <Nav.Link eventKey="1" name="1" className="p-0">
                     <div className="nav-link">
                       <span>Usuarios</span>
                     </div>
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="2" name="2">
-                    <li className="nav-item active">
+                  <Nav.Link eventKey="2" name="2" className="p-0">
+                    <li className="nav-item ">
                       <div className="nav-link">
                         <span>Proyectos</span>
                       </div>
