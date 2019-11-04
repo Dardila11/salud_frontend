@@ -7,6 +7,7 @@ import { URL } from "../../utils/URLSever";
 import CreateUser from "../createUser/createUser";
 import UpdateUser from "../updateUser/updateUser";
 import ViewUser from "../viewUser/viewUser";
+import DeleteUser from "../deleteUser/deleteUser";
 
 // TODO
 // - Arreglar los Modals (mostrarlos y cerrarlos)
@@ -18,6 +19,7 @@ class ListUsers extends Component {
     super(props);
     this.state = {
       emailToEdit: "",
+      allInfo: [],
       info: [],
       infoUsers: [],
       show: false,
@@ -54,8 +56,9 @@ class ListUsers extends Component {
     this.setState({ showView: true });
   };
 
-  handleDelete = () => {
+  handleDelete = event => {
     // este solo confirma al usuario la accion que se llevará a cabo
+    this.setState({ showDelete: true });
   };
 
   getUsers = () => {
@@ -70,9 +73,25 @@ class ListUsers extends Component {
         //console.log(response.data["2"].fields.first_name);
         //console.table(response.data);
         this.setState({ info: response.data }, () => {
-          //console.log(this.state.info);
+          //this.getU(this.state.Allinfo);
+          //this.setState({ info: this.state.Allinfo });
         });
       });
+  };
+
+  getU = info => {
+    var unique = info.filter((elem, index, self) => {
+      return index === self.indexOf(elem);
+    });
+    /*for (let index = 0; index < info.length; index++) {
+      console.log(info[index].email);
+      if (index + 1 !== info.length) {
+        if (info[index + 1].email === info[index].email) {
+          info.splice(index, 1);
+        }
+      }
+    }*/
+    console.log(unique);
   };
   componentDidMount() {
     this.getUsers();
@@ -91,6 +110,11 @@ class ListUsers extends Component {
   viewRow = email => {
     this.setState({ emailToEdit: email });
     this.handleView(email);
+  };
+
+  deleteRow = email => {
+    this.setState({ emailToEdit: email });
+    this.handleDelete(email);
   };
 
   render() {
@@ -152,6 +176,13 @@ class ListUsers extends Component {
                 }}>
                 Ver
               </Button>
+              <Button
+                className="ml-1"
+                onClick={() => {
+                  this.deleteRow(props.original.email);
+                }}>
+                Eliminar
+              </Button>
             </>
           );
         }
@@ -182,6 +213,11 @@ class ListUsers extends Component {
         <Modal show={this.state.showView} onHide={this.handleClose}>
           {/* Ver Usuario */}
           <ViewUser email={this.state.emailToEdit} />
+        </Modal>
+        <Modal show={this.state.showDelete} onHide={this.handleClose}>
+          {/* Eliminar Usuario */}
+
+          <DeleteUser email={this.state.emailToEdit} />
         </Modal>
       </>
     );

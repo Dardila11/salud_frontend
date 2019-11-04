@@ -9,7 +9,6 @@ class UpdateUser extends Component {
     this.state = {
       emailToEdit: props.email,
       type: "",
-      userId: "",
       username: "",
       firstName: "",
       lastName: "",
@@ -76,7 +75,6 @@ class UpdateUser extends Component {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
     const {
       type,
-      userId,
       firstName,
       lastName,
       email,
