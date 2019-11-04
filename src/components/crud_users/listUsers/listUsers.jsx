@@ -9,10 +9,8 @@ import UpdateUser from "../updateUser/updateUser";
 import ViewUser from "../viewUser/viewUser";
 import DeleteUser from "../deleteUser/deleteUser";
 
-// TODO
-// - Arreglar los Modals (mostrarlos y cerrarlos)
-// - Arreglar que se está mostrando usuarios duplicados por los permisos
-// - agregar codigo para que funcionen todo los Modals (Create, View, Delete, etc)
+// TODO:
+// - Arreglar el ancho de la tabla
 
 class ListUsers extends Component {
   constructor(props) {

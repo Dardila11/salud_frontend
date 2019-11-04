@@ -3,6 +3,9 @@ import axios from "axios";
 import { URL } from "../../utils/URLSever";
 import { Button, Modal, Form, Col } from "react-bootstrap";
 
+// TODO:
+// - Cargar los datos del usuario al Formulario (Dejarlo como formulario ??)
+
 class ViewUser extends Component {
   constructor(props) {
     super(props);
