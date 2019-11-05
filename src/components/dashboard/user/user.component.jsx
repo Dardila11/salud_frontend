@@ -20,12 +20,12 @@ class UserDashboard extends Component {
   }
 
   vertification = () => {
-    this.vertificationAuthorization();
     vertificationToken();
+    this.vertificationAuthorization();
   };
 
   vertificationAuthorization = () => {
-    const token = localStorage.getItem("token").replace(/[""]+/g, "");
+    const token = JSON.parse(localStorage.getItem("token"));
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT " + token
@@ -52,7 +52,7 @@ class UserDashboard extends Component {
       return <Redirect to="/" />;
     }
     return (
-      <section>
+      <section onMouseDown={this.vertification}>
         <NavBar />
         <NavUser />
       </section>

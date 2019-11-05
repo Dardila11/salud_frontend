@@ -2,7 +2,7 @@ import axios from "axios";
 import { URL } from "./URLSever";
 
 export function vertificationToken() {
-  const token = localStorage.getItem("token").replace(/[""]+/g, "");
+  const token = JSON.parse(localStorage.getItem("token"));
   const data = {
     token: token
   };
@@ -20,7 +20,7 @@ export function vertificationToken() {
 }
 
 function refreshToken() {
-  const token = localStorage.getItem("token").replace(/[""]+/g, "");
+  const token = JSON.parse(localStorage.getItem("token"));
   const data = {
     token: token
   };

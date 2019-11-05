@@ -21,7 +21,7 @@ class DeleteUser extends Component {
   };
 
   handleDelete = () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    const token = JSON.parse(localStorage.getItem("token"));
     var json = {
       email_instance: this.state.emailToDelete,
       is_active: 0

@@ -23,19 +23,19 @@ class AdminDashboard extends Component {
   }
 
   vertification = () => {
-    this.vertificationAuthorization();
     vertificationToken();
+    this.vertificationAuthorization();    
   };
 
   vertificationAuthorization = () => {
-    const token = localStorage.getItem("token").replace(/[""]+/g, "");
+    const token = JSON.parse(localStorage.getItem("token"));
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT " + token
     };
     axios
       .post(URL + "/users/verificate/administrator/", {}, { headers: headers })
-      .then(() => {
+      .then(() => {        
         this.setState({ isLogged: true });
       })
       .catch(error => {

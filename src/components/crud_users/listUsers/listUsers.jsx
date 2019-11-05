@@ -91,7 +91,7 @@ class ListUsers extends Component {
   };
 
   getUsers = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    const token = JSON.parse(localStorage.getItem("token"));
     axios
       .get(URL + "/users/all/", {
         headers: {

@@ -50,7 +50,7 @@ class CreateUser extends Component {
 
   loadCenters = async () => {
     console.log("se ejecuta loadCenters");
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    const token = JSON.parse(localStorage.getItem("token"));
     axios
       .get(URL + "/places/center/all/", {
         headers: {
@@ -96,7 +96,7 @@ class CreateUser extends Component {
   };
 
   loadDepartaments = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     axios
       .get(URL + "/places/department/all/", {
         headers: {
@@ -111,7 +111,7 @@ class CreateUser extends Component {
   };
 
   saveNewUserInfo = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     const {
       type,
       userId,

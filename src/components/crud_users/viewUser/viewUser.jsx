@@ -44,7 +44,7 @@ class ViewUser extends Component {
   };
 
   loadCenters = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     await axios
       .get(URL + "/places/center/all/", {
         headers: {
@@ -68,7 +68,7 @@ class ViewUser extends Component {
     this.setState({ optionsCenters: optionsCentersArray });
   };
   loadDepartaments = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     await axios
       .get(URL + "/places/department/all/", {
         headers: {
@@ -98,7 +98,7 @@ class ViewUser extends Component {
     this.getUserByEmail();
   }
   getUserByEmail = () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     console.log(this.state.emailToView);
     const headers = {
       "Content-Type": "application/json",

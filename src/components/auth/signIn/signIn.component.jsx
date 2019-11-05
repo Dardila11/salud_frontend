@@ -42,7 +42,6 @@ class SignIn extends Component {
           this.saveUserInfo(response.data);
         })
         .catch(error => {
-          console.warn(JSON.parse(error.request.response));
           this.setState({
             show: true,
             alertVariant: "danger",
@@ -156,7 +155,8 @@ class SignIn extends Component {
               variant="danger"
               show={this.state.show}
               onClose={handleDismiss}
-              dismissible>
+              dismissible
+            >
               <p className="mb-0">{this.state.message}</p>
             </Alert>
           </div>

@@ -64,7 +64,7 @@ class UpdateUser extends Component {
   };
 
   loadCenters = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     await axios
       .get(URL + "/places/center/all/", {
         headers: {
@@ -79,7 +79,7 @@ class UpdateUser extends Component {
   };
 
   loadDepartaments = async () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     await axios
       .get(URL + "/places/department/all/", {
         headers: {
@@ -110,7 +110,7 @@ class UpdateUser extends Component {
   };
 
   updateUserInfo = () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     const {
       type,
       firstName,
@@ -150,7 +150,7 @@ class UpdateUser extends Component {
   };
 
   getUserByEmail = () => {
-    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    var token = JSON.parse(localStorage.getItem("token"));
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT " + token
