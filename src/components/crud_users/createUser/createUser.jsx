@@ -3,8 +3,7 @@ import axios from "axios";
 import { URL } from "../../utils/URLSever";
 import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
 
-// TODO:
-// - Actualizar el formulario. agregar los permisos para cada usuario
+// TODO
 // - Agregar mensajes de Alerta
 // - Validar formulario
 class CreateUser extends Component {
@@ -23,6 +22,7 @@ class CreateUser extends Component {
       myDepartment: -1,
       createCenters: false,
       createUsers: false,
+      createProjects: false,
       infoCenters: [],
       optionsCenters: [],
       optionsDepartments: [],
@@ -131,10 +131,24 @@ class CreateUser extends Component {
         my_center: myCenter,
         my_department: myDepartment
       },
-      permissions: [{ name: "add_user" }, { name: "change_user" }]
+      permissions: []
     };
+    if (this.state.createCenters === true) {
+      json.permissions.push(
+        { name: "add_center" },
+        { name: "change_center" },
+        { name: "view_center" }
+      );
+    }
+    if (this.state.createUsers === true) {
+      json.permissions.push(
+        { name: "add_user" },
+        { name: "change_user" },
+        { name: "view_user" }
+      );
+    }
     var myJson = JSON.stringify(json);
-    console.log(myJson);
+    console.log("ESTE ES MI JSON: " + myJson);
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT " + token
@@ -154,11 +168,20 @@ class CreateUser extends Component {
       });
   };
 
+  handleChangeCheck = event => {
+    if (event.target.checked) {
+      this.setState({ [event.target.name]: true });
+    } else {
+      this.setState({ [event.target.name]: false });
+    }
+  };
+
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
   handleSubmit = event => {
     event.preventDefault();
+
     this.saveNewUserInfo();
   };
   handleClose = () => {
@@ -187,6 +210,7 @@ class CreateUser extends Component {
                 <Form.Control
                   as="select"
                   name="type"
+                  required
                   value={this.state.type}
                   onChange={this.handleChange}>
                   <option>...</option>
@@ -270,7 +294,8 @@ class CreateUser extends Component {
                   as="select"
                   name="myCenter"
                   value={this.state.myCenter}
-                  onChange={this.handleChange}>
+                  onChange={this.handleChange}
+                  required>
                   <option>...</option>
                   {this.state.optionsCenters.map((option, index) => {
                     return (
@@ -289,6 +314,7 @@ class CreateUser extends Component {
                 <Form.Control
                   as="select"
                   name="myDepartment"
+                  required
                   value={this.state.myDepartment}
                   onChange={this.handleChange}>
                   <option>...</option>
@@ -309,13 +335,30 @@ class CreateUser extends Component {
             <Form.Row>
               <Form.Group controlId="formBasicCheckbox">
                 <Form.Label>Permisos de creación para: </Form.Label>
-                <Form.Check type="checkbox" label="Centros" id="checkCenters" />
-                <Form.Check type="checkbox" label="Usuarios" id="checkUsers" />
                 <Form.Check
-                  disable
+                  name="createCenters"
+                  type="checkbox"
+                  label="Centros"
+                  id="checkCenters"
+                  value={this.state.createCenters}
+                  onChange={this.handleChangeCheck}
+                />
+                <Form.Check
+                  name="createUsers"
+                  type="checkbox"
+                  label="Usuarios"
+                  id="checkUsers"
+                  value={this.state.createCenters}
+                  onChange={this.handleChangeCheck}
+                />
+                <Form.Check
+                  disabled
+                  name="createProjects"
                   type="checkbox"
                   label="Proyectos Clinicos"
                   id="checkProjects"
+                  value={this.state.createCenters}
+                  onChange={this.handleChangeCheck}
                 />
               </Form.Group>
             </Form.Row>
