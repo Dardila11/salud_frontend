@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Alert } from "react-bootstrap";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { URL } from "../../utils/URLSever";
@@ -8,6 +8,7 @@ import CreateUser from "../createUser/createUser";
 import UpdateUser from "../updateUser/updateUser";
 import ViewUser from "../viewUser/viewUser";
 import DeleteUser from "../deleteUser/deleteUser";
+import "./listUsers.styles.css";
 
 // TODO:
 // - Arreglar el ancho de la tabla
@@ -26,12 +27,15 @@ class ListUsers extends Component {
       showUpdate: false,
       showView: false,
       showDelete: false,
-      showAlert: false
+      showAlert: false,
+      showMessage: false,
+      message: false
     };
   }
 
   handleCloseCreate = () => {
     // mostrar mensaje usuario creado
+    this.setState({ showMessage: true, message: "Usuario Creado" });
     this.handleClose();
   };
 
@@ -41,6 +45,7 @@ class ListUsers extends Component {
   };
   handleCloseUpdate = () => {
     // mostrar mensaje usuario creado
+    this.setState({ showMessage: true, message: "Usuario Actualizado" });
     this.handleClose();
   };
   handleCloseDelete = () => {
@@ -126,6 +131,7 @@ class ListUsers extends Component {
   };
 
   render() {
+    const handleDismiss = () => this.setState({ showMessage: false });
     const columns = [
       {
         Header: "Nombres",
@@ -270,6 +276,15 @@ class ListUsers extends Component {
             email={this.state.emailToEdit}
           />
         </Modal>
+        <div className="no-login time">
+          <Alert
+            variant="success"
+            show={this.state.showMessage}
+            onClose={handleDismiss}
+            dismissible>
+            <p className="mb-0">{this.state.message}</p>
+          </Alert>
+        </div>
       </>
     );
   }

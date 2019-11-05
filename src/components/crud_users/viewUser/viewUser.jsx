@@ -19,9 +19,11 @@ class ViewUser extends Component {
       email: "",
       password: "",
       confEmail: "",
-      myCenter: -1,
-      myDepartment: -1,
+      myCenter: "",
+      myDepartment: "",
       infoCenters: [],
+      optionsCenters: [],
+      optionsDepartments: [],
       infoDepartaments: [],
       show: false,
       setShow: false,
@@ -41,9 +43,58 @@ class ViewUser extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  loadCenters = async () => {
+    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    await axios
+      .get(URL + "/places/center/all/", {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      })
+      .then(response => {
+        this.setState({ infoCenters: response.data }, () => {
+          this.viewCentersInfo();
+        });
+      });
+  };
+  viewCentersInfo = () => {
+    console.log(this.state.infoCenters);
+    var optionsCentersArray = [];
+    for (let index = 0; index < this.state.infoCenters.length; index++) {
+      var name = this.state.infoCenters[index].fields.name;
+      var pk = this.state.infoCenters[index].pk;
+      optionsCentersArray.push({ myPk: pk, myName: name });
+    }
+    this.setState({ optionsCenters: optionsCentersArray });
+  };
+  loadDepartaments = async () => {
+    var token = localStorage.getItem("token").replace(/[""]+/g, "");
+    await axios
+      .get(URL + "/places/department/all/", {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      })
+      .then(response => {
+        this.setState({ infoDepartaments: response.data }, () => {
+          this.viewDepartmentsInfo();
+        });
+      });
+  };
+  viewDepartmentsInfo = () => {
+    console.log(this.state.infoDepartaments);
+    var optionsDepArray = [];
+    for (let index = 0; index < this.state.infoDepartaments.length; index++) {
+      var name = this.state.infoDepartaments[index].fields.name;
+      var pk = this.state.infoDepartaments[index].pk;
+      optionsDepArray.push({ myPk: pk, myName: name });
+    }
+    this.setState({ optionsDepartments: optionsDepArray });
+  };
+
   componentDidMount() {
-    //this.loadCenters();
-    //this.loadDepartaments();
+    this.loadCenters();
+    this.loadDepartaments();
     this.getUserByEmail();
   }
   getUserByEmail = () => {
@@ -68,8 +119,8 @@ class ViewUser extends Component {
             lastName: response.data[0].last_name,
             email: response.data[0].email,
             type: role,
-            myCenter: response.data[0].my_center__name,
-            myDepartment: response.data[0].my_department__name
+            myCenter: response.data[0].my_center,
+            myDepartment: response.data[0].my_department
           },
           () => {
             console.log(this.state.type);
@@ -172,15 +223,14 @@ class ViewUser extends Component {
                   name="myCenter"
                   value={this.state.myCenter}
                   onChange={this.handleChange}>
-                  <option key={-1} value={-1}>
-                    ...
-                  </option>
-                  <option key={1} value={1}>
-                    Psicologia
-                  </option>
-                  <option key={2} value={2}>
-                    Otro
-                  </option>
+                  <option>...</option>
+                  {this.state.optionsCenters.map((option, index) => {
+                    return (
+                      <option key={index} value={option.myPk}>
+                        {option.myName}
+                      </option>
+                    );
+                  })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
                   Porfavor, elija un centro
@@ -193,15 +243,14 @@ class ViewUser extends Component {
                   name="myDepartment"
                   value={this.state.myDepartment}
                   onChange={this.handleChange}>
-                  <option key={-1} value={-1}>
-                    ...
-                  </option>
-                  <option key={1} value={1}>
-                    Salud
-                  </option>
-                  <option key={2} value={2}>
-                    Otro
-                  </option>
+                  <option>...</option>
+                  {this.state.optionsDepartments.map((option, index) => {
+                    return (
+                      <option key={index} value={option.myPk}>
+                        {option.myName}
+                      </option>
+                    );
+                  })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
                   Porfavor, elija un departamento

@@ -55,28 +55,17 @@ class UpdateUser extends Component {
   viewCentersInfo = () => {
     console.log(this.state.infoCenters);
     var optionsCentersArray = [];
-    // recorremos todo los centros y sacamos el nombre y el id
     for (let index = 0; index < this.state.infoCenters.length; index++) {
       var name = this.state.infoCenters[index].fields.name;
       var pk = this.state.infoCenters[index].pk;
-      //console.log("Nombre del centro: " + name + " pk: " + pk);
       optionsCentersArray.push({ myPk: pk, myName: name });
-      //var op = JSON.stringify(optionsCentersArray);
-      //console.log(op);
-      // llenamos el select de centros
     }
-
-    this.setState({ optionsCenters: optionsCentersArray }, () => {
-      // console.log(
-      //   "se guardaron los pk y name de los centros: " +
-      //     this.state.optionsCenters
-      // );
-    });
+    this.setState({ optionsCenters: optionsCentersArray });
   };
 
-  loadCenters = () => {
+  loadCenters = async () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
-    axios
+    await axios
       .get(URL + "/places/center/all/", {
         headers: {
           Authorization: "JWT " + token
@@ -85,14 +74,13 @@ class UpdateUser extends Component {
       .then(response => {
         this.setState({ infoCenters: response.data }, () => {
           this.viewCentersInfo();
-          //console.log(this.state.infoCenters);
         });
       });
   };
 
-  loadDepartaments = () => {
+  loadDepartaments = async () => {
     var token = localStorage.getItem("token").replace(/[""]+/g, "");
-    axios
+    await axios
       .get(URL + "/places/department/all/", {
         headers: {
           Authorization: "JWT " + token
@@ -108,20 +96,12 @@ class UpdateUser extends Component {
   viewDepartmentsInfo = () => {
     console.log(this.state.infoDepartaments);
     var optionsDepArray = [];
-    // recorremos todo los centros y sacamos el nombre y el id
     for (let index = 0; index < this.state.infoDepartaments.length; index++) {
       var name = this.state.infoDepartaments[index].fields.name;
       var pk = this.state.infoDepartaments[index].pk;
-      //console.log("Nombre del departamento: " + name + " pk: " + pk);
       optionsDepArray.push({ myPk: pk, myName: name });
-      //console.log("valor de optionDepArray " + optionsDepArray);
     }
-
-    this.setState({ optionsDepartments: optionsDepArray }, () => {
-      // console.log(
-      //   "valor de optionDepartments " + this.state.optionsDepartments
-      // );
-    });
+    this.setState({ optionsDepartments: optionsDepArray });
   };
 
   handleSubmit = event => {
@@ -150,7 +130,7 @@ class UpdateUser extends Component {
         my_department: myDepartment
       },
       permissions_add: [{ name: "add_user" }, { name: "change_user" }],
-      permissions_remove: [{ name: "add_user" }, { name: "change_user" }]
+      permissions_remove: []
     };
     var myJson = JSON.stringify(json);
     console.log("LO QUE SE ESTÄ GUARDANDO " + myJson);
@@ -165,6 +145,7 @@ class UpdateUser extends Component {
       })
       .then(response => {
         console.log(response.status);
+        this.handleCloseUpdate();
       });
   };
 
@@ -187,12 +168,12 @@ class UpdateUser extends Component {
             lastName: response.data[0].last_name,
             email: response.data[0].email,
             type: role,
-            myCenter: response.data[0].my_center__name,
-            myDepartment: response.data[0].my_department__name
+            myCenter: response.data[0].my_center,
+            myDepartment: response.data[0].my_department
           },
           () => {
             //console.log(this.state.type);
-            //console.log("Ha sido asignado el centro: " + this.state.myCenter);
+            console.log("Ha sido asignado el centro: " + this.state.myCenter);
           }
         );
       });
@@ -296,19 +277,11 @@ class UpdateUser extends Component {
                   onChange={this.handleChange}>
                   <option>...</option>
                   {this.state.optionsCenters.map((option, index) => {
-                    if (option.myName === this.state.myCenter) {
-                      return (
-                        <option defaultValue key={index} value={option.myPk}>
-                          {option.myName}
-                        </option>
-                      );
-                    } else {
-                      return (
-                        <option key={index} value={option.myPk}>
-                          {option.myName}
-                        </option>
-                      );
-                    }
+                    return (
+                      <option key={index} value={option.myPk}>
+                        {option.myName}
+                      </option>
+                    );
                   })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
@@ -339,7 +312,7 @@ class UpdateUser extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleCloseUpdate}>
+          <Button variant="secondary" onClick={this.handleClose}>
             Cancelar
           </Button>
           <Button form="formUpdate" type="submit">
