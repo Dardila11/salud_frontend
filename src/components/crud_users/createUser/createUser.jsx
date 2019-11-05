@@ -21,6 +21,8 @@ class CreateUser extends Component {
       confEmail: "",
       myCenter: -1,
       myDepartment: -1,
+      createCenters: false,
+      createUsers: false,
       infoCenters: [],
       optionsCenters: [],
       optionsDepartments: [],
@@ -298,9 +300,23 @@ class CreateUser extends Component {
                     );
                   })}
                 </Form.Control>
+
                 <Form.Control.Feedback type="invalid">
                   Porfavor, elija un departamento
                 </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group controlId="formBasicCheckbox">
+                <Form.Label>Permisos de creación para: </Form.Label>
+                <Form.Check type="checkbox" label="Centros" id="checkCenters" />
+                <Form.Check type="checkbox" label="Usuarios" id="checkUsers" />
+                <Form.Check
+                  disable
+                  type="checkbox"
+                  label="Proyectos Clinicos"
+                  id="checkProjects"
+                />
               </Form.Group>
             </Form.Row>
           </Form>

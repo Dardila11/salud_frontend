@@ -167,23 +167,10 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
-        id: "is_staff",
-        Header: "Administrador",
-        //accessor: "is_staff",
-        accessor: d => {
-          return d.is_staff ? "Si" : "No";
-        },
-        sortable: false,
-        filterable: false,
-        width: 150,
-        maxWidth: 150,
-        minWidth: 100
-      },
-      {
         id: "is_simple",
-        Header: "Usuario Simple",
+        Header: "Rol",
         accessor: d => {
-          return d.is_simple ? "Si" : "No";
+          return d.is_simple ? "Usuario" : "Administrador";
         },
         sortable: false,
         filterable: false,
