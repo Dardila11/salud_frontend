@@ -4,6 +4,7 @@ import NavAdmin from "../administrator/navAdmin/navAdmin.component";
 import { URL } from "../../utils/URLSever";
 import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
+import { vertificationToken } from "../../utils/verificationToken";
 import { Redirect } from "react-router-dom";
 import "./admin.styles.css";
 
@@ -13,7 +14,6 @@ class AdminDashboard extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
 
-  role = JSON.parse(localStorage.getItem("role"));
   constructor(props) {
     super(props);
     this.state = {
@@ -21,45 +21,44 @@ class AdminDashboard extends Component {
       isNew: true
     };
   }
+
   vertification = () => {
-    var token = JSON.parse(localStorage.getItem("token"));
-    if (this.role !== null) {
-      if (this.role === "is_staff") {
-        axios
-          .post(URL + "/users/verificate/administrator/", {
-            headers: {
-              "Content-Type":
-                "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-              Authorization: "JWT " + token
-            }
-          })
-          .then(response => {
-            console.log("El servidor dice: " + response.status);
-            this.setState({ isLogged: true });
-          })
-          .catch(error => {
-            //closeSession();
-            console.warn(JSON.parse(error.request.response));
-            alert("Sesión expirado por inactividad");
-            this.setState({ isLogged: false });
-          });
-      } else {
-        closeSession();
-        alert("Sesión expirada por politicas de seguridad");
-        this.setState({ isLogged: false });
-      }
-    }
+    this.vertificationAuthorization();
+    vertificationToken();
   };
 
-  componentDidMount() {
-    //this.vertification();
+  vertificationAuthorization = () => {
+    const token = localStorage.getItem("token").replace(/[""]+/g, "");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT " + token
+    };
+    axios
+      .post(URL + "/users/verificate/administrator/", {}, { headers: headers })
+      .then(() => {
+        this.setState({ isLogged: true });
+      })
+      .catch(error => {
+        const status = JSON.parse(error.request.status);
+        if (status === 401) {
+          this.setState({ isLogged: false });
+        }
+      });
+  };
+
+  componentWillMount() {
+    this.vertification();
   }
+
   render() {
     if (!this.state.isLogged) {
       return <Redirect to="/" />;
     }
     return (
-      <section className="h-100 container-fluid p-0">
+      <section
+        className="h-100 container-fluid p-0"
+        onMouseDown={this.vertification}
+      >
         <div className="navbar-custom">
           <NavBar />
         </div>

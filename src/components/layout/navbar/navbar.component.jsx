@@ -7,6 +7,7 @@ class NavBar extends Component {
     super(props);
     this.state = {};
   }
+
   render() {
     return (
       <Navbar expand="lg" className="h-100 color-custom">

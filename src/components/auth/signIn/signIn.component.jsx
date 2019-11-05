@@ -14,8 +14,8 @@ class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      password: "",
+      email: "mdquilindo@unicauca.edu.co",
+      password: "oracle",
       isLoggedIn: false,
       isVisible: false,
       adminDashboard: false,

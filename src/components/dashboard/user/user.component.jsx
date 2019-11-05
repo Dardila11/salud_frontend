@@ -5,6 +5,7 @@ import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import NavUser from "./navUser/navUser.component";
+import { vertificationToken } from "../../utils/verificationToken";
 
 class UserDashboard extends Component {
   CancelToken = axios.CancelToken;
@@ -19,37 +20,33 @@ class UserDashboard extends Component {
   }
 
   vertification = () => {
-    var token = JSON.parse(localStorage.getItem("token"));
+    this.vertificationAuthorization();
+    vertificationToken();
+  };
+
+  vertificationAuthorization = () => {
+    const token = localStorage.getItem("token").replace(/[""]+/g, "");
     const headers = {
-      "Content-Type":
-        "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+      "Content-Type": "application/json",
       Authorization: "JWT " + token
     };
-    if (this.role !== null) {
-      if (this.role === "is_simple") {
-        axios
-          .post(URL + "/users/verificate/simple/", {
-            headers: headers
-          })
-          .then(response => {
-            console.log("El servidor dice: " + response.status);
-            this.setState({ isLogged: true });
-          })
-          .catch(() => {
-            closeSession();
-            alert("Sesión expirado por inactividad");
-            this.setState({ isLogged: false });
-          });
-      } else {
-        closeSession();
-        alert("Sesión expirada por politicas de seguridad");
-        this.setState({ isLogged: false });
-      }
-    }
+    axios
+      .post(URL + "/users/verificate/simple/", {}, { headers: headers })
+      .then(() => {
+        this.setState({ isLogged: true });
+      })
+      .catch(error => {
+        const status = JSON.parse(error.request.status);
+        if (status === 401) {
+          this.setState({ isLogged: false });
+        }
+      });
   };
-  componentDidMount() {
-    // this.vertification();
+
+  componentWillMount() {
+    this.vertification();
   }
+
   render() {
     if (!this.state.isLogged) {
       return <Redirect to="/" />;
