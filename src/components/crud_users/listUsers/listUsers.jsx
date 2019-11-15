@@ -9,6 +9,7 @@ import UpdateUser from "../updateUser/updateUser";
 import ViewUser from "../viewUser/viewUser";
 import DeleteUser from "../deleteUser/deleteUser";
 import "./listUsers.styles.css";
+import { thisExpression } from "@babel/types";
 
 // TODO:
 // - Arreglar el ancho de la tabla
@@ -209,7 +210,8 @@ class ListUsers extends Component {
               <Button
                 onClick={() => {
                   this.updateRow(props.original.email);
-                }}>
+                }}
+              >
                 Editar
               </Button>
               <Button
@@ -217,14 +219,16 @@ class ListUsers extends Component {
                 onClick={() => {
                   console.log(props.original.email);
                   this.viewRow(props.original.email);
-                }}>
+                }}
+              >
                 Ver
               </Button>
               <Button
                 className="ml-1"
                 onClick={() => {
                   this.deleteRow(props.original.email);
-                }}>
+                }}
+              >
                 Eliminar
               </Button>
             </>
@@ -234,16 +238,20 @@ class ListUsers extends Component {
     ];
     return (
       <>
-        <h1>Esto es una tabla para listar los usuarios</h1>
-        <Button className="mb-2" onClick={this.handleCreate}>
-          Crear usuario
-        </Button>
+        <h1 class="h3 mb-2 text-gray-800">Lista de usuarios</h1>
+        <button class="btn btn-primary btn-icon-split p-0 mb-2" onClick={this.handleCreate}>
+          <span class="icon text-white-50">
+            <i class="fas fa-plus-square"></i>
+          </span>
+          <span class="text text-white">Crear usuario</span>
+        </button>
         <ReactTable
           columns={columns}
           data={this.state.info}
           defaultPageSize={6}
           noDataText={"No existen usuarios"}
-          filterable></ReactTable>
+          filterable
+        ></ReactTable>
 
         <Modal show={this.state.showCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
@@ -281,7 +289,8 @@ class ListUsers extends Component {
             variant="success"
             show={this.state.showMessage}
             onClose={handleDismiss}
-            dismissible>
+            dismissible
+          >
             <p className="mb-0">{this.state.message}</p>
           </Alert>
         </div>
