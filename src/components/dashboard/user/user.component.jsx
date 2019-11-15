@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
 import { URL } from "../../utils/URLSever";
-import { closeSession } from "../../utils/handleLocalStorage";
+// import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import NavUser from "./navUser/navUser.component";

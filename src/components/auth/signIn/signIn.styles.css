@@ -77,7 +77,7 @@
   background: url("../../../img/antorcha.png");
   top: 0;
   right: 10%;
-  z-index: 10;
+  z-index: -1;
 }
 
 .bandera {
@@ -87,7 +87,7 @@
   background: url("../../../img/bandera.png") no-repeat;
   left: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: -1;
 }
 
 .no-login {

@@ -1,15 +1,13 @@
 import React, { Component } from "react";
 import NavAdmin from "../administrator/navAdmin/navAdmin.component";
 import { URL } from "../../utils/URLSever";
-import { closeSession } from "../../utils/handleLocalStorage";
+// import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { vertificationToken } from "../../utils/verificationToken";
 import { Redirect } from "react-router-dom";
-import { buttonToogle } from "../../../js/sb-admin-2.min";
 import "../../../css/sb-admin-2.min.css";
 import "../../../vendor/fontawesome-free/css/all.min.css";
 import "./admin.styles.css";
-import NavBar from "../../layout/navbar/navbar.component";
 
 // TODO:
 // - Falta agregar sesión expirada por inactividad

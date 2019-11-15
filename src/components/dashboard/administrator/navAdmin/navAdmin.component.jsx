@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import "./navAdmin.styles.css";
-import { Row, Col, Nav, Tab, Container } from "react-bootstrap";
+import { Nav, Tab } from "react-bootstrap";
 import NavBar from "../../../layout/navbar/navbar.component";
 
 import ListUsers from "../../../crud_users/listUsers/listUsers";
@@ -57,7 +57,7 @@ class NavAdmin extends Component {
           <li className="nav-item active">
             <a className="nav-link" href="index.html">
               <i className="fas fa-fw fa-tachometer-alt"></i>
-              <span>Dashboard</span>
+              <span>Administrador</span>
             </a>
           </li>
           <hr className="sidebar-divider"></hr>

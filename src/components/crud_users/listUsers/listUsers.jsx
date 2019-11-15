@@ -9,7 +9,6 @@ import UpdateUser from "../updateUser/updateUser";
 import ViewUser from "../viewUser/viewUser";
 import DeleteUser from "../deleteUser/deleteUser";
 import "./listUsers.styles.css";
-import { thisExpression } from "@babel/types";
 
 // TODO:
 // - Arreglar el ancho de la tabla
@@ -238,12 +237,12 @@ class ListUsers extends Component {
     ];
     return (
       <>
-        <h1 class="h3 mb-2 text-gray-800">Lista de usuarios</h1>
-        <button class="btn btn-primary btn-icon-split p-0 mb-2" onClick={this.handleCreate}>
-          <span class="icon text-white-50">
-            <i class="fas fa-plus-square"></i>
+        <h1 className="h3 mb-2 text-gray-800">Lista de usuarios</h1>
+        <button className="btn btn-primary btn-icon-split p-0 mb-2" onClick={this.handleCreate}>
+          <span className="icon text-white-50">
+            <i className="fas fa-plus-square"></i>
           </span>
-          <span class="text text-white">Crear usuario</span>
+          <span className="text text-white">Crear usuario</span>
         </button>
         <ReactTable
           columns={columns}

@@ -196,7 +196,7 @@ class CreateUser extends Component {
     return (
       <>
         <Modal.Header closeButton>
-          <Modal.Title>Crear Usuario</Modal.Title>
+          <Modal.Title class="h3 text-gray-800 mb-0">Crear usuario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form
@@ -366,7 +366,7 @@ class CreateUser extends Component {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleCloseCreate}>
+          <Button variant="danger" onClick={this.handleCloseCreate}>
             Cancelar
           </Button>
           <Button form="formCreateUser" type="submit">

@@ -4,7 +4,7 @@ import axios from "axios";
 import { Redirect } from "react-router-dom";
 import { URL } from "../../utils/URLSever";
 import { buttonToogle } from "../../../js/sb-admin-2.min";
-import { closeSession } from "../../utils/handleLocalStorage";
+// import { closeSession } from "../../utils/handleLocalStorage";
 
 class NavBar extends Component {
   email = JSON.parse(localStorage.getItem("email"));
@@ -62,7 +62,7 @@ class NavBar extends Component {
           <li className="nav-item dropdown no-arrow mx-1">
             <a
               className="nav-link dropdown-toggle"
-              href="#"
+              href="!#"
               id="alertsDropdown"
               role="button"
               data-toggle="dropdown"
@@ -77,7 +77,7 @@ class NavBar extends Component {
               aria-labelledby="alertsDropdown"
             >
               <h6 className="dropdown-header">Alerts Center</h6>
-              <a className="dropdown-item d-flex align-items-center" href="#">
+              <a className="dropdown-item d-flex align-items-center" href="!#">
                 <div className="mr-3">
                   <div className="icon-circle bg-primary">
                     <i className="fas fa-file-alt text-white"></i>
@@ -90,7 +90,7 @@ class NavBar extends Component {
                   </span>
                 </div>
               </a>
-              <a className="dropdown-item d-flex align-items-center" href="#">
+              <a className="dropdown-item d-flex align-items-center" href="!#">
                 <div className="mr-3">
                   <div className="icon-circle bg-success">
                     <i className="fas fa-donate text-white"></i>
@@ -101,7 +101,7 @@ class NavBar extends Component {
                   $290.29 has been deposited into your account!
                 </div>
               </a>
-              <a className="dropdown-item d-flex align-items-center" href="#">
+              <a className="dropdown-item d-flex align-items-center" href="!#">
                 <div className="mr-3">
                   <div className="icon-circle bg-warning">
                     <i className="fas fa-exclamation-triangle text-white"></i>
@@ -115,7 +115,7 @@ class NavBar extends Component {
               </a>
               <a
                 className="dropdown-item text-center small text-gray-500"
-                href="#"
+                href="!#"
               >
                 Show All Alerts
               </a>
@@ -124,7 +124,7 @@ class NavBar extends Component {
           <li className="nav-item dropdown no-arrow mx-1">
             <a
               className="nav-link dropdown-toggle"
-              href="#"
+              href="!#"
               id="alertsDropdown"
               role="button"
               data-toggle="dropdown"
@@ -139,7 +139,7 @@ class NavBar extends Component {
               aria-labelledby="alertsDropdown"
             >
               <h6 className="dropdown-header">Messages Center</h6>
-              <a className="dropdown-item d-flex align-items-center" href="#">
+              <a className="dropdown-item d-flex align-items-center" href="!#">
                 <div className="mr-3">
                   <div className="icon-circle bg-primary">
                     <i className="fas fa-file-alt text-white"></i>
@@ -152,7 +152,7 @@ class NavBar extends Component {
                   </span>
                 </div>
               </a>
-              <a className="dropdown-item d-flex align-items-center" href="#">
+              <a className="dropdown-item d-flex align-items-center" href="!#">
                 <div className="mr-3">
                   <div className="icon-circle bg-success">
                     <i className="fas fa-donate text-white"></i>
@@ -163,7 +163,7 @@ class NavBar extends Component {
                   $290.29 has been deposited into your account!
                 </div>
               </a>
-              <a className="dropdown-item d-flex align-items-center" href="#">
+              <a className="dropdown-item d-flex align-items-center" href="!#">
                 <div className="mr-3">
                   <div className="icon-circle bg-warning">
                     <i className="fas fa-exclamation-triangle text-white"></i>
@@ -177,7 +177,7 @@ class NavBar extends Component {
               </a>
               <a
                 className="dropdown-item text-center small text-gray-500"
-                href="#"
+                href="!#"
               >
                 Show All Alerts
               </a>
@@ -188,7 +188,7 @@ class NavBar extends Component {
           <li className="nav-item dropdown no-arrow">
             <a
               className="nav-link dropdown-toggle"
-              href="#"
+              href="!#"
               id="userDropdown"
               role="button"
               data-toggle="dropdown"
@@ -201,30 +201,31 @@ class NavBar extends Component {
               <img
                 className="img-profile rounded-circle"
                 src="https://source.unsplash.com/QAB-WJcbgJk/60x60"
-              ></img>
+                alt="profile"
+              />
             </a>
             <div
               className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
               aria-labelledby="userDropdown"
             >
-              <a className="dropdown-item" href="#">
+              <a className="dropdown-item" href="!#">
                 <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                 Profile
               </a>
-              <a className="dropdown-item" href="#">
+              <a className="dropdown-item" href="!#">
                 <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                 Settings
               </a>
-              <a className="dropdown-item" href="#">
+              <a className="dropdown-item" href="!#">
                 <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                 Activity Log
               </a>
               <div className="dropdown-divider"></div>
               <a
                 className="dropdown-item"
-                href="#"
+                href="!#"
                 data-toggle="modal"
-                data-target="#logoutModal"
+                data-target="!#logoutModal"
               >
                 <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                 Logout
