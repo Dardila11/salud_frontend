@@ -10,12 +10,17 @@ import UpdateUser from '../updateUser/updateUser';
 import ViewUser from '../viewUser/viewUser';
 import DeleteUser from '../deleteUser/deleteUser';
 import './listUsers.styles.css';
-//import CreateUser from '../createUser/createUser';
 
-// TODO:
-// - Arreglar el ancho de la tabla
-// - Que solo sea una columna para el Rol
-
+/**
+ * @todo - eliminar la columna centro y departamento
+ * - cambiar la columna Rol por 'Administrador' mostrar un check si lo es o no.
+ * - cambiar los botones de las acciones por los iconos
+ */
+/**
+ * @author Dardila
+ * @description Este componente se encarga de listar la informacion de todos los usuarios en una tabla
+ * y de permitir su correspondiente CRUD
+ */
 class ListUsers extends Component {
   constructor(props) {
     super(props);
@@ -37,26 +42,49 @@ class ListUsers extends Component {
     };
   }
 
+  /**
+   * @function handleCloseCreate function enviada como prop de un componente.
+   * es llamada cuando un usuario es creado satisfactoriamente
+   */
   handleCloseCreate = () => {
     // mostrar mensaje usuario creado
     this.setState({ showMessage: true, message: 'Usuario Creado' });
     this.handleClose();
   };
 
+  /**
+   * @function handleCloseView function enviada como prop de un componente.
+   * es llamada se cierra el modal de ViewUser
+   */
   handleCloseView = () => {
     // mostrar mensaje usuario creado
     this.handleClose();
   };
+  /**
+   * @function handleCloseUpdate function enviada como prop de un componente.
+   * es llamada cuando un usuario es actualizado satisfactoriamente
+   */
   handleCloseUpdate = () => {
-    // mostrar mensaje usuario creado
     this.setState({ showMessage: true, message: 'Usuario Actualizado' });
     this.handleClose();
   };
+  /**
+   * @function handleCloseDelete function enviada como prop de un componente.
+   * es llamada se elimina un usuario.
+   */
   handleCloseDelete = () => {
-    // mostrar mensaje usuario creado
+    /**
+     * @todo mostrar mensaje de usuario eliminado
+     */
     this.handleClose();
   };
 
+  /**
+   * @function handleClose se encarga de resetar los valores de las alertas
+   * y finaliza actualizando nuevamente los usuarios.
+   * @todo deberia solamente actualizar los usuarios
+   *      cuando son creados, actualizados o borrados
+   */
   handleClose = () => {
     this.setState(
       {
@@ -72,6 +100,11 @@ class ListUsers extends Component {
       }
     );
   };
+
+  /**
+   * todos los handleShow, create, update, view, delete
+   * se encargan de cambiar el estado del correspondiente variable
+   */
 
   handleShow = () => {
     this.setState({ show: true });
@@ -90,10 +123,17 @@ class ListUsers extends Component {
   };
 
   handleDelete = event => {
-    // este solo confirma al usuario la accion que se llevará a cabo
     this.setState({ showDelete: true });
   };
 
+  /**
+   * @function loadDepartaments
+   * @description Realiza una peticion al servidor el cual obtiene todos los
+   * departamentos que existen. Si la peticion es aceptada, finaliza llamando
+   * la @function viewDepartmentsInfo
+   *
+   * @todo agregar el evento de error
+   */
   loadDepartaments = async () => {
     var token = JSON.parse(localStorage.getItem('token'));
     axios
@@ -109,6 +149,11 @@ class ListUsers extends Component {
       });
   };
 
+  /**
+   * @function viewDepartmentsInfo
+   * @description Se encarga de extraer solo la informacion que se necesita.
+   * el name y pk del departamento
+   */
   viewDepartmentsInfo = () => {
     console.log(this.state.infoDepartaments);
     var optionsDepArray = [];
@@ -121,6 +166,14 @@ class ListUsers extends Component {
     this.setState({ infoDepartaments: optionsDepArray });
   };
 
+  /**
+   * @function loadCenters
+   * @description Realiza una peticion al servidor el cual obtiene todos los
+   * centros que existen. Si la peticion es aceptada, finaliza llamando
+   * la @function viewCentersInfo
+   *
+   * @todo agregar el evento de error
+   */
   loadCenters = async () => {
     console.log('se ejecuta loadCenters');
     const token = JSON.parse(localStorage.getItem('token'));
@@ -137,6 +190,11 @@ class ListUsers extends Component {
       });
   };
 
+  /**
+   * @function viewCentersInfo
+   * @description Se encarga de extraer solo la informacion que se necesita.
+   * el name y pk del departamento
+   */
   viewCentersInfo = () => {
     console.log(this.state.infoCenters);
     var optionsCentersArray = [];
@@ -151,6 +209,13 @@ class ListUsers extends Component {
     this.setState({ infoCenters: optionsCentersArray });
   };
 
+  /**
+   * @function getUsers
+   * @description Realiza una peticion al servidor el cual obtiene todos los
+   * usuarios que existen.
+   *
+   * @todo agregar el evento de error
+   */
   getUsers = async () => {
     const token = JSON.parse(localStorage.getItem('token'));
     axios
@@ -170,17 +235,33 @@ class ListUsers extends Component {
         });
       });
   };
+
+  /**
+   * @function componentDidMount
+   * @description despues de que se monta el componente
+   * este llama las siguientes funciones
+   */
   componentDidMount() {
     this.getUsers();
     this.loadCenters();
     this.loadDepartaments();
   }
 
+  /**
+   * @function updateRow
+   * @description Se encarga de mostrar el modal de actualizacion de usuario y cargar la informacion
+   * del usuario (su email)
+   */
   updateRow = email => {
     this.setState({ emailToEdit: email });
     this.handleUpdate(email);
   };
 
+  /**
+   * @function viewRow
+   * @description Se encarga de mostrar el modal de ver la informacion del usuario y cargar la informacion
+   * del usuario (su email)
+   */
   viewRow = email => {
     this.setState({ emailToEdit: email }, () => {
       console.log('viewRow: ' + this.state.emailToEdit);
@@ -188,6 +269,10 @@ class ListUsers extends Component {
     });
   };
 
+  /**
+   * @function deleteRow
+   * @description Carga el modal de confirmacion de eliminacion del usuario
+   */
   deleteRow = email => {
     this.setState({ emailToEdit: email });
     this.handleDelete(email);
@@ -195,6 +280,10 @@ class ListUsers extends Component {
 
   render() {
     const handleDismiss = () => this.setState({ showMessage: false });
+    /**
+     * @var columns contiene la informacion de las columnas de la tabla donde se muestra
+     * la informacion de los usuario.
+     */
     const columns = [
       {
         Header: 'Nombres',
