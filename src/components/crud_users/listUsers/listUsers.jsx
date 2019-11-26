@@ -1,14 +1,16 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Modal, Button, Alert } from "react-bootstrap";
-import ReactTable from "react-table";
-import "react-table/react-table.css";
-import { URL } from "../../utils/URLSever";
-import CreateUser from "../createUser/createUser";
-import UpdateUser from "../updateUser/updateUser";
-import ViewUser from "../viewUser/viewUser";
-import DeleteUser from "../deleteUser/deleteUser";
-import "./listUsers.styles.css";
+import React, { Component } from 'react';
+import axios from 'axios';
+import { Modal, Button, Alert } from 'react-bootstrap';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
+import { URL } from '../../utils/URLSever';
+//import CreateUser from '../createUser/createUser';
+import CreateUserFormik from '../createUser/createUser.component';
+import UpdateUser from '../updateUser/updateUser';
+import ViewUser from '../viewUser/viewUser';
+import DeleteUser from '../deleteUser/deleteUser';
+import './listUsers.styles.css';
+//import CreateUser from '../createUser/createUser';
 
 // TODO:
 // - Arreglar el ancho de la tabla
@@ -18,10 +20,12 @@ class ListUsers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      emailToEdit: "",
+      emailToEdit: '',
       allInfo: [],
       info: [],
       infoUsers: [],
+      infoCenters: [],
+      infoDepartaments: [],
       show: false,
       showCreate: false,
       showUpdate: false,
@@ -35,7 +39,7 @@ class ListUsers extends Component {
 
   handleCloseCreate = () => {
     // mostrar mensaje usuario creado
-    this.setState({ showMessage: true, message: "Usuario Creado" });
+    this.setState({ showMessage: true, message: 'Usuario Creado' });
     this.handleClose();
   };
 
@@ -45,7 +49,7 @@ class ListUsers extends Component {
   };
   handleCloseUpdate = () => {
     // mostrar mensaje usuario creado
-    this.setState({ showMessage: true, message: "Usuario Actualizado" });
+    this.setState({ showMessage: true, message: 'Usuario Actualizado' });
     this.handleClose();
   };
   handleCloseDelete = () => {
@@ -63,7 +67,7 @@ class ListUsers extends Component {
         showView: false
       },
       () => {
-        console.log("se actualizan los usuarios nuevamente");
+        console.log('se actualizan los usuarios nuevamente');
         this.getUsers();
       }
     );
@@ -90,27 +94,86 @@ class ListUsers extends Component {
     this.setState({ showDelete: true });
   };
 
-  getUsers = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
+  loadDepartaments = async () => {
+    var token = JSON.parse(localStorage.getItem('token'));
     axios
-      .get(URL + "/users/all/", {
+      .get(URL + '/places/department/all/', {
         headers: {
-          Authorization: "JWT " + token
+          Authorization: 'JWT ' + token
+        }
+      })
+      .then(response => {
+        this.setState({ infoDepartaments: response.data }, () => {
+          this.viewDepartmentsInfo();
+        });
+      });
+  };
+
+  viewDepartmentsInfo = () => {
+    console.log(this.state.infoDepartaments);
+    var optionsDepArray = [];
+    // recorremos todo los centros y sacamos el nombre y el id
+    for (let index = 0; index < this.state.infoDepartaments.length; index++) {
+      var name = this.state.infoDepartaments[index].fields.name;
+      var pk = this.state.infoDepartaments[index].pk;
+      optionsDepArray.push({ myPk: pk, myName: name });
+    }
+    this.setState({ infoDepartaments: optionsDepArray });
+  };
+
+  loadCenters = async () => {
+    console.log('se ejecuta loadCenters');
+    const token = JSON.parse(localStorage.getItem('token'));
+    axios
+      .get(URL + '/places/center/all/', {
+        headers: {
+          Authorization: 'JWT ' + token
+        }
+      })
+      .then(response => {
+        this.setState({ infoCenters: response.data }, () => {
+          this.viewCentersInfo();
+        });
+      });
+  };
+
+  viewCentersInfo = () => {
+    console.log(this.state.infoCenters);
+    var optionsCentersArray = [];
+    // recorremos todo los centros y sacamos el nombre y el id
+    for (let index = 0; index < this.state.infoCenters.length; index++) {
+      var name = this.state.infoCenters[index].fields.name;
+      var pk = this.state.infoCenters[index].pk;
+      console.log('Nombre del centro: ' + name + ' pk: ' + pk);
+      optionsCentersArray.push({ myPk: pk, myName: name });
+    }
+
+    this.setState({ infoCenters: optionsCentersArray });
+  };
+
+  getUsers = async () => {
+    const token = JSON.parse(localStorage.getItem('token'));
+    axios
+      .get(URL + '/users/all/', {
+        headers: {
+          Authorization: 'JWT ' + token
         }
       })
       .then(response => {
         //console.log(response.data["2"].fields.first_name);
         console.log(response.data);
         this.setState({ info: response.data }, () => {
-          console.log("Todos los usuarios: " + this.state.info["2"].is_simple);
+          /*console.log('Todos los usuarios: ' + this.state.info['2'].is_simple);
           for (let index = 0; index < this.state.info.length; index++) {
             console.log(this.state.info[index]);
-          }
+          }*/
         });
       });
   };
   componentDidMount() {
     this.getUsers();
+    this.loadCenters();
+    this.loadDepartaments();
   }
 
   updateRow = email => {
@@ -120,7 +183,7 @@ class ListUsers extends Component {
 
   viewRow = email => {
     this.setState({ emailToEdit: email }, () => {
-      console.log("viewRow: " + this.state.emailToEdit);
+      console.log('viewRow: ' + this.state.emailToEdit);
       this.handleView(email);
     });
   };
@@ -134,29 +197,29 @@ class ListUsers extends Component {
     const handleDismiss = () => this.setState({ showMessage: false });
     const columns = [
       {
-        Header: "Nombres",
-        accessor: "first_name",
+        Header: 'Nombres',
+        accessor: 'first_name',
         width: 150,
         maxWidth: 200,
         minWidth: 100
       },
       {
-        Header: "Apellidos",
-        accessor: "last_name",
+        Header: 'Apellidos',
+        accessor: 'last_name',
         width: 150,
         maxWidth: 200,
         minWidth: 100
       },
       {
-        Header: "Email",
-        accessor: "email",
+        Header: 'Email',
+        accessor: 'email',
         width: 200,
         maxWidth: 200,
         minWidth: 100
       },
       {
-        Header: "Centro",
-        accessor: "my_center__name",
+        Header: 'Centro',
+        accessor: 'my_center__name',
         sortable: false,
         filterable: false,
         width: 100,
@@ -164,8 +227,8 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
-        Header: "Departamentos",
-        accessor: "my_department__name",
+        Header: 'Departamentos',
+        accessor: 'my_department__name',
         sortable: false,
         filterable: false,
         width: 150,
@@ -173,10 +236,10 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
-        id: "is_simple",
-        Header: "Rol",
+        id: 'is_simple',
+        Header: 'Rol',
         accessor: d => {
-          return d.is_simple ? "Usuario" : "Administrador";
+          return d.is_simple ? 'Usuario' : 'Administrador';
         },
         sortable: false,
         filterable: false,
@@ -185,10 +248,10 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
-        id: "is_active",
-        Header: "Activo",
+        id: 'is_active',
+        Header: 'Activo',
         accessor: d => {
-          return d.is_active ? "Si" : "No";
+          return d.is_active ? 'Si' : 'No';
         },
         sortable: false,
         filterable: false,
@@ -197,7 +260,7 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
-        Header: "Acciones",
+        Header: 'Acciones',
         sortable: false,
         filterable: false,
         width: 250,
@@ -209,25 +272,22 @@ class ListUsers extends Component {
               <Button
                 onClick={() => {
                   this.updateRow(props.original.email);
-                }}
-              >
+                }}>
                 Editar
               </Button>
               <Button
-                className="ml-1"
+                className='ml-1'
                 onClick={() => {
                   console.log(props.original.email);
                   this.viewRow(props.original.email);
-                }}
-              >
+                }}>
                 Ver
               </Button>
               <Button
-                className="ml-1"
+                className='ml-1'
                 onClick={() => {
                   this.deleteRow(props.original.email);
-                }}
-              >
+                }}>
                 Eliminar
               </Button>
             </>
@@ -237,24 +297,27 @@ class ListUsers extends Component {
     ];
     return (
       <>
-        <h1 className="h3 mb-2 text-gray-800">Lista de usuarios</h1>
-        <button className="btn btn-primary btn-icon-split p-0 mb-2" onClick={this.handleCreate}>
-          <span className="icon text-white-50">
-            <i className="fas fa-plus-square"></i>
+        <h1 className='h3 mb-2 text-gray-800'>Lista de usuarios</h1>
+        <button
+          className='btn btn-primary btn-icon-split p-0 mb-2'
+          onClick={this.handleCreate}>
+          <span className='icon text-white-50'>
+            <i className='fas fa-plus-square'></i>
           </span>
-          <span className="text text-white">Crear usuario</span>
+          <span className='text text-white'>Crear usuario</span>
         </button>
         <ReactTable
           columns={columns}
           data={this.state.info}
           defaultPageSize={6}
-          noDataText={"No existen usuarios"}
-          filterable
-        ></ReactTable>
+          noDataText={'No existen usuarios'}
+          filterable></ReactTable>
 
         <Modal show={this.state.showCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
-          <CreateUser
+          <CreateUserFormik
+            infoDepartaments={this.state.infoDepartaments}
+            infoCenters={this.state.infoCenters}
             handleCloseCreate={this.handleCloseCreate}
             handleClose={this.handleClose}
           />
@@ -283,14 +346,13 @@ class ListUsers extends Component {
             email={this.state.emailToEdit}
           />
         </Modal>
-        <div className="no-login time">
+        <div className='no-login time'>
           <Alert
-            variant="success"
+            variant='success'
             show={this.state.showMessage}
             onClose={handleDismiss}
-            dismissible
-          >
-            <p className="mb-0">{this.state.message}</p>
+            dismissible>
+            <p className='mb-0'>{this.state.message}</p>
           </Alert>
         </div>
       </>
