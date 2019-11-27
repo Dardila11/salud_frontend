@@ -9,6 +9,7 @@ import CreateUserFormik from '../createUser/createUser.component';
 //import UpdateUser from '../updateUser/updateUser';
 import UpdateUserFormik from '../updateUser/updateUser.component';
 import ViewUser from '../viewUser/viewUser';
+import ViewUserFormik from '../viewUser/viewUser.component';
 import DeleteUser from '../deleteUser/deleteUser';
 import './listUsers.styles.css';
 
@@ -22,6 +23,8 @@ import './listUsers.styles.css';
  * @description Este componente se encarga de listar la informacion de todos los usuarios en una tabla
  * y de permitir su correspondiente CRUD
  */
+
+var modalUpdate = false;
 class ListUsers extends Component {
   constructor(props) {
     super(props);
@@ -145,7 +148,12 @@ class ListUsers extends Component {
       })
       .then(response => {
         this.setState({ userInfo: response.data }, () => {
-          this.handleUpdate();
+          if (modalUpdate) {
+            this.handleUpdate();
+          } else {
+            this.handleView();
+          }
+          modalUpdate = false;
         });
       });
   };
@@ -293,13 +301,10 @@ class ListUsers extends Component {
    * del usuario (su email)
    */
   updateRow = email => {
+    modalUpdate = true;
     this.setState({ emailToEdit: email }, () => {
       this.getUserPermissions(this.state.emailToEdit);
-      console.log('updateRow: email a editar ' + this.state.emailToEdit);
-      console.log('primero se corre getUserByEmail');
       this.getUserByEmail(this.state.emailToEdit);
-      console.log('luego abrimos el modal');
-      //this.handleUpdate();
     });
   };
 
@@ -310,8 +315,8 @@ class ListUsers extends Component {
    */
   viewRow = email => {
     this.setState({ emailToEdit: email }, () => {
-      console.log('viewRow: ' + this.state.emailToEdit);
-      this.handleView(email);
+      this.getUserPermissions(this.state.emailToEdit);
+      this.getUserByEmail(this.state.emailToEdit);
     });
   };
 
@@ -471,12 +476,14 @@ class ListUsers extends Component {
         </Modal>
         <Modal show={this.state.showView} onHide={this.handleClose}>
           {/* Ver Usuario */}
-          <ViewUser
+          <ViewUserFormik
             infoDepartaments={this.state.infoDepartaments}
             infoCenters={this.state.infoCenters}
             handleCloseView={this.handleCloseView}
             handleClose={this.handleClose}
             email={this.state.emailToEdit}
+            userInfo={this.state.userInfo}
+            userPermissions={this.state.userPermissions}
           />
         </Modal>
         <Modal show={this.state.showDelete} onHide={this.handleClose}>

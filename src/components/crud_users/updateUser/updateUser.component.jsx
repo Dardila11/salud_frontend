@@ -33,7 +33,6 @@ const schema = Yup.object({
  * @description Este componente se encarga de la actualizacion de informacion
  * de un usuario en la plataforma.
  */
-
 class UpdateUserFormik extends Component {
   constructor(props) {
     super(props);
@@ -47,12 +46,14 @@ class UpdateUserFormik extends Component {
   };
 
   componentDidMount() {
-    /*console.log('componentDidMount');
-    console.log(this.props.email);
-    console.log(this.props.userInfo[0].first_name);
-    console.log(this.props.infoDepartaments);*/
     console.log(this.props.userPermissions[0].user_permissions__codename);
   }
+
+  /**
+   * @function updateUserInfo
+   * @description Se encarga de guardar los datos modificados en un json
+   * y enviar una solicitud de actualizacion al servidor.
+   */
   updateUserInfo = async values => {
     console.log(values.firstName);
     var token = JSON.parse(localStorage.getItem('token'));
@@ -94,6 +95,10 @@ class UpdateUserFormik extends Component {
       .then(response => {
         console.log(response.status);
         this.handleCloseUpdate();
+      })
+      .catch(error => {
+        console.log('hubo un error!');
+        console.log(error.status);
       });
   };
   render() {
