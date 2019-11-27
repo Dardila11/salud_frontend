@@ -10,7 +10,7 @@ import CreateUserFormik from '../createUser/createUser.component';
 import UpdateUserFormik from '../updateUser/updateUser.component';
 import ViewUser from '../viewUser/viewUser';
 import ViewUserFormik from '../viewUser/viewUser.component';
-import DeleteUser from '../deleteUser/deleteUser';
+import DeleteUser from '../deleteUser/deleteUser.component';
 import './listUsers.styles.css';
 
 /**
@@ -76,13 +76,18 @@ class ListUsers extends Component {
   };
   /**
    * @function handleCloseDelete function enviada como prop de un componente.
-   * es llamada se elimina un usuario.
+   * es llamada se desactiva un usuario.
    */
   handleCloseDelete = () => {
-    /**
-     * @todo mostrar mensaje de usuario eliminado
-     */
-    this.handleClose();
+    this.setState(
+      {
+        showMessage: true,
+        message: 'Estado del usuario modificado'
+      },
+      () => {
+        this.handleClose();
+      }
+    );
   };
 
   /**
