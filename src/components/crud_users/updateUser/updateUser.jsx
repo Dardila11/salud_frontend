@@ -1,28 +1,26 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { URL } from "../../utils/URLSever";
-import { Button, Modal, Form, Col } from "react-bootstrap";
+import React, { Component } from 'react';
+import axios from 'axios';
+import { URL } from '../../utils/URLSever';
+import { Button, Modal, Form, Col } from 'react-bootstrap';
 
-// TODO:
-// - Asignar correctamente el centro y departamento. el api retorna el nombre, pero necesitamos el id
-//   debemos crear un metodo para poder asignarlo correctamente
-// - Si el usuario no tiene asignado ningun centro ni departamento, se debe poder dejarlo en blanco. sin errores
-// - adicionar la logica de comparacion de los cambios email
-// - validacion de formulario
+/**
+ * @author Dardila
+ * @deprecated NO BORRAR!
+ */
 class UpdateUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
       emailToEdit: props.email,
-      type: "",
-      username: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confEmail: "",
-      myCenter: "",
-      myDepartment: "",
+      type: '',
+      username: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confEmail: '',
+      myCenter: '',
+      myDepartment: '',
       infoCenters: [],
       optionsCenters: [],
       optionsDepartments: [],
@@ -64,11 +62,11 @@ class UpdateUser extends Component {
   };
 
   loadCenters = async () => {
-    var token = JSON.parse(localStorage.getItem("token"));
+    var token = JSON.parse(localStorage.getItem('token'));
     await axios
-      .get(URL + "/places/center/all/", {
+      .get(URL + '/places/center/all/', {
         headers: {
-          Authorization: "JWT " + token
+          Authorization: 'JWT ' + token
         }
       })
       .then(response => {
@@ -79,11 +77,11 @@ class UpdateUser extends Component {
   };
 
   loadDepartaments = async () => {
-    var token = JSON.parse(localStorage.getItem("token"));
+    var token = JSON.parse(localStorage.getItem('token'));
     await axios
-      .get(URL + "/places/department/all/", {
+      .get(URL + '/places/department/all/', {
         headers: {
-          Authorization: "JWT " + token
+          Authorization: 'JWT ' + token
         }
       })
       .then(response => {
@@ -110,7 +108,7 @@ class UpdateUser extends Component {
   };
 
   updateUserInfo = () => {
-    var token = JSON.parse(localStorage.getItem("token"));
+    var token = JSON.parse(localStorage.getItem('token'));
     const {
       type,
       firstName,
@@ -129,18 +127,18 @@ class UpdateUser extends Component {
         my_center: myCenter,
         my_department: myDepartment
       },
-      permissions_add: [{ name: "add_user" }, { name: "change_user" }],
+      permissions_add: [{ name: 'add_user' }, { name: 'change_user' }],
       permissions_remove: []
     };
     var myJson = JSON.stringify(json);
-    console.log("LO QUE SE ESTÄ GUARDANDO " + myJson);
+    console.log('LO QUE SE ESTÄ GUARDANDO ' + myJson);
     const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT " + token
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
     };
 
     axios
-      .put(URL + "/users/", json, {
+      .put(URL + '/users/', json, {
         headers: headers
       })
       .then(response => {
@@ -150,18 +148,18 @@ class UpdateUser extends Component {
   };
 
   getUserByEmail = () => {
-    var token = JSON.parse(localStorage.getItem("token"));
+    var token = JSON.parse(localStorage.getItem('token'));
     const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT " + token
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
     };
     axios
-      .get(URL + "/users/" + this.state.emailToEdit, {
+      .get(URL + '/users/' + this.state.emailToEdit, {
         headers: headers
       })
       .then(response => {
         let role;
-        role = response.data[0].is_staff === true ? (role = "1") : (role = "2");
+        role = response.data[0].is_staff === true ? (role = '1') : (role = '2');
         this.setState(
           {
             firstName: response.data[0].first_name,
@@ -173,7 +171,7 @@ class UpdateUser extends Component {
           },
           () => {
             //console.log(this.state.type);
-            console.log("Ha sido asignado el centro: " + this.state.myCenter);
+            console.log('Ha sido asignado el centro: ' + this.state.myCenter);
           }
         );
       });
@@ -187,16 +185,16 @@ class UpdateUser extends Component {
         </Modal.Header>
         <Modal.Body>
           <Form
-            id="formUpdate"
+            id='formUpdate'
             noValidate
             validated={this.state.validated}
             onSubmit={this.handleSubmit}>
             <Form.Row>
-              <Form.Group as={Col} md="4" controlId="formGridState">
+              <Form.Group as={Col} md='4' controlId='formGridState'>
                 <Form.Label>Tipo</Form.Label>
                 <Form.Control
-                  as="select"
-                  name="type"
+                  as='select'
+                  name='type'
                   value={this.state.type}
                   onChange={this.handleChange}>
                   <option key={-1} value={-1}>
@@ -213,25 +211,25 @@ class UpdateUser extends Component {
               </Form.Group>
             </Form.Row>
             <Form.Row>
-              <Form.Group as={Col} md="4" controlId="validationCustom01">
+              <Form.Group as={Col} md='4' controlId='validationCustom01'>
                 <Form.Label>Nombres</Form.Label>
                 <Form.Control
                   required
-                  type="text"
-                  name="firstName"
-                  placeholder="Nombres"
+                  type='text'
+                  name='firstName'
+                  placeholder='Nombres'
                   defaultValue={this.state.firstName}
                   onChange={this.handleChange}
                 />
                 <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom02">
+              <Form.Group as={Col} md='4' controlId='validationCustom02'>
                 <Form.Label>Apellidos</Form.Label>
                 <Form.Control
                   required
-                  type="text"
-                  name="lastName"
-                  placeholder="Apellidos"
+                  type='text'
+                  name='lastName'
+                  placeholder='Apellidos'
                   defaultValue={this.state.lastName}
                   onChange={this.handleChange}
                 />
@@ -239,40 +237,40 @@ class UpdateUser extends Component {
               </Form.Group>
             </Form.Row>
             <Form.Row>
-              <Form.Group as={Col} md="4" controlId="validationCustomUsername">
+              <Form.Group as={Col} md='4' controlId='validationCustomUsername'>
                 <Form.Label>Correo</Form.Label>
                 <Form.Control
-                  name="email"
-                  type="email"
-                  placeholder="email"
+                  name='email'
+                  type='email'
+                  placeholder='email'
                   defaultValue={this.state.email}
                   onChange={this.handleChange}
                   required
                 />
-                <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type='invalid'>
                   Porfavor digite un correo valido
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group as={Col} md="4" controlId="validationCustomUsername">
+              <Form.Group as={Col} md='4' controlId='validationCustomUsername'>
                 <Form.Label>Confirmar Correo</Form.Label>
                 <Form.Control
-                  name="confEmail"
-                  type="email"
-                  placeholder="email"
+                  name='confEmail'
+                  type='email'
+                  placeholder='email'
                   required
                 />
-                <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type='invalid'>
                   Correo no coincide
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
             <Form.Row>
-              <Form.Group as={Col} md="4" controlId="validationCustom03">
+              <Form.Group as={Col} md='4' controlId='validationCustom03'>
                 <Form.Label>Centro</Form.Label>
                 <Form.Control
-                  as="select"
-                  name="myCenter"
+                  as='select'
+                  name='myCenter'
                   value={this.state.myCenter}
                   onChange={this.handleChange}>
                   <option>...</option>
@@ -284,15 +282,15 @@ class UpdateUser extends Component {
                     );
                   })}
                 </Form.Control>
-                <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type='invalid'>
                   Porfavor, elija un centro
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom04">
+              <Form.Group as={Col} md='4' controlId='validationCustom04'>
                 <Form.Label>Departamento</Form.Label>
                 <Form.Control
-                  as="select"
-                  name="myDepartment"
+                  as='select'
+                  name='myDepartment'
                   value={this.state.myDepartment}
                   onChange={this.handleChange}>
                   <option>...</option>
@@ -304,7 +302,7 @@ class UpdateUser extends Component {
                     );
                   })}
                 </Form.Control>
-                <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type='invalid'>
                   Porfavor, elija un departamento
                 </Form.Control.Feedback>
               </Form.Group>
@@ -312,10 +310,10 @@ class UpdateUser extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose}>
+          <Button variant='secondary' onClick={this.handleClose}>
             Cancelar
           </Button>
-          <Button form="formUpdate" type="submit">
+          <Button form='formUpdate' type='submit'>
             Guardar Cambios
           </Button>
         </Modal.Footer>

@@ -6,19 +6,10 @@ import { Button, Modal, Form, Col } from 'react-bootstrap';
 import * as Yup from 'yup';
 
 /**
- * @todo - Agregar el asterisk de 'obligaotrio para cada label
- * - mostrar permisos de creacion de centros y usuarios si
- * solo si se selecciona administrador como el tipo
- */
-
-/**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
  * validaciones de los campos del formulario
  */
 const schema = Yup.object({
-  userId: Yup.string()
-    .min(4, 'Id debe tener minimo 4 caracteres')
-    .required('Campo Requerido'),
   firstName: Yup.string()
     .min(3, 'Nombre debe tener minimo 3 caracteres')
     .required('Campo Requerido'),
@@ -34,23 +25,39 @@ const schema = Yup.object({
     .required('Campo Requerido'),
   myCenter: Yup.string().required('Campo Requerido'),
   myDepartment: Yup.string().required('Campo Requerido'),
-  type: Yup.string().required('Campo Requerido ')
+  type: Yup.string().required('Campo Requerido')
 });
 
 /**
  * @author Dardila
- * @description Este componente se encarga de la creación de un usuario nuevo en la plataforma.
- * Se llena un formulario con los datos del usuario a crear ( Id, firstName, lastName, Email,
- * Center, Department and Permissions)
+ * @description Este componente se encarga de la actualizacion de informacion
+ * de un usuario en la plataforma.
  */
-class CreateUserFormik extends Component {
+
+class UpdateUserFormik extends Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
-  saveNewUserInfo = async values => {
+  handleClose = () => {
+    this.props.handleClose();
+  };
+  handleCloseUpdate = () => {
+    this.props.handleCloseUpdate();
+  };
+
+  componentDidMount() {
+    /*console.log('componentDidMount');
+    console.log(this.props.email);
+    console.log(this.props.userInfo[0].first_name);
+    console.log(this.props.infoDepartaments);*/
+    console.log(this.props.userPermissions[0].user_permissions__codename);
+  }
+  updateUserInfo = async values => {
+    console.log(values.firstName);
     var token = JSON.parse(localStorage.getItem('token'));
-    console.log('el token es ' + token);
     var json = {
+      email_instance: this.props.email,
       user: {
         type: values.type,
         user_id: values.userId,
@@ -60,24 +67,17 @@ class CreateUserFormik extends Component {
         my_center: values.myCenter,
         my_department: values.myDepartment
       },
-      permissions: []
+
+      /**
+       * @todo agregar codigo para que se adicione
+       * los permisos que son
+       * Ya estamos enviando los permisos del usuario.
+       * Falta agregar los checkboxes y seleccionarlos si tiene los permisos
+       * luego actualizar los permisos si son cambiados.
+       */
+      permissions_add: [{ name: 'add_user' }, { name: 'change_user' }],
+      permissions_remove: []
     };
-    if (values.createCenters === true) {
-      json.permissions.push(
-        { name: 'add_center' },
-        { name: 'change_center' },
-        { name: 'view_center' }
-      );
-    }
-    if (values.createUsers === true) {
-      json.permissions.push(
-        { name: 'add_user' },
-        { name: 'change_user' },
-        { name: 'view_user' }
-      );
-    }
-    var myJson = JSON.stringify(json);
-    console.log(myJson);
     /**
      * headers: son necesarios para realizar la
      * solicitud al servidor. se le envia el JWT y
@@ -87,50 +87,34 @@ class CreateUserFormik extends Component {
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + token
     };
-
     axios
-      .post(URL + '/users/', json, {
+      .put(URL + '/users/', json, {
         headers: headers
       })
       .then(response => {
         console.log(response.status);
-        this.handleCloseCreate();
-      })
-      .catch(error => {
-        console.log('hubo un error!');
-        console.log(error.status);
+        this.handleCloseUpdate();
       });
-  };
-
-  handleClose = () => {
-    this.props.handleClose();
-  };
-
-  handleCloseCreate = () => {
-    this.props.handleCloseCreate();
   };
   render() {
     return (
       <>
         <Formik
           noValidate
+          enableReinitialize
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            type: '',
-            userId: '',
-            firstName: '',
-            lastName: '',
-            email: '',
-            confEmail: '',
-            myCenter: '',
-            myDepartment: '',
-            createCenters: false,
-            createUsers: false,
-            createProjects: false
+            type: this.props.userInfo[0].is_staff === true ? '1' : '2',
+            firstName: this.props.userInfo[0].first_name,
+            lastName: this.props.userInfo[0].last_name,
+            email: this.props.email,
+            confEmail: this.props.email,
+            myCenter: this.props.userInfo[0].my_center,
+            myDepartment: this.props.userInfo[0].my_department
           }}
           validationSchema={schema}
-          onSubmit={this.saveNewUserInfo}>
+          onSubmit={this.updateUserInfo}>
           {({
             handleSubmit,
             handleChange,
@@ -143,11 +127,11 @@ class CreateUserFormik extends Component {
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Crear usuario
+                  Actualizar Usuario
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <Form id='formCreateUser' onSubmit={handleSubmit}>
+                <Form id='formUpdate' onSubmit={handleSubmit}>
                   <Form.Row>
                     <Form.Group as={Col} md='4' controlId='validationFormik01'>
                       <Form.Label>Tipo de Usuario</Form.Label>
@@ -164,21 +148,6 @@ class CreateUserFormik extends Component {
                       </Form.Control>
                       <Form.Control.Feedback type='invalid'>
                         {errors.type}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='validationCustom01'>
-                      <Form.Label>Identificación</Form.Label>
-                      <Form.Control
-                        type='text'
-                        name='userId'
-                        placeholder='Identificación'
-                        value={values.userId}
-                        onChange={handleChange}
-                        isValid={touched.userId && !errors.userId}
-                        isInvalid={!!errors.userId}
-                      />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.userId}
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
@@ -301,44 +270,14 @@ class CreateUserFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
-                  <Form.Row>
-                    <Form.Group controlId='formBasicCheckbox'>
-                      <Form.Label>Permisos de creación para: </Form.Label>
-                      <Form.Check
-                        name='createCenters'
-                        type='checkbox'
-                        label='Centros'
-                        id='checkCenters'
-                        value={values.createCenters}
-                        onChange={handleChange}
-                      />
-                      <Form.Check
-                        name='createUsers'
-                        type='checkbox'
-                        label='Usuarios'
-                        id='checkUsers'
-                        value={values.onChangecreateCenters}
-                        onChange={handleChange}
-                      />
-                      <Form.Check
-                        disabled
-                        name='createProjects'
-                        type='checkbox'
-                        label='Proyectos Clinicos'
-                        id='checkProjects'
-                        value={values.createCenters}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
-                  </Form.Row>
                 </Form>
               </Modal.Body>
               <Modal.Footer>
                 <Button variant='secondary' onClick={this.handleClose}>
                   Cancelar
                 </Button>
-                <Button form='formCreateUser' type='submit'>
-                  Crear Usuario
+                <Button form='formUpdate' type='submit'>
+                  guardar Cambios
                 </Button>
               </Modal.Footer>
             </>
@@ -349,4 +288,4 @@ class CreateUserFormik extends Component {
   }
 }
 
-export default CreateUserFormik;
+export default UpdateUserFormik;

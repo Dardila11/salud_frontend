@@ -6,7 +6,8 @@ import 'react-table/react-table.css';
 import { URL } from '../../utils/URLSever';
 //import CreateUser from '../createUser/createUser';
 import CreateUserFormik from '../createUser/createUser.component';
-import UpdateUser from '../updateUser/updateUser';
+//import UpdateUser from '../updateUser/updateUser';
+import UpdateUserFormik from '../updateUser/updateUser.component';
 import ViewUser from '../viewUser/viewUser';
 import DeleteUser from '../deleteUser/deleteUser';
 import './listUsers.styles.css';
@@ -31,6 +32,8 @@ class ListUsers extends Component {
       infoUsers: [],
       infoCenters: [],
       infoDepartaments: [],
+      userInfo: [1],
+      userPermissions: [1],
       show: false,
       showCreate: false,
       showUpdate: false,
@@ -114,7 +117,7 @@ class ListUsers extends Component {
     this.setState({ showCreate: true });
   };
 
-  handleUpdate = email => {
+  handleUpdate = () => {
     this.setState({ showUpdate: true });
   };
 
@@ -124,6 +127,47 @@ class ListUsers extends Component {
 
   handleDelete = event => {
     this.setState({ showDelete: true });
+  };
+
+  /**
+   * @function getUserByEmail
+   * @description obtiene la informacion del usuario por medio de su email.
+   */
+  getUserByEmail = async email => {
+    var token = JSON.parse(localStorage.getItem('token'));
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
+    };
+    axios
+      .get(URL + '/users/' + email, {
+        headers: headers
+      })
+      .then(response => {
+        this.setState({ userInfo: response.data }, () => {
+          this.handleUpdate();
+        });
+      });
+  };
+
+  /**
+   * @function getUserPermissions
+   * @description Obtiene todos los permisos de un usuario por su email
+   * @param email
+   */
+  getUserPermissions = async email => {
+    var token = JSON.parse(localStorage.getItem('token'));
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
+    };
+    axios
+      .get(URL + '/users/permissions/all/' + email, {
+        headers: headers
+      })
+      .then(response => {
+        this.setState({ userPermissions: response.data });
+      });
   };
 
   /**
@@ -155,7 +199,6 @@ class ListUsers extends Component {
    * el name y pk del departamento
    */
   viewDepartmentsInfo = () => {
-    console.log(this.state.infoDepartaments);
     var optionsDepArray = [];
     // recorremos todo los centros y sacamos el nombre y el id
     for (let index = 0; index < this.state.infoDepartaments.length; index++) {
@@ -175,7 +218,6 @@ class ListUsers extends Component {
    * @todo agregar el evento de error
    */
   loadCenters = async () => {
-    console.log('se ejecuta loadCenters');
     const token = JSON.parse(localStorage.getItem('token'));
     axios
       .get(URL + '/places/center/all/', {
@@ -196,13 +238,11 @@ class ListUsers extends Component {
    * el name y pk del departamento
    */
   viewCentersInfo = () => {
-    console.log(this.state.infoCenters);
     var optionsCentersArray = [];
     // recorremos todo los centros y sacamos el nombre y el id
     for (let index = 0; index < this.state.infoCenters.length; index++) {
       var name = this.state.infoCenters[index].fields.name;
       var pk = this.state.infoCenters[index].pk;
-      console.log('Nombre del centro: ' + name + ' pk: ' + pk);
       optionsCentersArray.push({ myPk: pk, myName: name });
     }
 
@@ -226,7 +266,7 @@ class ListUsers extends Component {
       })
       .then(response => {
         //console.log(response.data["2"].fields.first_name);
-        console.log(response.data);
+
         this.setState({ info: response.data }, () => {
           /*console.log('Todos los usuarios: ' + this.state.info['2'].is_simple);
           for (let index = 0; index < this.state.info.length; index++) {
@@ -253,8 +293,14 @@ class ListUsers extends Component {
    * del usuario (su email)
    */
   updateRow = email => {
-    this.setState({ emailToEdit: email });
-    this.handleUpdate(email);
+    this.setState({ emailToEdit: email }, () => {
+      this.getUserPermissions(this.state.emailToEdit);
+      console.log('updateRow: email a editar ' + this.state.emailToEdit);
+      console.log('primero se corre getUserByEmail');
+      this.getUserByEmail(this.state.emailToEdit);
+      console.log('luego abrimos el modal');
+      //this.handleUpdate();
+    });
   };
 
   /**
@@ -413,15 +459,21 @@ class ListUsers extends Component {
         </Modal>
         <Modal show={this.state.showUpdate} onHide={this.handleClose}>
           {/* Actualizar Usuario */}
-          <UpdateUser
+          <UpdateUserFormik
+            infoDepartaments={this.state.infoDepartaments}
+            infoCenters={this.state.infoCenters}
             handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
             email={this.state.emailToEdit}
+            userInfo={this.state.userInfo}
+            userPermissions={this.state.userPermissions}
           />
         </Modal>
         <Modal show={this.state.showView} onHide={this.handleClose}>
           {/* Ver Usuario */}
           <ViewUser
+            infoDepartaments={this.state.infoDepartaments}
+            infoCenters={this.state.infoCenters}
             handleCloseView={this.handleCloseView}
             handleClose={this.handleClose}
             email={this.state.emailToEdit}
