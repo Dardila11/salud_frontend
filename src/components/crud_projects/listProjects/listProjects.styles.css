@@ -1,0 +1,9 @@
+.no-login {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  left: 15%;
+  right: 15%;
+  top: 0;
+  z-index: 100;
+}

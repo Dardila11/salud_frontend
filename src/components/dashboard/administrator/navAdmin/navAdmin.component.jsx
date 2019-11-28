@@ -9,6 +9,7 @@ import { buttonToogle } from '../../../../js/sb-admin-2.min';
 import '../../../../css/sb-admin-2.min.css';
 import '../../../../vendor/fontawesome-free/css/all.min.css';
 import './css/fontello.css';
+import ListProjects from '../../../crud_projects/listProjects/listProjects.component';
 
 class NavAdmin extends Component {
   constructor(props) {
@@ -83,10 +84,12 @@ class NavAdmin extends Component {
           <div id='content'>
             <NavBar></NavBar>
             <div className='container pt-2 pr-5 pl-5 pb-2'>
-              <Tab.Pane eventKey='1'>
+              <Tab.Pane unmountOnExit eventKey='1'>
                 <ListUsers />
               </Tab.Pane>
-              <Tab.Pane eventKey='2'></Tab.Pane>
+              <Tab.Pane unmountOnExit eventKey='2'>
+                <ListProjects />
+              </Tab.Pane>
             </div>
           </div>
         </Tab.Content>
