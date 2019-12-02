@@ -46,6 +46,7 @@ const schema = Yup.object({
 class CreateUserFormik extends Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
 
   /**
@@ -127,8 +128,8 @@ class CreateUserFormik extends Component {
             userId: '',
             firstName: '',
             lastName: '',
-            email: '',
-            confEmail: '',
+            email: ''.toLowerCase(),
+            confEmail: ''.toLowerCase(),
             myCenter: '',
             myDepartment: '',
             createCenters: false,
@@ -155,7 +156,7 @@ class CreateUserFormik extends Component {
               <Modal.Body>
                 <Form id='formCreateUser' onSubmit={handleSubmit}>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='validationFormik01'>
+                    <Form.Group as={Col} md='5' controlId='validationFormik01'>
                       <Form.Label>Tipo de Usuario</Form.Label>
                       <Form.Control
                         as='select'
@@ -172,7 +173,7 @@ class CreateUserFormik extends Component {
                         {errors.type}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='validationCustom01'>
+                    <Form.Group as={Col} md='5' controlId='validationCustom01'>
                       <Form.Label>Identificación</Form.Label>
                       <Form.Control
                         type='text'
@@ -189,7 +190,7 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='validationCustom01'>
+                    <Form.Group as={Col} md='5' controlId='validationCustom01'>
                       <Form.Label>Nombres</Form.Label>
                       <Form.Control
                         type='text'
@@ -204,7 +205,7 @@ class CreateUserFormik extends Component {
                         {errors.firstName}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='validationCustom02'>
+                    <Form.Group as={Col} md='5' controlId='validationCustom02'>
                       <Form.Label>Apellidos</Form.Label>
                       <Form.Control
                         type='text'
@@ -223,7 +224,7 @@ class CreateUserFormik extends Component {
                   <Form.Row>
                     <Form.Group
                       as={Col}
-                      md='4'
+                      md='5'
                       controlId='validationCustomUsername'>
                       <Form.Label>Correo</Form.Label>
                       <Form.Control
@@ -241,7 +242,7 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                     <Form.Group
                       as={Col}
-                      md='4'
+                      md='5'
                       controlId='validationCustomUsername'>
                       <Form.Label>Confirmar Correo</Form.Label>
                       <Form.Control

@@ -3,7 +3,7 @@ import NavAdmin from '../administrator/navAdmin/navAdmin.component';
 import { URL } from '../../utils/URLSever';
 // import { closeSession } from "../../utils/handleLocalStorage";
 import axios from 'axios';
-import { vertificationToken } from '../../utils/verificationToken';
+//import { vertificationToken } from '../../utils/verificationToken';
 import { Redirect } from 'react-router-dom';
 import '../../../css/sb-admin-2.min.css';
 import '../../../vendor/fontawesome-free/css/all.min.css';

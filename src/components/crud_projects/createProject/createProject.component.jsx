@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import { Formik } from 'formik';
-import axios from 'axios';
-import { URL } from '../../utils/URLSever';
+//import axios from 'axios';
+//import { URL } from '../../utils/URLSever';
 import { Button, Modal, Form, Col } from 'react-bootstrap';
 import * as Yup from 'yup';
+//import Autosuggest from 'react-autosuggest';
+//import theme from './theme.css';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import es from 'date-fns/locale/es';
+registerLocale('es', es);
 
 /**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
@@ -11,12 +17,89 @@ import * as Yup from 'yup';
  */
 const schema = Yup.object({
   projectId: Yup.string()
-    .min(2, 'Id debe tener minimo 2 caracteres')
+    .test(
+      'len',
+      'Debe tener exactamente 10 caracteres',
+      val => val.length === 10
+    )
     .required('Campo Requerido'),
   title: Yup.string()
     .min(5, 'Titulo debe tener minimo 5 caracteres')
+    .max(150, 'Titulo debe tener maximo 150 caracteres')
     .required('Campo Requerido')
 });
+
+const theme = {
+  container: {
+    position: 'relative'
+  },
+  input: {
+    width: 240,
+    height: 30,
+    padding: '10px 20px',
+    fontFamily: 'Helvetica, sans-serif',
+    fontWeight: 300,
+    fontSize: 16,
+    border: '1px solid #aaa',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4
+  },
+  inputFocused: {
+    outline: 'none'
+  },
+  inputOpen: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
+  },
+  suggestionsContainer: {
+    display: 'none'
+  },
+  suggestionsContainerOpen: {
+    display: 'block',
+    position: 'absolute',
+    top: 51,
+    width: 280,
+    border: '1px solid #aaa',
+    backgroundColor: '#fff',
+    fontFamily: 'Helvetica, sans-serif',
+    fontWeight: 300,
+    fontSize: 16,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    zIndex: 2
+  },
+  suggestionsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: 'none'
+  },
+  suggestion: {
+    cursor: 'pointer',
+    padding: '10px 20px'
+  },
+  suggestionHighlighted: {
+    backgroundColor: '#ddd'
+  }
+};
+
+// When suggestion is clicked, Autosuggest needs to populate the input
+// based on the clicked suggestion. Teach Autosuggest how to calculate the
+// input value for every given suggestion.
+const getSuggestionValue = suggestion => suggestion.userName;
+
+function getSectionSuggestions(section) {
+  return section.userName;
+}
+
+function renderSuggestion(suggestion) {
+  return <span>{suggestion.userName}</span>;
+}
+
+function renderSectionTitle(section) {
+  return <strong>{section.userEmail}</strong>;
+}
 
 /**
  * @author Dardila
@@ -26,7 +109,12 @@ const schema = Yup.object({
 class CreateProjectFormik extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      value: '',
+      suggestions: []
+    };
   }
+
   handleClose = () => {
     this.props.handleClose();
   };
@@ -34,8 +122,77 @@ class CreateProjectFormik extends Component {
     this.props.handleCloseCreate();
   };
 
+  genId = length => {
+    var result = '';
+    var characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  };
+
+  // Autosuggest will call this function every time you need to update suggestions.
+  // You already implemented this logic above, so just use it.
+  onSuggestionsFetchRequested = ({ value }) => {
+    this.setState({
+      suggestions: this.getSuggestions(value)
+    });
+  };
+
+  escapeRegexCharacters = str => {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  };
+  // Teach Autosuggest how to calculate suggestions for any given input value.
+  getSuggestions = value => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+    const escapedValue = this.escapeRegexCharacters(value.trim());
+
+    if (escapedValue === '') {
+      return [];
+    }
+
+    const regex = new RegExp('^' + escapedValue, 'i');
+
+    if (escapedValue === '') {
+      return [];
+    }
+
+    return this.props.usersInfo
+      .map(section => {
+        console.log('EMAIL ' + section.userEmail);
+        return {
+          userEmail: section.userEmail,
+          userName: section.userName.filter(sec => regex.test(sec.name))
+        };
+      })
+      .filter(section => section.userName.length > 0);
+  };
+
+  onChange = (event, { newValue }) => {
+    this.setState({
+      value: newValue
+    });
+  };
+
+  // Autosuggest will call this function every time you need to clear suggestions.
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: []
+    });
+  };
+
   saveNewProjectInfo = () => {};
   render() {
+    const { value, suggestions } = this.state;
+    // Autosuggest will pass through all these props to the input.
+    const inputProps = {
+      placeholder: 'Investigador Responsable',
+      value,
+      onChange: this.onChange
+    };
     return (
       <>
         <Formik
@@ -43,14 +200,17 @@ class CreateProjectFormik extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            projectId: '',
+            projectId: this.genId(10),
             title: '',
-            registerDate: '',
-            startDate: '',
-            endDate: '',
-            projectState: '',
+            registerDate: new Date(),
+            startDate: new Date(),
+            endDate: new Date(),
+            projectState: 'registro',
             principalInvestigator: '',
-            responsibleInvestigator: ''
+            responsibleInvestigator:
+              JSON.parse(localStorage.getItem('first_name')) +
+              ' ' +
+              JSON.parse(localStorage.getItem('last_name'))
           }}
           validationSchema={schema}
           onSubmit={this.saveNewProjectInfo}>
@@ -61,7 +221,8 @@ class CreateProjectFormik extends Component {
             values,
             touched,
             isValid,
-            errors
+            errors,
+            setFieldValue
           }) => (
             <>
               <Modal.Header closeButton>
@@ -87,7 +248,6 @@ class CreateProjectFormik extends Component {
                         {errors.projectId}
                       </Form.Control.Feedback>
                     </Form.Group>
-
                     <Form.Group as={Col} md='7' controlId='inputId'>
                       <Form.Label>Titulo del proyecto</Form.Label>
                       <Form.Control
@@ -107,29 +267,31 @@ class CreateProjectFormik extends Component {
                   <Form.Row>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha registro</Form.Label>
-                      <Form.Control
-                        type='text'
+                      <DatePicker
+                        selected={values.registerDate}
+                        dateFormat='MMMM d, yyyy'
+                        disabled
+                        locale='{es}'
+                        className='form-control'
                         name='registerDate'
-                        placeholder='Fecha de registro'
-                        value={values.registerDate}
-                        onChange={handleChange}
-                        isValid={touched.registerDate && !errors.registerDate}
-                        isInvalid={!!errors.registerDate}
+                        onChange={date => setFieldValue('registerDate', date)}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.registerDate}
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha Inicio</Form.Label>
-                      <Form.Control
-                        type='text'
-                        name='registerDate'
-                        placeholder='Fecha de inicio'
-                        value={values.startDate}
-                        onChange={handleChange}
-                        isValid={touched.startDate && !errors.startDate}
-                        isInvalid={!!errors.startDate}
+                      <Form.Label>Fecha Inicio </Form.Label>
+                      <DatePicker
+                        selectsStart
+                        selected={values.startDate}
+                        endDate={values.endDate}
+                        dateFormat='MMMM d, yyyy'
+                        placeholderText='Fecha inicio'
+                        locale='es'
+                        className='form-control'
+                        name='startDate'
+                        onChange={date => setFieldValue('startDate', date)}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
@@ -137,14 +299,16 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Finalización </Form.Label>
-                      <Form.Control
-                        type='text'
-                        name='registerDate'
-                        placeholder='Fecha de finalización'
-                        value={values.endDate}
-                        onChange={handleChange}
-                        isValid={touched.endDate && !errors.endDate}
-                        isInvalid={!!errors.endDate}
+                      <DatePicker
+                        selected={values.endDate}
+                        startDate={values.startDate}
+                        minDate={values.startDate}
+                        dateFormat='MMMM d, yyyy'
+                        placeholderText='Fecha Final'
+                        locale='es'
+                        className='form-control'
+                        name='endDate'
+                        onChange={date => setFieldValue('endDate', date)}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.endDate}
@@ -152,10 +316,31 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
+                    {/*<Form.Group as={Col} md='4' controlId='inputId'>
+                      <Form.Label>Responsable principal</Form.Label>
+                      <Autosuggest
+                        multiSection={true}
+                        suggestions={suggestions}
+                        onSuggestionsFetchRequested={
+                          this.onSuggestionsFetchRequested
+                        }
+                        onSuggestionsClearRequested={
+                          this.onSuggestionsClearRequested
+                        }
+                        getSuggestionValue={getSuggestionValue}
+                        renderSuggestion={renderSuggestion}
+                        renderSectionTitle={renderSectionTitle}
+                        getSectionSuggestions={getSectionSuggestions}
+                        inputProps={inputProps}
+                        theme={theme}
+                      />
+                      
+                    </Form.Group>*/}
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Responsable del Registro </Form.Label>
                       <Form.Control
                         type='text'
+                        disabled
                         name='responsibleInvestigator'
                         placeholder='Responsable del registro'
                         value={values.responsibleInvestigator}
@@ -173,37 +358,27 @@ class CreateProjectFormik extends Component {
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Investigador Principal </Form.Label>
                       <Form.Control
-                        type='text'
+                        as='select'
                         name='principalInvestigator'
-                        placeholder='Responsable del registro'
                         value={values.principalInvestigator}
                         onChange={handleChange}
+                        required
+                        isInvalid={!!errors.principalInvestigator}
                         isValid={
                           touched.principalInvestigator &&
                           !errors.principalInvestigator
-                        }
-                        isInvalid={!!errors.principalInvestigator}
-                      />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.principalInvestigator}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='validationFormik01'>
-                      <Form.Label>Estado del Estudio</Form.Label>
-                      <Form.Control
-                        as='select'
-                        name='type'
-                        value={values.projectState}
-                        onChange={handleChange}
-                        isInvalid={!!errors.projectState}
-                        isValid={touched.projectState && !errors.projectState}>
+                        }>
                         <option value={-1}>------</option>
-                        <option value='1'>Registro</option>
-                        <option value='2'>Diseño</option>
-                        <option value='3'>Finalizado</option>
+                        {this.props.usersInfo.map((option, index) => {
+                          return (
+                            <option key={index} value={option.userEmail}>
+                              {option.userName} | {option.userEmail}
+                            </option>
+                          );
+                        })}
                       </Form.Control>
                       <Form.Control.Feedback type='invalid'>
-                        {errors.projectState}
+                        {errors.myCenter}
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>

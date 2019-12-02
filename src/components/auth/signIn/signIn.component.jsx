@@ -21,8 +21,8 @@ class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: 'dardila@unicauca.edu.co',
+      password: 'simon314',
       isLoggedIn: false,
       isVisible: false,
       adminDashboard: false,
@@ -83,6 +83,8 @@ class SignIn extends Component {
     localStorage.setItem('email', JSON.stringify(data.user.email));
     localStorage.setItem('token', JSON.stringify(data.token));
     localStorage.setItem('user', JSON.stringify(data.user.username));
+    localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
+    localStorage.setItem('last_name', JSON.stringify(data.user.last_name));
     let role;
     role =
       data.user.is_staff === true ? (role = 'is_staff') : (role = 'is_simple');

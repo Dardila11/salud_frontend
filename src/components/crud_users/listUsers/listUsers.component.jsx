@@ -8,7 +8,7 @@ import { URL } from '../../utils/URLSever';
 import CreateUserFormik from '../createUser/createUser.component';
 //import UpdateUser from '../updateUser/updateUser';
 import UpdateUserFormik from '../updateUser/updateUser.component';
-import ViewUser from '../viewUser/viewUser';
+//import ViewUser from '../viewUser/viewUser';
 import ViewUserFormik from '../viewUser/viewUser.component';
 import DeleteUser from '../deleteUser/deleteUser.component';
 import './listUsers.styles.css';
@@ -278,7 +278,7 @@ class ListUsers extends Component {
         }
       })
       .then(response => {
-        //console.log(response.data["2"].fields.first_name);
+        console.log(response.data['2'].first_name);
 
         this.setState({ info: response.data }, () => {
           /*console.log('Todos los usuarios: ' + this.state.info['2'].is_simple);
@@ -363,24 +363,6 @@ class ListUsers extends Component {
         minWidth: 100
       },
       {
-        Header: 'Centro',
-        accessor: 'my_center__name',
-        sortable: false,
-        filterable: false,
-        width: 100,
-        maxWidth: 100,
-        minWidth: 100
-      },
-      {
-        Header: 'Departamentos',
-        accessor: 'my_department__name',
-        sortable: false,
-        filterable: false,
-        width: 150,
-        maxWidth: 150,
-        minWidth: 100
-      },
-      {
         id: 'is_simple',
         Header: 'Rol',
         accessor: d => {
@@ -398,7 +380,7 @@ class ListUsers extends Component {
         accessor: d => {
           return d.is_active ? 'Si' : 'No';
         },
-        sortable: false,
+        sortable: true,
         filterable: false,
         width: 150,
         maxWidth: 150,
