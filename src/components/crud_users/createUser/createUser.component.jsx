@@ -46,7 +46,9 @@ const schema = Yup.object({
 class CreateUserFormik extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visibility: false
+    };
   }
 
   /**
@@ -309,9 +311,12 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group controlId='formBasicCheckbox'>
+                    <Form.Group
+                      show={this.state.visibility}
+                      controlId='formBasicCheckbox'>
                       <Form.Label>Permisos de creación para: </Form.Label>
                       <Form.Check
+                        disabled={values.type === '1' ? false : true}
                         name='createCenters'
                         type='checkbox'
                         label='Centros'
@@ -320,14 +325,15 @@ class CreateUserFormik extends Component {
                         onChange={handleChange}
                       />
                       <Form.Check
+                        disabled={values.type === '1' ? false : true}
                         name='createUsers'
                         type='checkbox'
                         label='Usuarios'
                         id='checkUsers'
-                        value={values.onChangecreateCenters}
+                        value={values.createUsers}
                         onChange={handleChange}
                       />
-                      <Form.Check
+                      {/* <Form.Check
                         disabled
                         name='createProjects'
                         type='checkbox'
@@ -335,7 +341,7 @@ class CreateUserFormik extends Component {
                         id='checkProjects'
                         value={values.createCenters}
                         onChange={handleChange}
-                      />
+                      /> */}
                     </Form.Group>
                   </Form.Row>
                 </Form>
