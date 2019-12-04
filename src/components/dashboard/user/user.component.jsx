@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
 import { URL } from "../../utils/URLSever";
-// import { closeSession } from "../../utils/handleLocalStorage";
+import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import NavUser from "./navUser/navUser.component";
@@ -37,7 +37,8 @@ class UserDashboard extends Component {
       })
       .catch(error => {
         const status = JSON.parse(error.request.status);
-        if (status === 401) {
+        if (status === 401 || status === 500) {
+          closeSession();
           this.setState({ isLogged: false });
         }
       });
