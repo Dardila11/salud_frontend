@@ -21,8 +21,8 @@ class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'dardila@unicauca.edu.co',
-      password: 'simon314',
+      email: '',
+      password: '',
       isLoggedIn: false,
       isVisible: false,
       adminDashboard: false,
@@ -81,6 +81,7 @@ class SignIn extends Component {
    */
   saveUserInfo = data => {
     localStorage.setItem('email', JSON.stringify(data.user.email));
+    localStorage.setItem('id', JSON.stringify(data.user.id));
     localStorage.setItem('token', JSON.stringify(data.token));
     localStorage.setItem('user', JSON.stringify(data.user.username));
     localStorage.setItem('first_name', JSON.stringify(data.user.first_name));

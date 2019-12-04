@@ -61,7 +61,7 @@ class ListProjects extends Component {
    * es llamada cuando un usuario es creado satisfactoriamente
    */
   handleCloseCreate = () => {
-    this.setState({ showMessage: true, message: 'Usuario Creado' });
+    this.setState({ showMessage: true, message: 'Proyecto Creado' });
     this.handleClose();
   };
 
@@ -96,13 +96,11 @@ class ListProjects extends Component {
       var email = this.state.info[i].email;
       var firstName = this.state.info[i].first_name;
       var lastName = this.state.info[i].last_name;
-      /*usersInfoArray.push({
-        userEmail: email,
-        userName: [{ name: firstName + ' ' + lastName }]
-      });*/
+      var id = this.state.info[i].id;
       usersInfoArray.push({
         userEmail: email,
-        userName: firstName + ' ' + lastName
+        userName: firstName + ' ' + lastName,
+        userId: id
       });
     }
     usersInfoArray.map(user => {

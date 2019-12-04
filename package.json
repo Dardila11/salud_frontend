@@ -11,14 +11,18 @@
     "bootstrap": "^4.3.1",
     "formik": "^2.0.4",
     "jquery": "^3.4.1",
+    "moment": "^2.24.0",
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
+    "react-autosuggest": "^9.4.3",
     "react-axios": "^2.0.3",
     "react-bootstrap": "^1.0.0-beta.14",
+    "react-datepicker": "^2.10.1",
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "react-table": "^6.10.3",
+    "react-themeable": "^1.1.0",
     "yup": "^0.27.0"
   },
   "scripts": {
