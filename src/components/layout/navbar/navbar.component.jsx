@@ -4,7 +4,7 @@ import axios from "axios";
 import { Redirect } from "react-router-dom";
 import { URL } from "../../utils/URLSever";
 import { buttonToogle } from "../../../js/sb-admin-2.min";
-// import { closeSession } from "../../utils/handleLocalStorage";
+import { closeSession } from "../../utils/handleLocalStorage";
 
 class NavBar extends Component {
   email = JSON.parse(localStorage.getItem("email"));
@@ -17,6 +17,7 @@ class NavBar extends Component {
   }
 
   logout = () => {
+    console.log("saliendo");
     const token = JSON.parse(localStorage.getItem("token"));
     const headers = {
       "Content-Type": "application/json",
@@ -25,6 +26,7 @@ class NavBar extends Component {
     axios
       .delete(URL + "/users/logout/", { headers: headers, data: {} })
       .then(() => {
+        closeSession();
         this.setState({ isLogged: false });
       });
   };
@@ -226,6 +228,7 @@ class NavBar extends Component {
                 href="!#"
                 data-toggle="modal"
                 data-target="!#logoutModal"
+                onClick={this.logout}
               >
                 <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                 Logout

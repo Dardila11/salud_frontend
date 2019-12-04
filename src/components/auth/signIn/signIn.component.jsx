@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Form, Button, Alert } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import './signIn.styles.css';
-import { URL } from '../../utils/URLSever';
+import React, { Component } from "react";
+import axios from "axios";
+import { Form, Button, Alert } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
+import "./signIn.styles.css";
+import { URL } from "../../utils/URLSever";
 
 /**
  * @todo
@@ -18,17 +18,20 @@ import { URL } from '../../utils/URLSever';
  * se redirecciona a la vista 'dashboard' correcta.
  */
 class SignIn extends Component {
+  CancelToken = axios.CancelToken;
+  source = this.CancelToken.source();
+
   constructor(props) {
     super(props);
     this.state = {
-      email: 'dardila@unicauca.edu.co',
-      password: 'simon314',
+      email: "mdquilindo@unicauca.edu.co",
+      password: "oracle",
       isLoggedIn: false,
       isVisible: false,
       adminDashboard: false,
       userDashboard: false,
-      alertVariant: '',
-      message: '',
+      alertVariant: "",
+      message: "",
       showAlert: false
     };
   }
@@ -39,6 +42,7 @@ class SignIn extends Component {
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
+
   handleDismiss = () => this.setState({ showAlert: false });
 
   /**
@@ -53,23 +57,28 @@ class SignIn extends Component {
     if (this.validateForm()) {
       const { email, password } = this.state;
       axios
-        .post(URL + '/users/login/', { email, password })
+        .post(
+          URL + "/users/login/",
+          { email, password },
+          { cancelToken: this.source.token }
+        )
         .then(response => {
+          console.log(response.data);
           this.setState({ isLoggedIn: true });
           this.saveUserInfo(response.data);
         })
         .catch(error => {
           this.setState({
             showAlert: true,
-            alertVariant: 'danger',
+            alertVariant: "danger",
             message: JSON.parse(error.request.response).detail
           });
         });
     } else {
       this.setState({
         isVisible: true,
-        alertVariant: 'warning',
-        message: 'Ingrese todos los datos.'
+        alertVariant: "warning",
+        message: "Ingrese todos los datos."
       });
     }
   };
@@ -80,29 +89,24 @@ class SignIn extends Component {
    * finaliza otorgando el role al usuario.
    */
   saveUserInfo = data => {
-    localStorage.setItem('email', JSON.stringify(data.user.email));
-    localStorage.setItem('token', JSON.stringify(data.token));
-    localStorage.setItem('user', JSON.stringify(data.user.username));
-    localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
-    localStorage.setItem('last_name', JSON.stringify(data.user.last_name));
+    localStorage.setItem("email", JSON.stringify(data.user.email));
+    localStorage.setItem("token", JSON.stringify(data.token));
+    localStorage.setItem("user", JSON.stringify(data.user.username));
+    localStorage.setItem("first_name", JSON.stringify(data.user.first_name));
+    localStorage.setItem("last_name", JSON.stringify(data.user.last_name));
     let role;
     role =
-      data.user.is_staff === true ? (role = 'is_staff') : (role = 'is_simple');
-    localStorage.setItem('role', JSON.stringify(role));
-    if (role === 'is_staff') {
+      data.user.is_staff === true ? (role = "is_staff") : (role = "is_simple");
+    localStorage.setItem("role", JSON.stringify(role));
+    if (role === "is_staff") {
       this.setState({ adminDashboard: true });
     } else {
       this.setState({ userDashboard: true });
     }
   };
 
-  componentDidMount() {
-    const CancelToken = axios.CancelToken;
-    this.source = CancelToken.source();
-  }
-
   componentWillUnmount() {
-    this.source.cancel('cancel request');
+    this.source.cancel("cancel request");
   }
 
   validateForm = () => {
@@ -111,53 +115,53 @@ class SignIn extends Component {
 
   render() {
     if (this.state.adminDashboard) {
-      return <Redirect to='/admin' />;
+      return <Redirect to="/admin" />;
     } else if (this.state.userDashboard) {
-      return <Redirect to='/user' />;
+      return <Redirect to="/user" />;
     }
     return (
       <>
-        <div className='app-secretary container-login'>
-          <div className='center'>
-            <header className='app-header'></header>
-            <div className='content-caja d-flex justify-content-center'>
-              <div className='caja'>
+        <div className="app-secretary container-login">
+          <div className="center">
+            <header className="app-header"></header>
+            <div className="content-caja d-flex justify-content-center">
+              <div className="caja">
                 <Form onSubmit={this.onLogin}>
-                  <div className='justify-content-center d-flex containt-logo'>
-                    <div className='logo-sge'></div>
+                  <div className="justify-content-center d-flex containt-logo">
+                    <div className="logo-sge"></div>
                   </div>
-                  <Form.Label className='mb-0'>
-                    <h3 className='title-login mt-2'>Iniciar Sesión</h3>
+                  <Form.Label className="mb-0">
+                    <h3 className="title-login mt-2">Iniciar Sesión</h3>
                   </Form.Label>
                   <Form.Control
-                    className='mb-2'
-                    type='text'
-                    name='email'
+                    className="mb-2"
+                    type="text"
+                    name="email"
                     value={this.state.email}
                     onChange={this.handleChange}
-                    placeholder='Usuario'
+                    placeholder="Usuario"
                     required
                   />
                   <Form.Control
-                    className='mb-2'
-                    type='password'
-                    name='password'
+                    className="mb-2"
+                    type="password"
+                    name="password"
                     value={this.state.password}
                     onChange={this.handleChange}
-                    placeholder='Contraseña'
+                    placeholder="Contraseña"
                     required
                   />
-                  <a href='#home' className='link'>
+                  <a href="#home" className="link">
                     Olvide mi contraseña
                   </a>
                   <br />
-                  <Button variant='primary' type='submit'>
+                  <Button variant="primary" type="submit">
                     Ingresar
                   </Button>
                 </Form>
               </div>
             </div>
-            <div className='footer-login p-3'>
+            <div className="footer-login p-3">
               <span>
                 2019 | División de las Tecnologías de la Información y las
                 Comunicaciones
@@ -168,17 +172,18 @@ class SignIn extends Component {
               <span>Version 1.0</span>
             </div>
           </div>
-          <div className='no-login time'>
+          <div className="no-login time">
             <Alert
-              variant='danger'
+              variant="danger"
               show={this.state.showAlert}
               onClose={this.handleDismiss}
-              dismissible>
-              <p className='mb-0'>{this.state.message}</p>
+              dismissible
+            >
+              <p className="mb-0">{this.state.message}</p>
             </Alert>
           </div>
-          <div className='antorcha'></div>
-          <div className='bandera'></div>
+          <div className="antorcha"></div>
+          <div className="bandera"></div>
         </div>
       </>
     );
