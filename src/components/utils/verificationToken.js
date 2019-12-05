@@ -7,7 +7,6 @@ export function vertificationToken() {
   const data = {
     token: token
   };
-  console.log("token: " + token);
   if (token !== null) {
     axios
       .post(URL + "/users/token/verificate/", data)

@@ -161,7 +161,7 @@ class CreateProjectFormik extends Component {
       return [];
     }
 
-    return this.props.usersInfo
+    return this.props.projectsInfo
       .map(section => {
         console.log('EMAIL ' + section.userEmail);
         return {
