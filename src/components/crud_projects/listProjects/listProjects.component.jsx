@@ -60,8 +60,8 @@ class ListProjects extends Component {
    * @function handleCloseCreate function enviada como prop de un componente.
    * es llamada cuando un usuario es creado satisfactoriamente
    */
-  handleCloseCreate = () => {W
-    this.setState({ showMessage: true, message: 'Proyecto Creado' });
+  handleCloseCreate = () => {
+    this.setState({ showMessage:true, message: 'Proyecto Creado' });
     this.handleClose();
   };
 
