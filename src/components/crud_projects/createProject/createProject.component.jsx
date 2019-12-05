@@ -27,7 +27,9 @@ const schema = Yup.object({
   title: Yup.string()
     .min(5, 'Titulo debe tener minimo 5 caracteres')
     .max(150, 'Titulo debe tener maximo 150 caracteres')
-    .required('Campo Requerido')
+    .required('Campo Requerido'),
+  principalInvestigator: Yup.string().required('Campo Requerido'),
+  responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
 
 const theme = {
@@ -106,6 +108,12 @@ function renderSectionTitle(section) {
  * @author Dardila
  * @description Este componente se encarga de la creacion de nuevos
  * proyectos de estudios
+ */
+
+/**
+ * @todo
+ * TODO: Las Fechas no las obtiene bien, da un dia menos.
+ * Falta validacion de fechas
  */
 class CreateProjectFormik extends Component {
   constructor(props) {

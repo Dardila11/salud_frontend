@@ -4,6 +4,7 @@ import { Modal, Alert, Button } from 'react-bootstrap';
 import ReactTable from 'react-table';
 import { URL } from '../../utils/URLSever';
 import CreateProjectFormik from '../createProject/createProject.component';
+import UpdateProjectFormik from '../updateProject/updateProject.component';
 
 import 'react-table/react-table.css';
 import './listProjects.styles.css';
@@ -13,6 +14,8 @@ class ListProjects extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      idProjectToEdit: -1,
+      projectInfo: [1],
       info: [],
       projectsInfo: [],
       usersInfo: [],
@@ -36,6 +39,10 @@ class ListProjects extends Component {
    */
   handleCreate = () => {
     this.setState({ showCreate: true });
+  };
+
+  handleUpdate = () => {
+    this.setState({ showUpdate: true });
   };
   /**
    * @function handleClose se encarga de resetar los valores de las alertas
@@ -67,6 +74,15 @@ class ListProjects extends Component {
     this.handleClose();
   };
 
+  /**
+   * @function handleCloseUpdate function enviada como prop de un componente.
+   * es llamada cuando un usuario es actualizado satisfactoriamente
+   */
+  handleCloseUpdate = () => {
+    this.setState({ showMessage: true, message: 'Proyecto Actualizado' });
+    this.handleClose();
+  };
+
   handleDismiss = () => {
     this.setState({ showMessage: false });
   };
@@ -89,6 +105,10 @@ class ListProjects extends Component {
         this.setState({ info: response.data }, () => {
           this.getUsersInfo();
         });
+      })
+      .catch(error => {
+        console.log('oh no, hubo un error!');
+        console.log(error.status);
       });
   };
 
@@ -104,12 +124,17 @@ class ListProjects extends Component {
         this.setState({ projectsInfo: response.data }, () => {
           this.getProjectsInfo();
         });
+      })
+      .catch(error => {
+        console.log('oh no, hubo un error!');
+        console.log(error.status);
       });
   };
 
   getProjectsInfo = () => {
     var projectsInfoArray = [];
     for (let i = 0; i < this.state.projectsInfo.length; i++) {
+      var id = this.state.projectsInfo[i].id;
       var title = this.state.projectsInfo[i].title_little;
       var reg_date = this.state.projectsInfo[i].date_reg;
       var start_date = this.state.projectsInfo[i].date_in_study;
@@ -120,6 +145,7 @@ class ListProjects extends Component {
         .principal_inv__first_name;
       var is_active = this.state.projectsInfo[i].is_active;
       projectsInfoArray.push({
+        id_pk: id,
         title: title,
         reg_date: reg_date,
         start_date: start_date,
@@ -152,8 +178,53 @@ class ListProjects extends Component {
     this.setState({ usersInfo: usersInfoArray });
   };
 
+  getProjectById = async id => {
+    var token = JSON.parse(localStorage.getItem('token'));
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
+    };
+    axios
+      .get(URL + '/studies/' + id, {
+        headers: headers
+      })
+      .then(response => {
+        this.setState({ projectInfo: response.data }, () => {
+          if (modalUpdate) {
+            this.handleUpdate();
+          }
+          modalUpdate = false;
+        });
+      })
+      .catch(error => {
+        console.log('oh no, hubo un error!');
+        console.log(error.status);
+      });
+  };
+
+  /**
+   * @function updateRow
+   * @description Se encarga de mostrar el modal de actualizacion de usuario y cargar la informacion
+   * del usuario (su email)
+   */
+  updateRow = id => {
+    modalUpdate = true;
+    this.setState({ idProjectToEdit: id }, () => {
+      this.getProjectById(this.state.idProjectToEdit);
+      //this.getUserPermissions(this.state.emailToEdit);
+      //this.getUserByEmail(this.state.emailToEdit);
+    });
+  };
+
   render() {
     const columns = [
+      {
+        Header: 'Id',
+        accessor: 'id_pk',
+        width: 50,
+        maxWidth: 200,
+        minWidth: 50
+      },
       {
         Header: 'Título',
         accessor: 'title',
@@ -241,7 +312,8 @@ class ListProjects extends Component {
             <>
               <Button
                 onClick={() => {
-                  this.updateRow(props.original.id);
+                  console.log(props.original.id_pk);
+                  this.updateRow(props.original.id_pk);
                 }}>
                 Editar
               </Button>
@@ -289,6 +361,16 @@ class ListProjects extends Component {
             usersInfo={this.state.usersInfo}
             handleCloseCreate={this.handleCloseCreate}
             handleClose={this.handleClose}
+          />
+        </Modal>
+        <Modal show={this.state.showUpdate} onHide={this.handleClose}>
+          {/* Actualizar Usuario */}
+          <UpdateProjectFormik
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            email={this.state.emailToEdit}
+            usersInfo={this.state.usersInfo}
+            projectInfo={this.state.projectInfo}
           />
         </Modal>
         <div className='no-login time'>
