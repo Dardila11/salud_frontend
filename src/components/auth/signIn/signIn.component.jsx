@@ -19,11 +19,14 @@ import ForgetPassword from "../signIn/forgetPassword/forgetPassword"
  * se redirecciona a la vista 'dashboard' correcta.
  */
 class SignIn extends Component {
+  CancelToken = axios.CancelToken;
+  source = this.CancelToken.source();
+
   constructor(props) {
     super(props);
     this.state = {
-      email: 'dardila@unicauca.edu.co',
-      password: 'simon314',
+      email: '',
+      password: '',
       isLoggedIn: false,
       isVisible: false,
       adminDashboard: false,
@@ -49,6 +52,7 @@ class SignIn extends Component {
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
+
   handleDismiss = () => this.setState({ showAlert: false });
   handleForget=()=> this.setState({ showForget: true })
   handleCloseForget = () => {
@@ -69,8 +73,13 @@ class SignIn extends Component {
     if (this.validateForm()) {
       const { email, password } = this.state;
       axios
-        .post(URL + '/users/login/', { email, password })
+        .post(
+          URL + '/users/login/',
+          { email, password },
+          { cancelToken: this.source.token }
+        )
         .then(response => {
+          console.log(response.data);
           this.setState({ isLoggedIn: true });
           this.saveUserInfo(response.data);
         })
@@ -97,6 +106,7 @@ class SignIn extends Component {
    */
   saveUserInfo = data => {
     localStorage.setItem('email', JSON.stringify(data.user.email));
+    localStorage.setItem('id', JSON.stringify(data.user.id));
     localStorage.setItem('token', JSON.stringify(data.token));
     localStorage.setItem('user', JSON.stringify(data.user.username));
     localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
@@ -111,11 +121,6 @@ class SignIn extends Component {
       this.setState({ userDashboard: true });
     }
   };
-
-  componentDidMount() {
-    const CancelToken = axios.CancelToken;
-    this.source = CancelToken.source();
-  }
 
   componentWillUnmount() {
     this.source.cancel('cancel request');

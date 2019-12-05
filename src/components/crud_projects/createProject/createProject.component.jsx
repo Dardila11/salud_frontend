@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Formik } from 'formik';
-//import axios from 'axios';
-//import { URL } from '../../utils/URLSever';
+import axios from 'axios';
+import { URL } from '../../utils/URLSever';
 import { Button, Modal, Form, Col } from 'react-bootstrap';
 import * as Yup from 'yup';
 //import Autosuggest from 'react-autosuggest';
@@ -10,6 +10,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
 registerLocale('es', es);
+var moment = require('moment');
 
 /**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
@@ -26,7 +27,9 @@ const schema = Yup.object({
   title: Yup.string()
     .min(5, 'Titulo debe tener minimo 5 caracteres')
     .max(150, 'Titulo debe tener maximo 150 caracteres')
-    .required('Campo Requerido')
+    .required('Campo Requerido'),
+  principalInvestigator: Yup.string().required('Campo Requerido'),
+  responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
 
 const theme = {
@@ -106,6 +109,12 @@ function renderSectionTitle(section) {
  * @description Este componente se encarga de la creacion de nuevos
  * proyectos de estudios
  */
+
+/**
+ * @todo
+ * TODO: Las Fechas no las obtiene bien, da un dia menos.
+ * Falta validacion de fechas
+ */
 class CreateProjectFormik extends Component {
   constructor(props) {
     super(props);
@@ -160,7 +169,7 @@ class CreateProjectFormik extends Component {
       return [];
     }
 
-    return this.props.usersInfo
+    return this.props.projectsInfo
       .map(section => {
         console.log('EMAIL ' + section.userEmail);
         return {
@@ -184,15 +193,62 @@ class CreateProjectFormik extends Component {
     });
   };
 
-  saveNewProjectInfo = () => {};
+  saveNewProjectInfo = async values => {
+    var token = JSON.parse(localStorage.getItem('token'));
+
+    var json = {
+      study: {
+        study_id: values.projectId,
+        title_little: values.title,
+        title_long: values.title,
+        status: 1,
+        date_in_study: moment(values.startDate).format('YYYY-MM-DD'),
+        date_prevout_end: null,
+        date_actout_end: null,
+        date_trueaout_end: moment(values.endDate).format('YYYY-MM-DD'),
+        description: null,
+        promoter: null,
+        financial_entity: null,
+        amount: null,
+        manager_reg: JSON.parse(localStorage.getItem('id')),
+        principal_inv: values.principalInvestigator,
+        manager_1: null,
+        manager_2: null
+      }
+    };
+    var myJson = JSON.stringify(json);
+    console.log(myJson);
+    /**
+     * headers: son necesarios para realizar la
+     * solicitud al servidor. se le envia el JWT y
+     * el token como autorización
+     */
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
+    };
+    axios
+      .post(URL + '/studies/', json, {
+        headers: headers
+      })
+      .then(response => {
+        console.log(response.status);
+        this.handleCloseCreate();
+      })
+      .catch(error => {
+        console.log('hubo un error');
+        console.log(error.status);
+      });
+  };
   render() {
-    const { value, suggestions } = this.state;
+    //const { value, suggestions } = this.state;
     // Autosuggest will pass through all these props to the input.
-    const inputProps = {
+    /* const inputProps = {
       placeholder: 'Investigador Responsable',
       value,
       onChange: this.onChange
-    };
+    }; */
     return (
       <>
         <Formik
@@ -205,7 +261,6 @@ class CreateProjectFormik extends Component {
             registerDate: new Date(),
             startDate: new Date(),
             endDate: new Date(),
-            projectState: 'registro',
             principalInvestigator: '',
             responsibleInvestigator:
               JSON.parse(localStorage.getItem('first_name')) +
@@ -269,9 +324,9 @@ class CreateProjectFormik extends Component {
                       <Form.Label>Fecha registro</Form.Label>
                       <DatePicker
                         selected={values.registerDate}
-                        dateFormat='MMMM d, yyyy'
+                        dateFormat='yyyy-MM-dd'
                         disabled
-                        locale='{es}'
+                        locale='es'
                         className='form-control'
                         name='registerDate'
                         onChange={date => setFieldValue('registerDate', date)}
@@ -286,7 +341,7 @@ class CreateProjectFormik extends Component {
                         selectsStart
                         selected={values.startDate}
                         endDate={values.endDate}
-                        dateFormat='MMMM d, yyyy'
+                        dateFormat='yyyy-MM-dd'
                         placeholderText='Fecha inicio'
                         locale='es'
                         className='form-control'
@@ -303,7 +358,7 @@ class CreateProjectFormik extends Component {
                         selected={values.endDate}
                         startDate={values.startDate}
                         minDate={values.startDate}
-                        dateFormat='MMMM d, yyyy'
+                        dateFormat='yyyy-MM-dd'
                         placeholderText='Fecha Final'
                         locale='es'
                         className='form-control'
@@ -371,7 +426,7 @@ class CreateProjectFormik extends Component {
                         <option value={-1}>------</option>
                         {this.props.usersInfo.map((option, index) => {
                           return (
-                            <option key={index} value={option.userEmail}>
+                            <option key={index} value={option.userId}>
                               {option.userName} | {option.userEmail}
                             </option>
                           );
@@ -388,7 +443,7 @@ class CreateProjectFormik extends Component {
                 <Button variant='secondary' onClick={this.handleClose}>
                   Cancelar
                 </Button>
-                <Button form='formCreateUser' type='submit'>
+                <Button form='formCreateProject' type='submit'>
                   Crear Proyecto
                 </Button>
               </Modal.Footer>
