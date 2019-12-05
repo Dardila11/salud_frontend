@@ -311,9 +311,7 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group
-                      show={this.state.visibility}
-                      controlId='formBasicCheckbox'>
+                    <Form.Group controlId='formBasicCheckbox'>
                       <Form.Label>Permisos de creación para: </Form.Label>
                       <Form.Check
                         disabled={values.type === '1' ? false : true}

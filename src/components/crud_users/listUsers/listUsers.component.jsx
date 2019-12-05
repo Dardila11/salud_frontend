@@ -179,7 +179,9 @@ class ListUsers extends Component {
         headers: headers
       })
       .then(response => {
-        this.setState({ userPermissions: response.data });
+        this.setState({ userPermissions: response.data }, () => {
+          this.getUserByEmail(email);
+        });
       });
   };
 
@@ -278,7 +280,7 @@ class ListUsers extends Component {
         }
       })
       .then(response => {
-        console.log(response.data['2'].first_name);
+        //console.log(response.data['2'].first_name);
 
         this.setState({ info: response.data }, () => {
           /*console.log('Todos los usuarios: ' + this.state.info['2'].is_simple);
@@ -309,7 +311,7 @@ class ListUsers extends Component {
     modalUpdate = true;
     this.setState({ emailToEdit: email }, () => {
       this.getUserPermissions(this.state.emailToEdit);
-      this.getUserByEmail(this.state.emailToEdit);
+      //this.getUserByEmail(this.state.emailToEdit);
     });
   };
 
