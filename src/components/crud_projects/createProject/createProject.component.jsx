@@ -161,7 +161,7 @@ class CreateProjectFormik extends Component {
       return [];
     }
 
-    return this.props.usersInfo
+    return this.props.projectsInfo
       .map(section => {
         console.log('EMAIL ' + section.userEmail);
         return {
@@ -416,7 +416,7 @@ class CreateProjectFormik extends Component {
                           !errors.principalInvestigator
                         }>
                         <option value={-1}>------</option>
-                        {this.props.usersInfo.map((option, index) => {
+                        {this.props.projectsInfo.map((option, index) => {
                           return (
                             <option key={index} value={option.userId}>
                               {option.userName} | {option.userEmail}
