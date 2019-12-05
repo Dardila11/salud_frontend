@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Formik } from 'formik';
 import axios from 'axios';
 import { URL } from '../../utils/URLSever';
-import { Button, Modal, Form, Col } from 'react-bootstrap';
+import { Button, Modal, Form, Col ,Alert} from 'react-bootstrap';
 import * as Yup from 'yup';
 
 /**
@@ -47,7 +47,11 @@ class CreateUserFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visibility: false
+      visibility: false,
+      alertVariant: "",
+      message: "",
+      showForget:false,
+      show: false
     };
   }
 
@@ -103,12 +107,12 @@ class CreateUserFormik extends Component {
       })
       .then(response => {
         console.log(response.status);
-        this.handleCloseCreate();
+        alert(response.data)
+        //this.handleCloseCreate();
       })
-      .catch(error => {
-        console.log('hubo un error!');
-        console.log(error.status);
-      });
+        .catch(error => {
+          alert(error.response.data);
+        });
   };
 
   handleClose = () => {

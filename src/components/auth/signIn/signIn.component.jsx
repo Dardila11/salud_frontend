@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { Modal,Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import './signIn.styles.css';
 import { URL } from '../../utils/URLSever';
+import ForgetPassword from "../signIn/forgetPassword/forgetPassword"
 
 /**
  * @todo
@@ -29,8 +30,17 @@ class SignIn extends Component {
       userDashboard: false,
       alertVariant: '',
       message: '',
-      showAlert: false
+      showAlert: false,
+      showForget:false,
+      show: false
     };
+  }
+    handleClose = () => {
+    this.setState(
+      {
+        showForget: false
+      }
+    )
   }
   /**
    * handleChange: cambia el estado de la 'variable' en el state
@@ -40,6 +50,12 @@ class SignIn extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   handleDismiss = () => this.setState({ showAlert: false });
+  handleForget=()=> this.setState({ showForget: true })
+  handleCloseForget = () => {
+    // mostrar mensaje usuario creado
+    alert('Revise el correo en su bandeja de entrada para recuperar su password')
+    this.handleClose();
+  };   
 
   /**
    * onLogin: Valida que el formulario este correcto
@@ -117,6 +133,13 @@ class SignIn extends Component {
     }
     return (
       <>
+              <Modal show={this.state.showForget} onHide={this.handleClose}>
+          <ForgetPassword 
+            handleCloseForget={this.handleCloseForget}
+            handleClose={this.handleClose}>
+
+          </ForgetPassword>
+        </Modal>
         <div className='app-secretary container-login'>
           <div className='center'>
             <header className='app-header'></header>
@@ -147,9 +170,9 @@ class SignIn extends Component {
                     placeholder='Contraseña'
                     required
                   />
-                  <a href='#home' className='link'>
+                  <a href="#" className="link" onClick={this.handleForget}>
                     Olvide mi contraseña
-                  </a>
+                  </a>{" "}
                   <br />
                   <Button variant='primary' type='submit'>
                     Ingresar

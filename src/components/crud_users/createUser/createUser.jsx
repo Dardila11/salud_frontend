@@ -60,10 +60,12 @@ class CreateUser extends Component {
           Authorization: 'JWT ' + token
         }
       })
+      .catch(err=>{
+      alert(err.response.data)
+      }
+      )
       .then(response => {
-        this.setState({ infoCenters: response.data }, () => {
-          this.viewCentersInfo();
-        });
+        alert(response.data)
       });
   };
 
