@@ -54,10 +54,10 @@ class UpdateProjectFormik extends Component {
   };
 
   componentDidMount() {
-    //console.log(this.props.projectInfo.fields.study_id);
     console.log(this.props.projectInfo);
     console.log(this.props.projectInfo[0].pk);
     console.log(this.props.projectInfo[0].fields.study_id);
+    console.log(this.props.projectInfo[0].fields.date_reg.substring(0, 10));
 
     var date = moment('12-25-1995', 'MM-DD-YYYY');
     console.log('my date ' + date);
@@ -128,10 +128,16 @@ class UpdateProjectFormik extends Component {
           initialValues={{
             projectId: this.props.projectInfo[0].fields.study_id,
             title: this.props.projectInfo[0].fields.title_little,
-            registerDate: new Date(),
-            startDate: new Date('2019-01-01'),
+            /*  GMT-5 zona horaria de Colombia */
+            registerDate: new Date(
+              this.props.projectInfo[0].fields.date_reg.substring(0, 10) +
+                'GMT-5'
+            ),
+            startDate: new Date(
+              this.props.projectInfo[0].fields.date_in_study + 'GMT-5'
+            ),
             endDate: new Date(
-              this.props.projectInfo[0].fields.date_trueaout_end
+              this.props.projectInfo[0].fields.date_trueaout_end + 'GMT-5'
             ),
             principalInvestigator: this.props.projectInfo[0].fields
               .principal_inv,

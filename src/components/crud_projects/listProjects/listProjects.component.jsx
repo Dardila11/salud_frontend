@@ -136,7 +136,7 @@ class ListProjects extends Component {
     for (let i = 0; i < this.state.projectsInfo.length; i++) {
       var id = this.state.projectsInfo[i].id;
       var title = this.state.projectsInfo[i].title_little;
-      var reg_date = this.state.projectsInfo[i].date_reg;
+      var reg_date = this.state.projectsInfo[i].date_reg.substring(0, 10);
       var start_date = this.state.projectsInfo[i].date_in_study;
       var end_date = this.state.projectsInfo[i].date_trueaout_end;
       var status = this.state.projectsInfo[i].status;
@@ -211,20 +211,12 @@ class ListProjects extends Component {
     modalUpdate = true;
     this.setState({ idProjectToEdit: id }, () => {
       this.getProjectById(this.state.idProjectToEdit);
-      //this.getUserPermissions(this.state.emailToEdit);
-      //this.getUserByEmail(this.state.emailToEdit);
     });
   };
 
   render() {
+    /* En este caso, el accessor es la variable del array projectsInfoArray */
     const columns = [
-      {
-        Header: 'Id',
-        accessor: 'id_pk',
-        width: 50,
-        maxWidth: 200,
-        minWidth: 50
-      },
       {
         Header: 'Título',
         accessor: 'title',
@@ -339,14 +331,14 @@ class ListProjects extends Component {
     ];
     return (
       <>
-        <h1 className='h3 mb-2 text-gray-800'>Lista de estudios</h1>
+        <h1 className='h3 mb-2 text-gray-800'>Lista de proyectos</h1>
         <button
           className='btn btn-primary btn-icon-split p-0 mb-2'
           onClick={this.handleCreate}>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
-          <span className='text text-white'>Crear estudio</span>
+          <span className='text text-white'>Crear proyecto</span>
         </button>
         <ReactTable
           columns={columns}
