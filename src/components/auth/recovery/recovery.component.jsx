@@ -1,12 +1,12 @@
-import { Formik } from 'formik';
-import { BrowserRouter as Router, Route, Switch,Link } from "react-router-dom";
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Form, Button, Alert,Col } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import './recovery.styles.css';
-import { URL } from '../../utils/URLSever';
-import * as Yup from 'yup';
+import { Formik } from "formik";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import React, { Component } from "react";
+import axios from "axios";
+import { Form, Button, Alert, Col } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
+import "./recovery.styles.css";
+import { URL } from "../../utils/URLSever";
+import * as Yup from "yup";
 
 /**
  * @todo
@@ -27,29 +27,27 @@ import * as Yup from 'yup';
  */
 const schema = Yup.object({
   pass1: Yup.string()
-    .min(6, 'Password debe tener minimo 6 caracteres')
-    .required('Campo Requerido'),
+    .min(6, "Contraseña debe tener minimo 6 caracteres")
+    .required("Campo Requerido"),
   pass2: Yup.string()
-    .oneOf([Yup.ref('pass1'), null], 'Passwords no coinciden')
-    .required('Campo Requerido')
-}); 
- 
- 
- 
- 
+    .oneOf([Yup.ref("pass1"), null], "Contraseña no coinciden")
+    .required("Campo Requerido")
+});
+
 class Recovery extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       isLoggedIn: false,
       isVisible: false,
       adminDashboard: false,
       userDashboard: false,
-      alertVariant: '',
-      message: '',
-      showAlert: false
+      alertVariant: "",
+      message: "",
+      showAlert: false,
+      isSuccessfull: false
     };
   }
   /**
@@ -60,9 +58,7 @@ class Recovery extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   handleDismiss = () => this.setState({ showAlert: false });
-  handleSubmit = () => 
-  {
-  };
+  handleSubmit = () => {};
 
   /**
    * onLogin: Valida que el formulario este correcto
@@ -71,76 +67,26 @@ class Recovery extends Component {
    * @returns la informacion del usuario si este existe. junto con el token.
    *  */
   saveNewUserPass = async values => {
-    var token =this.props.match.params.tk;
-    console.log('el token es ' + token);
+    var token = this.props.match.params.tk;
+    console.log("el token es " + token);
     var json = {
-      
-        password: values.pass1
-        
+      password: values.pass1
     };
     const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
+      "Content-Type": "application/json",
+      Authorization: "JWT " + token
     };
-        axios
-      .post(URL + '/users/password/'+token+"/", json, {
+    axios
+      .post(URL + "/users/password/" + token + "/", json, {
         password: values.pass1
       })
       .then(response => {
-        console.log(response.status);
-        alert(response.data)
-        //this.handleCloseCreate();
+        alert("Contraseña restablecida con exito");
+        this.setState({ isSuccessfull: true });
       })
-        .catch(error => {
-          alert(error.response.data);
-        });
-  };
-  onLogin = event => {
-    event.preventDefault();
-    if (this.validateForm()) {
-      const { email, password } = this.state;
-      axios
-        .post(URL + '/users/login/', { email, password })
-        .then(response => {
-          this.setState({ isLoggedIn: true });
-          this.saveUserInfo(response.data);
-        })
-        .catch(error => {
-          this.setState({
-            showAlert: true,
-            alertVariant: 'danger',
-            message: JSON.parse(error.request.response).detail
-          });
-        });
-    } else {
-      this.setState({
-        isVisible: true,
-        alertVariant: 'warning',
-        message: 'Ingrese todos los datos.'
+      .catch(error => {
+        alert(error.response.data);
       });
-    }
-  };
-
-  /**
-   * @param data: el cual tiene los datos del usuario. email, toke, username y los guarda
-   * en el localStorage del navegador.
-   * finaliza otorgando el role al usuario.
-   */
-  saveUserInfo = data => {
-    localStorage.setItem('email', JSON.stringify(data.user.email));
-    localStorage.setItem('token', JSON.stringify(data.token));
-    localStorage.setItem('user', JSON.stringify(data.user.username));
-    localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
-    localStorage.setItem('last_name', JSON.stringify(data.user.last_name));
-    let role;
-    role =
-      data.user.is_staff === true ? (role = 'is_staff') : (role = 'is_simple');
-    localStorage.setItem('role', JSON.stringify(role));
-    if (role === 'is_staff') {
-      this.setState({ adminDashboard: true });
-    } else {
-      this.setState({ userDashboard: true });
-    }
   };
 
   componentDidMount() {
@@ -149,7 +95,7 @@ class Recovery extends Component {
   }
 
   componentWillUnmount() {
-    this.source.cancel('cancel request');
+    this.source.cancel("cancel request");
   }
 
   validateForm = () => {
@@ -157,24 +103,22 @@ class Recovery extends Component {
   };
 
   render() {
-    if (this.state.adminDashboard) {
-      return <Redirect to='/admin' />;
-    } else if (this.state.userDashboard) {
-      return <Redirect to='/user' />;
+    if (this.state.isSuccessfull) {
+      return <Redirect to="/" />;
     }
     return (
       <>
-      
-              <Formik
+        <Formik
           noValidate
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            pass1: '',
-            passs2: ''
+            pass1: "",
+            pass2: ""
           }}
           validationSchema={schema}
-          onSubmit={this.saveNewUserPass}>
+          onSubmit={this.saveNewUserPass}
+        >
           {({
             handleSubmit,
             handleChange,
@@ -185,98 +129,81 @@ class Recovery extends Component {
             errors
           }) => (
             <>
-                      <div className='app-secretary container-login'>
-          <div className='center'>
-            <header className='app-header'></header>
-            <div className='content-caja d-flex justify-content-center'>
-              <div className='caja'>
-                <Form id='formUpdateUserPass' onSubmit={handleSubmit}>
-                
-                
-                   <div className='justify-content-center d-flex containt-logo'>
-                    <div className='logo-sge'></div>
+              <div className="app-secretary container-login">
+                <div className="center">
+                  <header className="app-header"></header>
+                  <div className="content-caja d-flex justify-content-center">
+                    <div className="caja">
+                      <Form id="formUpdateUserPass" onSubmit={handleSubmit}>
+                        <div className="justify-content-center d-flex containt-logo">
+                          <div className="logo-sge"></div>
+                        </div>
+                        <Form.Label className="mb-0">
+                          <h3 className="title-login mt-2">
+                            Restablecer Contraseña
+                          </h3>
+                        </Form.Label>
+
+                        <Form.Group
+                          controlId="validationFormik01"
+                          className="mb-2"
+                        >
+                          <Form.Control
+                            type="password"
+                            name="pass1"
+                            value={values.pass1}
+                            onChange={handleChange}
+                            isInvalid={!!errors.pass1}
+                            isValid={touched.pass1 && !errors.pass1}
+                            placeholder="Contraseña"
+                          ></Form.Control>
+                          <Form.Control.Feedback type="invalid">
+                            {errors.pass1}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+
+                        <Form.Group
+                          controlId="validationFormik02"
+                          className="mb-2"
+                        >
+                          <Form.Control
+                            type="password"
+                            name="pass2"
+                            value={values.pass2}
+                            onChange={handleChange}
+                            isInvalid={!!errors.pass2}
+                            isValid={touched.pass2 && !errors.pass2}
+                            placeholder="Repetir contraseña"
+                          ></Form.Control>
+                          <Form.Control.Feedback type="invalid">
+                            {errors.pass2}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                        <Button variant="primary" type="submit">
+                          Restablecer
+                        </Button>
+                      </Form>
+                    </div>
                   </div>
-                  <Form.Label className='mb-0'>
-                    <h3 className='title-login mt-2'>Restablecer Password</h3>
-                  </Form.Label>
-                  <Form.Label>Nuevo Password:</Form.Label>
-                
-                  
-                    <Form.Group controlId='validationFormik01'>
-
-                      <Form.Control
-                      
-                        type='password'  
-                        name='pass1'
-                        value={values.pass1}
-                        onChange={handleChange}
-                        isInvalid={!!errors.pass1}
-                        isValid={touched.pass1 && !errors.pass1}>
-                      </Form.Control>
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.passs1}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-
-               
-
-                
-                 
-                    <Form.Group  controlId='validationFormik02'>
-                      <Form.Label>Repetir Password:</Form.Label>
-                      <Form.Control
-                        type='password' 
-                        name='pass2'
-                        value={values.pass2}
-                        onChange={handleChange}
-                        isInvalid={!!errors.pass2}
-                        isValid={touched.pass2 && !errors.pass2}>
-                      </Form.Control>
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.passs2}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-
-                  
-					<Link to="/">Login</Link>
-                  <br />
-                  <Button variant='primary' type='submit'>
-                    Restablecer
-                  </Button>
-                </Form>
-                          </div>
-          <div className='antorcha'></div>
-          <div className='bandera'></div>
-        </div>
-
-         </div>
-         
-          </div>
-
-
-
-
+                  <div className="footer-login p-3">
+                    <span>
+                      2019 | División de las Tecnologías de la Información y las
+                      Comunicaciones
+                    </span>
+                    <br />
+                    <span>
+                      Universidad del Cauca | clindesignunicauca@gmail.com
+                    </span>
+                    <br />
+                    <span>Version 1.0</span>
+                  </div>
+                </div>
+                <div className="antorcha"></div>
+                <div className="bandera"></div>
+              </div>
             </>
           )}
-        </Formik>   
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-
-          
+        </Formik>
       </>
     );
   }
