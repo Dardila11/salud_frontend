@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Alert, Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 import { showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
+import AlertComponent from '../../layout/alert/alert.component';
 import ForgetPassword from './forgetPassword/forgetPassword.component';
 
 import './signIn.styles.css';
@@ -182,11 +183,10 @@ class SignIn extends Component {
               <span>Version 1.0</span>
             </div>
           </div>
-          <div className='container-alert'>
-            <Alert show={true} variant={this.state.alertVariant}>
-              <p className='mb-0'>{this.state.alertMessage}</p>
-            </Alert>
-          </div>
+          <AlertComponent
+            alertVariant={this.state.alertVariant}
+            alertMessage={this.state.alertMessage}
+          ></AlertComponent>
           <div className='antorcha'></div>
           <div className='bandera'></div>
         </div>

@@ -4,7 +4,7 @@ export async function showAlert() {
   $('.alert').hide();
   window.clearTimeout(alert);
   $('.alert').show();
-  alert = window.setTimeout(function() {
+  var alert = window.setTimeout(function() {
     $('.alert').slideDown(function() {
       $('.alert').hide();
     });

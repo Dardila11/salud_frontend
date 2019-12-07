@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
-import axios from "axios";
-import { URL } from "../../../utils/URLSever";
+import React, { Component } from 'react';
+import { Button, Modal, Form } from 'react-bootstrap';
+import axios from 'axios';
+import { URL } from '../../../utils/URLSever';
 
 export default class ForgetPassword extends Component {
   constructor(props) {
@@ -9,7 +9,7 @@ export default class ForgetPassword extends Component {
 
     this.state = {
       validated: false,
-      email: ""
+      email: ''
     };
   }
 
@@ -26,7 +26,7 @@ export default class ForgetPassword extends Component {
     event.preventDefault();
     const { email } = this.state;
     axios
-      .put(URL + "/users/password/recovery/", { email })
+      .put(URL + '/users/password/recovery/', { email })
       .then(response => {
         console.log(response.data);
       })
@@ -40,24 +40,24 @@ export default class ForgetPassword extends Component {
     return (
       <>
         <Modal.Header closeButton>
-          <Modal.Title class="h3 text-gray-800 mb-0">
+          <Modal.Title class='h3 text-gray-800 mb-0'>
             Recuperar Contraseña
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form
-            id="formForgetPassword"
+            id='formForgetPassword'
             noValidate
             validated={this.state.validated}
             onSubmit={this.handleSubmit}
           >
             <Form.Row>
-              <Form.Label>Email de inscripcion</Form.Label>
+              <Form.Label>Email de inscripción</Form.Label>
               <Form.Control
                 required
-                type="email"
-                name="email"
-                placeholder="Email"
+                type='email'
+                name='email'
+                placeholder='Email'
                 defaultValue={this.state.email}
                 onChange={this.handleChange}
               />
@@ -66,13 +66,13 @@ export default class ForgetPassword extends Component {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="danger" onClick={this.handleClose}>
+          <Button variant='danger' onClick={this.handleClose}>
             Cancelar
           </Button>
           <Button
-            form="formForgetPassword"
+            form='formForgetPassword'
             onClick={this.handleCloseForgetPassword}
-            type="submit"
+            type='submit'
           >
             Enviar Email
           </Button>
