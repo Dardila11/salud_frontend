@@ -128,14 +128,14 @@ class Recovery extends Component {
             errors
           }) => (
             <>
-              <div className="app-secretary container-login">
+              <div className="app-all container-unicauca">
                 <div className="center">
                   <header className="app-header"></header>
-                  <div className="content-caja d-flex justify-content-center">
-                    <div className="caja">
+                  <div className="content-box d-flex justify-content-center">
+                    <div className="box">
                       <Form id="formUpdateUserPass" onSubmit={handleSubmit}>
                         <div className="justify-content-center d-flex containt-logo">
-                          <div className="logo-sge"></div>
+                          <div className="logo-clindesign"></div>
                         </div>
                         <Form.Label className="mb-0">
                           <h3 className="title-login mt-2">

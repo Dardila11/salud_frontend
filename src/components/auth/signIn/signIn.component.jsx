@@ -128,14 +128,13 @@ class SignIn extends Component {
             handleClose={this.handleClose}
           ></ForgetPassword>
         </Modal>
-        <div className='app-secretary container-login'>
+        <div className='container-unicauca app-all'>
           <div className='center'>
-            <header className='app-header'></header>
-            <div className='content-caja d-flex justify-content-center'>
-              <div className='caja'>
+            <div className='content-box d-flex justify-content-center'>
+              <div className='box'>
                 <Form onSubmit={this.onLogin}>
                   <div className='justify-content-center d-flex containt-logo'>
-                    <div className='logo-sge'></div>
+                    <div className='logo-clindesign'></div>
                   </div>
                   <Form.Label className='mb-0'>
                     <h3 className='title-login mt-2'>Iniciar Sesión</h3>

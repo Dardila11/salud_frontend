@@ -1,9 +1,9 @@
-.container-login {
+.container-unicauca {
   background: rgb(0,212,255);
   background: radial-gradient(circle, rgba(0,212,255,1) 0%, rgba(0,65,121,1) 35%);
 }
 
-.logo-sge {
+.logo-clindesign {
   background-image: url("../../../img/logo.svg");
   background-repeat: no-repeat;
   background-size: 100%;
@@ -28,7 +28,7 @@
   color: white;
 }
 
-.app-secretary {
+.app-all {
   position: absolute;
   display: flex;
   justify-content: center;
@@ -50,7 +50,7 @@
   z-index: 2;
 }
 
-.caja {
+.box {
   width: 368px;
   height: 355px;
   background: url("../../../img/back-login.png");
@@ -58,11 +58,11 @@
   padding: 20px 10px 20px 10px;
 }
 
-.content-caja {
+.content-box {
   width: 100%;
 }
 
-.caja > form {
+.box > form {
   padding: 0px 50px 0px 50px;
 }
 
