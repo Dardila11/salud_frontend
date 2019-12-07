@@ -17,7 +17,6 @@ class NavBar extends Component {
   }
 
   logout = () => {
-    console.log("saliendo");
     const token = JSON.parse(localStorage.getItem("token"));
     const headers = {
       "Content-Type": "application/json",

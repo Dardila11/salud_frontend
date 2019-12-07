@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Modal,Form, Button, Alert } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import './signIn.styles.css';
-import { URL } from '../../utils/URLSever';
-import ForgetPassword from "../signIn/forgetPassword/forgetPassword"
 
-/**
- * @todo
- * - Terminar todas las funcionalidades del login:
- *   recordar contraseña, olvidé constraseña
- */
+import { Alert, Button, Form, Modal } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+
+import { showAlert } from '../../utils/utils';
+import { URL } from '../../utils/URLSever';
+import ForgetPassword from './forgetPassword/forgetPassword.component';
+
+import './signIn.styles.css';
 
 /**
  * @author Dardila
- * @description este componente se encarga del ingreso a la aplicacion
- * se le pide al usuario ingresar su 'email' y 'contraseña'. y si son correctas
- * se redirecciona a la vista 'dashboard' correcta.
+ * @description Este componente se encarga del ingreso a la aplicación.
  */
 class SignIn extends Component {
   CancelToken = axios.CancelToken;
@@ -27,90 +23,74 @@ class SignIn extends Component {
     this.state = {
       email: '',
       password: '',
-      isLoggedIn: false,
-      isVisible: false,
       adminDashboard: false,
       userDashboard: false,
       alertVariant: '',
-      message: '',
-      showAlert: false,
-      showForget:false,
-      show: false
+      alertMessage: '',
+      isVisibleForgetPassword: false
     };
   }
-    handleClose = () => {
-    this.setState(
-      {
-        showForget: false
-      }
-    )
-  }
+
   /**
-   * handleChange: cambia el estado de la 'variable' en el state
-   * por el valor asignado.
+   * Cambia el estado de la variable `event.target.name`
    */
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleDismiss = () => this.setState({ showAlert: false });
-  handleForget=()=> this.setState({ showForget: true })
-  handleCloseForget = () => {
-    // mostrar mensaje usuario creado
-    alert('Revise el correo en su bandeja de entrada para recuperar su password')
-    this.handleClose();
-  };   
-
   /**
-   * onLogin: Valida que el formulario este correcto
-   * y luego realiza la solicitud de ingreso al servidor
-   * @params email, password
-   * @returns la informacion del usuario si este existe. junto con el token.
-   *  */
+   * Cierra todas las ventanas modales
+   */
+  handleClose = () => this.setState({ isVisibleForgetPassword: false });
 
-  onLogin = event => {
-    event.preventDefault();
-    if (this.validateForm()) {
-      const { email, password } = this.state;
-      axios
-        .post(
-          URL + '/users/login/',
-          { email, password },
-          { cancelToken: this.source.token }
-        )
-        .then(response => {
-          console.log(response.data);
-          this.setState({ isLoggedIn: true });
-          this.saveUserInfo(response.data);
-        })
-        .catch(error => {
-          this.setState({
-            showAlert: true,
-            alertVariant: 'danger',
-            message: JSON.parse(error.request.response).detail
-          });
-        });
-    } else {
-      this.setState({
-        isVisible: true,
-        alertVariant: 'warning',
-        message: 'Ingrese todos los datos.'
-      });
-    }
+  handleOpenForgetPassword = () => {
+    this.setState({ isVisibleForgetPassword: true });
+  };
+
+  handleCloseForgetPassword = () => {
+    this.setState({
+      isVisibleForgetPassword: false,
+      alertVariant: 'success',
+      alertMessage: 'Revisa la bandeja de entrada de tu correo.'
+    });
+    showAlert();
   };
 
   /**
-   * @param data: el cual tiene los datos del usuario. email, toke, username y los guarda
-   * en el localStorage del navegador.
-   * finaliza otorgando el role al usuario.
+   * Valida que el formulario este correcto y luego realiza la solicitud de ingreso al servidor
+   * @params `email`, `password`
+   * @returns la información del usuario si este existe, junto con el token.
+   */
+  onLogin = event => {
+    event.preventDefault();
+    const { email, password } = this.state;
+    axios
+      .post(
+        URL + '/users/login/',
+        { email, password },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ isLoggedIn: true });
+        this.saveUserInfo(response.data);
+      })
+      .catch(error => {
+        this.setState({
+          alertVariant: 'danger',
+          alertMessage: JSON.parse(error.request.response).detail
+        });
+        showAlert();
+      });
+  };
+
+  /**
+   * Guarda la información del usuario en el `localStorage` proveniente de `data`
+   * @param data
    */
   saveUserInfo = data => {
-    localStorage.setItem('email', JSON.stringify(data.user.email));
     localStorage.setItem('id', JSON.stringify(data.user.id));
+    localStorage.setItem('email', JSON.stringify(data.user.email));
     localStorage.setItem('token', JSON.stringify(data.token));
-    localStorage.setItem('user', JSON.stringify(data.user.username));
-    localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
-    localStorage.setItem('last_name', JSON.stringify(data.user.last_name));
     let role;
     role =
       data.user.is_staff === true ? (role = 'is_staff') : (role = 'is_simple');
@@ -122,13 +102,12 @@ class SignIn extends Component {
     }
   };
 
+  /**
+   * Cancela todas las solicitudes `axios` al cerrar el ciclo de vida del componente
+   */
   componentWillUnmount() {
     this.source.cancel('cancel request');
   }
-
-  validateForm = () => {
-    return this.state.email.length > 0 && this.state.password.length > 0;
-  };
 
   render() {
     if (this.state.adminDashboard) {
@@ -136,14 +115,17 @@ class SignIn extends Component {
     } else if (this.state.userDashboard) {
       return <Redirect to='/user' />;
     }
-    return (
-      <>
-              <Modal show={this.state.showForget} onHide={this.handleClose}>
-          <ForgetPassword 
-            handleCloseForget={this.handleCloseForget}
-            handleClose={this.handleClose}>
 
-          </ForgetPassword>
+    return (
+      <section>
+        <Modal
+          show={this.state.isVisibleForgetPassword}
+          onHide={this.handleClose}
+        >
+          <ForgetPassword
+            handleCloseForgetPassword={this.handleCloseForgetPassword}
+            handleClose={this.handleClose}
+          ></ForgetPassword>
         </Modal>
         <div className='app-secretary container-login'>
           <div className='center'>
@@ -159,11 +141,11 @@ class SignIn extends Component {
                   </Form.Label>
                   <Form.Control
                     className='mb-2'
-                    type='text'
+                    type='email'
                     name='email'
                     value={this.state.email}
                     onChange={this.handleChange}
-                    placeholder='Usuario'
+                    placeholder='Correo'
                     required
                   />
                   <Form.Control
@@ -175,9 +157,13 @@ class SignIn extends Component {
                     placeholder='Contraseña'
                     required
                   />
-                  <a href="#" className="link" onClick={this.handleForget}>
+                  <a
+                    href='#'
+                    className='link'
+                    onClick={this.handleOpenForgetPassword}
+                  >
                     Olvide mi contraseña
-                  </a>{" "}
+                  </a>{' '}
                   <br />
                   <Button variant='primary' type='submit'>
                     Ingresar
@@ -196,19 +182,15 @@ class SignIn extends Component {
               <span>Version 1.0</span>
             </div>
           </div>
-          <div className='no-login time'>
-            <Alert
-              variant='danger'
-              show={this.state.showAlert}
-              onClose={this.handleDismiss}
-              dismissible>
-              <p className='mb-0'>{this.state.message}</p>
+          <div className='container-alert'>
+            <Alert show={true} variant={this.state.alertVariant}>
+              <p className='mb-0'>{this.state.alertMessage}</p>
             </Alert>
           </div>
           <div className='antorcha'></div>
           <div className='bandera'></div>
         </div>
-      </>
+      </section>
     );
   }
 }
