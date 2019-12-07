@@ -365,7 +365,7 @@ class ListProjects extends Component {
             projectInfo={this.state.projectInfo}
           />
         </Modal>
-        <div className='no-login time'>
+        <div className='container-alert time'>
           <Alert
             variant='success'
             show={this.state.showMessage}

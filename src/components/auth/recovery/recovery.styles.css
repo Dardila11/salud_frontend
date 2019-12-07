@@ -90,7 +90,7 @@
   z-index: -1;
 }
 
-.no-login {
+.container-alert {
   position: fixed;
   display: flex;
   justify-content: center;

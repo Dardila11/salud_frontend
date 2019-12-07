@@ -483,7 +483,7 @@ class ListUsers extends Component {
             email={this.state.emailToEdit}
           />
         </Modal>
-        <div className='no-login time'>
+        <div className='container-alert time'>
           <Alert
             variant='success'
             show={this.state.showMessage}

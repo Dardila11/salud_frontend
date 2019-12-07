@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
 import axios from "axios";
 import { URL } from "../../../utils/URLSever";
+
 export default class ForgetPassword extends Component {
   constructor(props) {
     super(props);
@@ -12,8 +13,8 @@ export default class ForgetPassword extends Component {
     };
   }
 
-  handleCloseForget = () => {
-    this.props.handleCloseForget();
+  handleCloseForgetPassword = () => {
+    this.props.handleCloseForgetPassword();
   };
   handleClose = () => {
     this.props.handleClose();
@@ -70,7 +71,7 @@ export default class ForgetPassword extends Component {
           </Button>
           <Button
             form="formForgetPassword"
-            onClick={this.handleCloseForget}
+            onClick={this.handleCloseForgetPassword}
             type="submit"
           >
             Enviar Email
