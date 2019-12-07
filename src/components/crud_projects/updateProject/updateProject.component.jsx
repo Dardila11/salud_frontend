@@ -27,7 +27,8 @@ const schema = Yup.object({
     .max(150, 'Titulo debe tener maximo 150 caracteres')
     .required('Campo Requerido'),
   principalInvestigator: Yup.string().required('Campo Requerido'),
-  responsibleInvestigator: Yup.string().required('Campo Requerido')
+  responsibleInvestigator: Yup.string().required('Campo Requerido'),
+  projectStatus: Yup.string().required('Campo Requerido')
 });
 
 /**
@@ -75,12 +76,12 @@ class UpdateProjectFormik extends Component {
     console.log(values.firstName);
     var token = JSON.parse(localStorage.getItem('token'));
     var json = {
-      study_id: this.props.id,
+      study_id: this.props.projectInfo[0].pk,
       study: {
         study_id: values.projectId,
         title_little: values.title,
         title_long: values.title,
-        status: 1,
+        status: values.projectStatus,
         date_in_study: moment(values.startDate).format('YYYY-MM-DD'),
         date_prevout_end: null,
         date_actout_end: null,
@@ -95,17 +96,20 @@ class UpdateProjectFormik extends Component {
         manager_2: null
       }
     };
+    var myJson = JSON.stringify(json);
+    console.log(myJson);
     /**
      * headers: son necesarios para realizar la
      * solicitud al servidor. se le envia el JWT y
      * el token como autorización
      */
+
     const headers = {
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + token
     };
     axios
-      .put(URL + '/users/', json, {
+      .put(URL + '/studies/', json, {
         headers: headers
       })
       .then(response => {
@@ -126,6 +130,7 @@ class UpdateProjectFormik extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
+            projectStatus: this.props.projectInfo[0].fields.status,
             projectId: this.props.projectInfo[0].fields.study_id,
             title: this.props.projectInfo[0].fields.title_little,
             /*  GMT-5 zona horaria de Colombia */
@@ -147,7 +152,7 @@ class UpdateProjectFormik extends Component {
               JSON.parse(localStorage.getItem('last_name'))
           }}
           validationSchema={schema}
-          onSubmit={this.updateUserInfo}>
+          onSubmit={this.updateProjectInfo}>
           {({
             handleSubmit,
             handleChange,
@@ -165,7 +170,7 @@ class UpdateProjectFormik extends Component {
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <Form id='formCreateProject' onSubmit={handleSubmit}>
+                <Form id='formUpdateProject' onSubmit={handleSubmit}>
                   <Form.Row>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Id del proyecto</Form.Label>
@@ -315,6 +320,26 @@ class UpdateProjectFormik extends Component {
                         {errors.myCenter}
                       </Form.Control.Feedback>
                     </Form.Group>
+                    <Form.Group as={Col} md='4' controlId='inputId'>
+                      <Form.Label>Estado</Form.Label>
+                      <Form.Control
+                        as='select'
+                        name='projectStatus'
+                        value={values.projectStatus}
+                        onChange={handleChange}
+                        isInvalid={!!errors.projectStatus}
+                        isValid={
+                          touched.projectStatus && !errors.projectStatus
+                        }>
+                        <option value={-1}>------</option>
+                        <option value='1'>Registro</option>
+                        <option value='2'>Diseño</option>
+                        <option value='3'>Finalizado</option>
+                      </Form.Control>
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.projectStatus}
+                      </Form.Control.Feedback>
+                    </Form.Group>
                   </Form.Row>
                 </Form>
               </Modal.Body>
@@ -322,8 +347,8 @@ class UpdateProjectFormik extends Component {
                 <Button variant='secondary' onClick={this.handleClose}>
                   Cancelar
                 </Button>
-                <Button form='formCreateProject' type='submit'>
-                  Crear Proyecto
+                <Button form='formUpdateProject' type='submit'>
+                  Actualizar Proyecto
                 </Button>
               </Modal.Footer>
             </>
