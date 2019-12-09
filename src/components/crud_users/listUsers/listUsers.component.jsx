@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { Button, Modal } from 'react-bootstrap';
+import Capitalize from 'react-capitalize';
 import ReactTable from 'react-table';
 
 import { getHeader, showAlert } from '../../utils/utils';
@@ -45,14 +46,16 @@ class ListUsers extends Component {
           accessor: 'first_name',
           width: 150,
           maxWidth: 200,
-          minWidth: 100
+          minWidth: 100,
+          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
         },
         {
           Header: 'Apellidos',
           accessor: 'last_name',
           width: 150,
           maxWidth: 200,
-          minWidth: 100
+          minWidth: 100,
+          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
         },
         {
           Header: 'Correo',
