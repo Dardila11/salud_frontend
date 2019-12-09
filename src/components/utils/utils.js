@@ -5,7 +5,7 @@ export async function showAlert(alertId) {
   window.clearTimeout(alert);
   $('#' + alertId).show();
   var alert = window.setTimeout(function() {
-    console.log("haciendo");
+    console.log('haciendo');
     $('#' + alertId).slideDown(function() {
       $('#' + alertId).hide();
     });
@@ -21,4 +21,4 @@ export function getHeader() {
   return headers;
 }
 
-export function getCapitalizable(string) {}
+export function getSerialize(e) {}

@@ -118,12 +118,19 @@
   cursor: pointer;
 }
 
-/* .create {
+.success {
   padding: 15px;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url('../../../img/create.png');
-} */
+  background-image: url('../../../img/comprobado.png');
+}
+
+.create {
+  padding: 15px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../../../img/mas.png');
+}
 
 .view {
   padding: 15px !important;
@@ -147,6 +154,13 @@
   background-position: center;
   background-repeat: no-repeat;
   background-image: url('../../../img/upload.png');
+}
+
+.remove {
+  padding: 15px !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../../../img/borrar.png');
 }
 
 .change {

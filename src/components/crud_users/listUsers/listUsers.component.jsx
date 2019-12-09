@@ -77,16 +77,20 @@ class ListUsers extends Component {
           minWidth: 100
         },
         {
-          id: 'is_active',
           Header: 'Activo',
-          accessor: d => {
-            return d.is_active ? 'Si' : 'No';
-          },
+          accessor: 'is_active',
           sortable: true,
           filterable: false,
           width: 50,
           maxWidth: 50,
-          minWidth: 50
+          minWidth: 50,
+          Cell: props => {
+            return props.value ? (
+              <div className='success'></div>
+            ) : (
+              <div className='remove'></div>
+            );
+          }
         },
         {
           Header: 'Acciones',
@@ -139,10 +143,10 @@ class ListUsers extends Component {
       alertMessage: 'Estado del usuario modificado.'
     });
     this.handleClose();
-    showAlert();
+    showAlert(this.state.alertId);
   };
 
-  handleCloseUpdate = () => {
+  handleCloseUpdate = () => {    
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Usuario actualizado.'
@@ -158,7 +162,7 @@ class ListUsers extends Component {
   /**
    * @function handleClose se encarga de cerrar todas los modales
    */
-  handleClose = () => {
+  handleClose = () => {    
     const { isVisibleCreate, isVisibleDelete, isVisibleUpdate } = this.state;
     if (
       isVisibleCreate === true ||

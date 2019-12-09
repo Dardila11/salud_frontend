@@ -1,31 +1,30 @@
 import React, { Component } from 'react';
-import { Formik } from 'formik';
 import axios from 'axios';
-import { URL } from '../../utils/URLSever';
-import { Button, Modal, Form, Col } from 'react-bootstrap';
+
+import { Col, Button, Form, Modal } from 'react-bootstrap';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-/**
- * @var schema Crear un objecto Yup el cual se encarga de todas las
- * validaciones de los campos del formulario
- */
+import { getHeader, showAlert } from '../../utils/utils';
+import { URL } from '../../utils/URLSever';
+import AlertComponent from '../../layout/alert/alert.component';
+
 const schema = Yup.object({
   firstName: Yup.string()
     .min(3, 'Nombre debe tener minimo 3 caracteres')
-    .required('Campo Requerido'),
+    .required('Campo requerido'),
   lastName: Yup.string()
     .min(3, 'Apellido debe tener minimo 3 caracteres')
-    .required('Campo Requerido'),
+    .required('Campo requerido'),
   email: Yup.string()
     .email('Email Invalido')
-    .required('Campo Requerido'),
+    .required('Campo requerido'),
   confEmail: Yup.string()
-    .email('Email invalido')
-    .oneOf([Yup.ref('email'), null], 'Emails no coinciden')
-    .required('Campo Requerido'),
-  myCenter: Yup.string().required('Campo Requerido'),
-  myDepartment: Yup.string().required('Campo Requerido'),
-  type: Yup.string().required('Campo Requerido')
+    .email('Correo invalido')
+    .oneOf([Yup.ref('email'), null], 'Correo no coincide')
+    .required('Campo requerido'),
+  myCenter: Yup.number().positive('Campo requerido'),
+  myDepartment: Yup.number().positive('Campo requerido')
 });
 
 /**
@@ -36,81 +35,62 @@ const schema = Yup.object({
 class UpdateUserFormik extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      alertMessage: '',
+      alertVariant: '',
+      alertId: 'alert-create-update'
+    };
   }
+
   handleClose = () => {
     this.props.handleClose();
   };
+
   handleCloseUpdate = () => {
     this.props.handleCloseUpdate();
   };
 
-  componentDidMount() {
-    console.log(this.props.userPermissions[0].user_permissions__codename);
-  }
-
   /**
    * @function updateUserInfo
-   * @description Se encarga de guardar los datos modificados en un json
-   * y enviar una solicitud de actualizacion al servidor.
+   * @description Se encarga de guardar los datos modificados del usuario
    */
   updateUserInfo = async values => {
-    console.log(values.firstName);
-    var token = JSON.parse(localStorage.getItem('token'));
-    var json = {
+    const headers = getHeader();
+    const data = {
       email_instance: this.props.email,
       user: {
-        type: values.type,
-        user_id: values.userId,
         first_name: values.firstName,
         last_name: values.lastName,
         email: values.email,
         my_center: values.myCenter,
         my_department: values.myDepartment
       },
-
-      /**
-       * @todo agregar codigo para que se adicione
-       * los permisos que son
-       * Ya estamos enviando los permisos del usuario.
-       * Falta agregar los checkboxes y seleccionarlos si tiene los permisos
-       * luego actualizar los permisos si son cambiados.
-       */
       permissions_add: [{ name: 'add_user' }, { name: 'change_user' }],
       permissions_remove: []
     };
-    /**
-     * headers: son necesarios para realizar la
-     * solicitud al servidor. se le envia el JWT y
-     * el token como autorización
-     */
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
-    };
     axios
-      .put(URL + '/users/', json, {
-        headers: headers
-      })
-      .then(response => {
-        console.log(response.status);
+      .put(URL + '/users/', data, { headers: headers })
+      .then(() => {
         this.handleCloseUpdate();
       })
       .catch(error => {
-        console.log('hubo un error!');
-        console.log(error.status);
+        console.log(JSON.parse(error.request.response));
+        this.setState({
+          alertVariant: 'danger',
+          alertMessage: JSON.parse(error.request.response).detail
+        });
+        showAlert(this.state.alertId);
       });
   };
+
   render() {
     return (
-      <>
+      <section>
         <Formik
           noValidate
-          enableReinitialize
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            type: this.props.userInfo[0].is_staff === true ? '1' : '2',
             firstName: this.props.userInfo[0].first_name,
             lastName: this.props.userInfo[0].last_name,
             email: this.props.email,
@@ -119,45 +99,24 @@ class UpdateUserFormik extends Component {
             myDepartment: this.props.userInfo[0].my_department
           }}
           validationSchema={schema}
-          onSubmit={this.updateUserInfo}>
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors
-          }) => (
+          onSubmit={this.updateUserInfo}
+        >
+          {({ handleSubmit, handleChange, values, touched, errors }) => (
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Actualizar Usuario
+                  Actualizar usuario
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <Form id='formUpdate' onSubmit={handleSubmit}>
+                <Form id='formUpdateUser' onSubmit={handleSubmit}>
+                  <p>
+                    <i className='required'>
+                      * Todos los campos son obligatorios
+                    </i>
+                  </p>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='validationFormik01'>
-                      <Form.Label>Tipo de Usuario</Form.Label>
-                      <Form.Control
-                        as='select'
-                        name='type'
-                        value={values.type}
-                        onChange={handleChange}
-                        isInvalid={!!errors.type}
-                        isValid={touched.type && !errors.type}>
-                        <option value={-1}>------</option>
-                        <option value='1'>Administrador</option>
-                        <option value='2'>Usuario Simple</option>
-                      </Form.Control>
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.type}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Form.Row>
-                  <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='validationCustom01'>
+                    <Form.Group as={Col} md='6' controlId='validationCustom01'>
                       <Form.Label>Nombres</Form.Label>
                       <Form.Control
                         type='text'
@@ -172,7 +131,7 @@ class UpdateUserFormik extends Component {
                         {errors.firstName}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='validationCustom02'>
+                    <Form.Group as={Col} md='6' controlId='validationCustom02'>
                       <Form.Label>Apellidos</Form.Label>
                       <Form.Control
                         type='text'
@@ -191,8 +150,9 @@ class UpdateUserFormik extends Component {
                   <Form.Row>
                     <Form.Group
                       as={Col}
-                      md='4'
-                      controlId='validationCustomUsername'>
+                      md='6'
+                      controlId='validationCustomUsername'
+                    >
                       <Form.Label>Correo</Form.Label>
                       <Form.Control
                         name='email'
@@ -209,9 +169,10 @@ class UpdateUserFormik extends Component {
                     </Form.Group>
                     <Form.Group
                       as={Col}
-                      md='4'
-                      controlId='validationCustomUsername'>
-                      <Form.Label>Confirmar Correo</Form.Label>
+                      md='6'
+                      controlId='validationCustomUsername'
+                    >
+                      <Form.Label>Confirmar correo</Form.Label>
                       <Form.Control
                         name='confEmail'
                         type='email'
@@ -236,7 +197,8 @@ class UpdateUserFormik extends Component {
                         onChange={handleChange}
                         required
                         isInvalid={!!errors.myCenter}
-                        isValid={touched.myCenter && !errors.myCenter}>
+                        isValid={touched.myCenter && !errors.myCenter}
+                      >
                         <option value={-1}>------</option>
                         {this.props.infoCenters.map((option, index) => {
                           return (
@@ -259,7 +221,8 @@ class UpdateUserFormik extends Component {
                         value={values.myDepartment}
                         onChange={handleChange}
                         isInvalid={!!errors.myDepartment}
-                        isValid={touched.myDepartment && !errors.myDepartment}>
+                        isValid={touched.myDepartment && !errors.myDepartment}
+                      >
                         <option value={-1}>------</option>
                         {this.props.infoDepartaments.map((option, index) => {
                           return (
@@ -269,7 +232,6 @@ class UpdateUserFormik extends Component {
                           );
                         })}
                       </Form.Control>
-
                       <Form.Control.Feedback type='invalid'>
                         {errors.myDepartment}
                       </Form.Control.Feedback>
@@ -281,14 +243,19 @@ class UpdateUserFormik extends Component {
                 <Button variant='secondary' onClick={this.handleClose}>
                   Cancelar
                 </Button>
-                <Button form='formUpdate' type='submit'>
-                  guardar Cambios
+                <Button form='formUpdateUser' type='submit'>
+                  Guardar cambios
                 </Button>
               </Modal.Footer>
             </>
           )}
         </Formik>
-      </>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        ></AlertComponent>
+      </section>
     );
   }
 }
