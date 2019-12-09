@@ -1,40 +1,33 @@
 import React, { Component } from 'react';
-import { Formik } from 'formik';
 import axios from 'axios';
+
+import { Button, Col, Form, Modal } from 'react-bootstrap';
+import { Formik } from 'formik';
+import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
-import { Button, Modal, Form, Col ,Alert} from 'react-bootstrap';
+import AlertComponent from '../../layout/alert/alert.component';
 import * as Yup from 'yup';
 
-/**
- * @todo - Agregar el asterisk de 'obligaotrio para cada label
- * - mostrar permisos de creacion de centros y usuarios si
- * solo si se selecciona administrador como el tipo
- */
-
-/**
- * @var schema Crear un objecto Yup el cual se encarga de todas las
- * validaciones de los campos del formulario
- */
 const schema = Yup.object({
+  type: Yup.number().positive('Campo requerido'),
   userId: Yup.string()
     .min(4, 'Id debe tener minimo 4 caracteres')
-    .required('Campo Requerido'),
+    .required('Campo requerido'),
   firstName: Yup.string()
     .min(3, 'Nombre debe tener minimo 3 caracteres')
-    .required('Campo Requerido'),
+    .required('Campo requerido'),
   lastName: Yup.string()
     .min(3, 'Apellido debe tener minimo 3 caracteres')
-    .required('Campo Requerido'),
+    .required('Campo requerido'),
   email: Yup.string()
-    .email('Email Invalido')
-    .required('Campo Requerido'),
+    .email('Correo invalido')
+    .required('Campo requerido'),
   confEmail: Yup.string()
-    .email('Email invalido')
-    .oneOf([Yup.ref('email'), null], 'Emails no coinciden')
-    .required('Campo Requerido'),
-  myCenter: Yup.string().required('Campo Requerido'),
-  myDepartment: Yup.string().required('Campo Requerido'),
-  type: Yup.string().required('Campo Requerido ')
+    .email('Correo invalido')
+    .oneOf([Yup.ref('email'), null], 'Correo no coincide')
+    .required('Campo requerido'),
+  myCenter: Yup.number().positive('Campo requerido'),
+  myDepartment: Yup.number().positive('Campo requerido')
 });
 
 /**
@@ -47,23 +40,21 @@ class CreateUserFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visibility: false,
-      alertVariant: "",
-      message: "",
-      showForget:false,
-      show: false
+      isAdmin: false,
+      alertMessage: '',
+      alertVariant: '',
+      alertId: 'alert-create-user'
     };
   }
 
   /**
    * @function saveNewUserInfo
    * @description Se encarga de cargar los datos del nuevo usuario
-   * en un json y enviar una solicitud de creacion al servidor
+   * en un data y enviar una solicitud de creacion al servidor
    */
   saveNewUserInfo = async values => {
-    var token = JSON.parse(localStorage.getItem('token'));
-    console.log('el token es ' + token);
-    var json = {
+    const headers = getHeader();
+    var data = {
       user: {
         type: values.type,
         user_id: values.userId,
@@ -76,43 +67,39 @@ class CreateUserFormik extends Component {
       permissions: []
     };
     if (values.createCenters === true) {
-      json.permissions.push(
+      data.permissions.push(
         { name: 'add_center' },
         { name: 'change_center' },
         { name: 'view_center' }
       );
     }
     if (values.createUsers === true) {
-      json.permissions.push(
+      data.permissions.push(
         { name: 'add_user' },
         { name: 'change_user' },
         { name: 'view_user' }
       );
     }
-    var myJson = JSON.stringify(json);
-    console.log(myJson);
-    /**
-     * headers: son necesarios para realizar la
-     * solicitud al servidor. se le envia el JWT y
-     * el token como autorización
-     */
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
-    };
-
     axios
-      .post(URL + '/users/', json, {
+      .post(URL + '/users/', data, {
         headers: headers
       })
-      .then(response => {
-        console.log(response.status);
-        alert(response.data)
-        //this.handleCloseCreate();
+      .then(() => {
+        this.handleCloseCreate();
       })
-        .catch(error => {
-          alert(error.response.data);
+      .catch(error => {
+        this.setState({
+          alertVariant: 'danger',
+          alertMessage: JSON.parse(error.request.response).detail
         });
+        showAlert(this.state.alertId);
+      });
+  };
+
+  handleChange = event => {
+    this.setState({
+      isAdmin: parseInt(event.target.value) === 1 ? true : false
+    });
   };
 
   handleClose = () => {
@@ -122,37 +109,31 @@ class CreateUserFormik extends Component {
   handleCloseCreate = () => {
     this.props.handleCloseCreate();
   };
+
   render() {
     return (
-      <>
+      <section>
         <Formik
           noValidate
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            type: '',
+            type: -1,
             userId: '',
             firstName: '',
             lastName: '',
             email: ''.toLowerCase(),
             confEmail: ''.toLowerCase(),
-            myCenter: '',
-            myDepartment: '',
+            myCenter: -1,
+            myDepartment: -1,
             createCenters: false,
             createUsers: false,
             createProjects: false
           }}
           validationSchema={schema}
-          onSubmit={this.saveNewUserInfo}>
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors
-          }) => (
+          onSubmit={this.saveNewUserInfo}
+        >
+          {({ handleSubmit, handleChange, values, touched, errors }) => (
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
@@ -160,26 +141,35 @@ class CreateUserFormik extends Component {
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                <p>
+                  <i className='required'>
+                    * Todos los campos son obligatorios
+                  </i>
+                </p>
                 <Form id='formCreateUser' onSubmit={handleSubmit}>
                   <Form.Row>
                     <Form.Group as={Col} md='5' controlId='validationFormik01'>
-                      <Form.Label>Tipo de Usuario</Form.Label>
+                      <Form.Label>Tipo de usuario</Form.Label>
                       <Form.Control
                         as='select'
                         name='type'
                         value={values.type}
-                        onChange={handleChange}
+                        onChange={e => {
+                          handleChange(e);
+                          this.handleChange(e);
+                        }}
                         isInvalid={!!errors.type}
-                        isValid={touched.type && !errors.type}>
-                        <option value={-1}>------</option>
-                        <option value='1'>Administrador</option>
-                        <option value='2'>Usuario Simple</option>
+                        isValid={touched.type && !errors.type}
+                      >
+                        <option value={-1}>---</option>
+                        <option value={1}>Administrador</option>
+                        <option value={2}>Usuario simple</option>
                       </Form.Control>
                       <Form.Control.Feedback type='invalid'>
                         {errors.type}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='5' controlId='validationCustom01'>
+                    <Form.Group as={Col} md='7' controlId='validationCustom01'>
                       <Form.Label>Identificación</Form.Label>
                       <Form.Control
                         type='text'
@@ -196,7 +186,7 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='5' controlId='validationCustom01'>
+                    <Form.Group as={Col} md='6' controlId='validationCustom01'>
                       <Form.Label>Nombres</Form.Label>
                       <Form.Control
                         type='text'
@@ -211,7 +201,7 @@ class CreateUserFormik extends Component {
                         {errors.firstName}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='5' controlId='validationCustom02'>
+                    <Form.Group as={Col} md='6' controlId='validationCustom02'>
                       <Form.Label>Apellidos</Form.Label>
                       <Form.Control
                         type='text'
@@ -230,13 +220,14 @@ class CreateUserFormik extends Component {
                   <Form.Row>
                     <Form.Group
                       as={Col}
-                      md='5'
-                      controlId='validationCustomUsername'>
+                      md='6'
+                      controlId='validationCustomUsername'
+                    >
                       <Form.Label>Correo</Form.Label>
                       <Form.Control
                         name='email'
                         type='email'
-                        placeholder='email'
+                        placeholder='Correo'
                         value={values.email}
                         onChange={handleChange}
                         isValid={touched.email && !errors.email}
@@ -248,13 +239,14 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                     <Form.Group
                       as={Col}
-                      md='5'
-                      controlId='validationCustomUsername'>
-                      <Form.Label>Confirmar Correo</Form.Label>
+                      md='6'
+                      controlId='validationCustomUsername'
+                    >
+                      <Form.Label>Confirmar correo</Form.Label>
                       <Form.Control
                         name='confEmail'
                         type='email'
-                        placeholder='email'
+                        placeholder='Confirmar correo'
                         value={values.confEmail}
                         onChange={handleChange}
                         isValid={touched.confEmail && !errors.confEmail}
@@ -275,8 +267,9 @@ class CreateUserFormik extends Component {
                         onChange={handleChange}
                         required
                         isInvalid={!!errors.myCenter}
-                        isValid={touched.myCenter && !errors.myCenter}>
-                        <option value={-1}>------</option>
+                        isValid={touched.myCenter && !errors.myCenter}
+                      >
+                        <option value={-1}>---</option>
                         {this.props.infoCenters.map((option, index) => {
                           return (
                             <option key={index} value={option.myPk}>
@@ -298,8 +291,9 @@ class CreateUserFormik extends Component {
                         value={values.myDepartment}
                         onChange={handleChange}
                         isInvalid={!!errors.myDepartment}
-                        isValid={touched.myDepartment && !errors.myDepartment}>
-                        <option value={-1}>------</option>
+                        isValid={touched.myDepartment && !errors.myDepartment}
+                      >
+                        <option value={-1}>---</option>
                         {this.props.infoDepartaments.map((option, index) => {
                           return (
                             <option key={index} value={option.myPk}>
@@ -314,7 +308,7 @@ class CreateUserFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
-                  <Form.Row>
+                  <Form.Row className={this.state.isAdmin ? '' : 'hidden'}>
                     <Form.Group controlId='formBasicCheckbox'>
                       <Form.Label>Permisos de creación para: </Form.Label>
                       <Form.Check
@@ -353,13 +347,18 @@ class CreateUserFormik extends Component {
                   Cancelar
                 </Button>
                 <Button form='formCreateUser' type='submit'>
-                  Crear Usuario
+                  Crear usuario
                 </Button>
               </Modal.Footer>
             </>
           )}
         </Formik>
-      </>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        ></AlertComponent>
+      </section>
     );
   }
 }
