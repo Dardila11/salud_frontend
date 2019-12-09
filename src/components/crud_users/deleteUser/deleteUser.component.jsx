@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { URL } from '../../utils/URLSever';
 import axios from 'axios';
+import { getHeader } from '../../utils/utils';
 
 /**
  * @author Dardila
@@ -22,26 +23,19 @@ class DeleteUser extends Component {
   };
 
   handleDelete = () => {
-    const token = JSON.parse(localStorage.getItem('token'));
-    var json = {
-      email_instance: this.state.emailToDelete,
-      is_active: 0
-    };
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
+    const headers = getHeader();
+    const data = {
+      email_instance: this.state.emailToDelete
     };
     axios
-      .put(URL + '/users/active/', json, {
-        headers: headers
-      })
+      .delete(URL + '/users/', { headers: headers, data: data })
       .then(response => {
         console.log(response.data);
         this.handleCloseDelete();
       })
       .catch(error => {
         console.log('hubo un error');
-        console.log(error.status);
+        console.log(error.response);
       });
   };
 

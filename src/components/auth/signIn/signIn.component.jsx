@@ -8,6 +8,7 @@ import { showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 import ForgetPassword from './forgetPassword/forgetPassword.component';
+import FooterLogin from '../../layout/footer-login/footer-login.component';
 
 import './signIn.styles.css';
 
@@ -28,6 +29,7 @@ class SignIn extends Component {
       userDashboard: false,
       alertVariant: '',
       alertMessage: '',
+      alertId: 'alert-singIn',
       isVisibleForgetPassword: false
     };
   }
@@ -72,15 +74,15 @@ class SignIn extends Component {
         { cancelToken: this.source.token }
       )
       .then(response => {
-        this.setState({ isLoggedIn: true });
         this.saveUserInfo(response.data);
+        this.setState({ isLoggedIn: true });
       })
       .catch(error => {
         this.setState({
           alertVariant: 'danger',
           alertMessage: JSON.parse(error.request.response).detail
         });
-        showAlert();
+        showAlert(this.state.alertId);
       });
   };
 
@@ -116,7 +118,6 @@ class SignIn extends Component {
     } else if (this.state.userDashboard) {
       return <Redirect to='/user' />;
     }
-
     return (
       <section>
         <Modal
@@ -128,14 +129,13 @@ class SignIn extends Component {
             handleClose={this.handleClose}
           ></ForgetPassword>
         </Modal>
-        <div className='app-secretary container-login'>
+        <div className='app-all container-unicauca'>
           <div className='center'>
-            <header className='app-header'></header>
-            <div className='content-caja d-flex justify-content-center'>
-              <div className='caja'>
+            <div className='content-box d-flex justify-content-center'>
+              <div className='box'>
                 <Form onSubmit={this.onLogin}>
                   <div className='justify-content-center d-flex containt-logo'>
-                    <div className='logo-sge'></div>
+                    <div className='logo-clindesign'></div>
                   </div>
                   <Form.Label className='mb-0'>
                     <h3 className='title-login mt-2'>Iniciar Sesión</h3>
@@ -158,13 +158,13 @@ class SignIn extends Component {
                     placeholder='Contraseña'
                     required
                   />
-                  <a
-                    href='#'
-                    className='link'
+                  <button
+                    type='button'
+                    className='button-alert'
                     onClick={this.handleOpenForgetPassword}
                   >
                     Olvide mi contraseña
-                  </a>{' '}
+                  </button>{' '}
                   <br />
                   <Button variant='primary' type='submit'>
                     Ingresar
@@ -172,18 +172,10 @@ class SignIn extends Component {
                 </Form>
               </div>
             </div>
-            <div className='footer-login p-3'>
-              <span>
-                2019 | División de las Tecnologías de la Información y las
-                Comunicaciones
-              </span>
-              <br />
-              <span>Universidad del Cauca | clindesignunicauca@gmail.com</span>
-              <br />
-              <span>Version 1.0</span>
-            </div>
+            <FooterLogin></FooterLogin>
           </div>
           <AlertComponent
+            alertId={this.state.alertId}
             alertVariant={this.state.alertVariant}
             alertMessage={this.state.alertMessage}
           ></AlertComponent>

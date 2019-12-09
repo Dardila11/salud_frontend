@@ -1,209 +1,156 @@
-import { Formik } from "formik";
-import React, { Component } from "react";
-import axios from "axios";
-import { Form, Button, Alert, Col } from "react-bootstrap";
-import { Redirect } from "react-router-dom";
-import "./recovery.styles.css";
-import { URL } from "../../utils/URLSever";
-import * as Yup from "yup";
+import React, { Component } from 'react';
+import axios from 'axios';
 
-/**
- * @todo
- * - Terminar todas las funcionalidades del login:
- *   recordar contraseña, olvidé constraseña
- */
+import { Form, Button } from 'react-bootstrap';
+import { Formik } from 'formik';
+import { Redirect } from 'react-router-dom';
+import * as Yup from 'yup';
+
+import { showAlert } from '../../utils/utils';
+import { URL } from '../../utils/URLSever';
+import AlertComponent from '../../layout/alert/alert.component';
+import FooterLogin from '../../layout/footer-login/footer-login.component';
+
+const schema = Yup.object({
+  pass1: Yup.string().min(6, 'Contraseña debe tener minimo 6 caracteres'),
+  pass2: Yup.string().oneOf([Yup.ref('pass1'), null], 'Contraseña no coincide')
+});
 
 /**
  * @author Dardila
- * @description este componente se encarga del ingreso a la aplicacion
- * se le pide al usuario ingresar su 'email' y 'contraseña'. y si son correctas
- * se redirecciona a la vista 'dashboard' correcta.
+ * @description Este componente se encarga de cambiar la contraseña.
  */
-
-/**
- * @var schema Crear un objecto Yup el cual se encarga de todas las
- * validaciones de los campos del formulario
- */
-const schema = Yup.object({
-  pass1: Yup.string()
-    .min(6, "Contraseña debe tener minimo 6 caracteres")
-    .required("Campo Requerido"),
-  pass2: Yup.string()
-    .oneOf([Yup.ref("pass1"), null], "Contraseña no coinciden")
-    .required("Campo Requerido")
-});
-
 class Recovery extends Component {
+  CancelToken = axios.CancelToken;
+  source = this.CancelToken.source();
+
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      password: "",
-      isLoggedIn: false,
-      isVisible: false,
-      adminDashboard: false,
-      userDashboard: false,
-      alertVariant: "",
-      message: "",
-      showAlert: false,
-      isSuccessfull: false
+      isSuccess: false,
+      alertVariant: '',
+      alertMessage: ''
     };
   }
-  /**
-   * handleChange: cambia el estado de la 'variable' en el state
-   * por el valor asignado.
-   */
+
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
-  handleDismiss = () => this.setState({ showAlert: false });
-  handleSubmit = () => {};
 
   /**
-   * onLogin: Valida que el formulario este correcto
-   * y luego realiza la solicitud de ingreso al servidor
-   * @params email, password
+   * Valida que el formulario este correcto y luego realiza la solicitud de ingreso al servidor
+   * @params `token`, `password`
    * @returns la informacion del usuario si este existe. junto con el token.
    *  */
-  saveNewUserPass = async values => {
+  savePassword = async values => {
     var token = this.props.match.params.tk;
-    console.log("el token es " + token);
-    var json = {
-      password: values.pass1
-    };
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT " + token
-    };
     axios
-      .post(URL + "/users/password/" + token + "/", json, {
+      .post(URL + '/users/password/' + token + '/', {
         password: values.pass1
       })
       .then(response => {
-        alert("Contraseña restablecida con exito");
-        this.setState({ isSuccessfull: true });
+        alert(response.data.detail);
+        this.setState({ isSuccess: true });
       })
       .catch(error => {
-        alert(error.response.data);
+        this.setState({
+          alertVariant: 'danger',
+          alertMessage: JSON.parse(error.request.response).detail
+        });
+        showAlert();
       });
   };
 
-  componentDidMount() {
-    const CancelToken = axios.CancelToken;
-    this.source = CancelToken.source();
-  }
-
   componentWillUnmount() {
-    this.source.cancel("cancel request");
+    this.source.cancel('cancel request');
   }
-
-  validateForm = () => {
-    return this.state.email.length > 0 && this.state.password.length > 0;
-  };
 
   render() {
-    if (this.state.isSuccessfull) {
-      return <Redirect to="/" />;
+    if (this.state.isSuccess) {
+      return <Redirect to='/' />;
     }
     return (
-      <>
+      <section>
         <Formik
           noValidate
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            pass1: "",
-            pass2: ""
+            pass1: '',
+            pass2: ''
           }}
           validationSchema={schema}
-          onSubmit={this.saveNewUserPass}
+          onSubmit={this.savePassword}
         >
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors
-          }) => (
-            <>
-              <div className="app-secretary container-login">
-                <div className="center">
-                  <header className="app-header"></header>
-                  <div className="content-caja d-flex justify-content-center">
-                    <div className="caja">
-                      <Form id="formUpdateUserPass" onSubmit={handleSubmit}>
-                        <div className="justify-content-center d-flex containt-logo">
-                          <div className="logo-sge"></div>
-                        </div>
-                        <Form.Label className="mb-0">
-                          <h3 className="title-login mt-2">
-                            Restablecer Contraseña
-                          </h3>
-                        </Form.Label>
-
-                        <Form.Group
-                          controlId="validationFormik01"
-                          className="mb-2"
-                        >
-                          <Form.Control
-                            type="password"
-                            name="pass1"
-                            value={values.pass1}
-                            onChange={handleChange}
-                            isInvalid={!!errors.pass1}
-                            isValid={touched.pass1 && !errors.pass1}
-                            placeholder="Contraseña"
-                          ></Form.Control>
-                          <Form.Control.Feedback type="invalid">
-                            {errors.pass1}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-
-                        <Form.Group
-                          controlId="validationFormik02"
-                          className="mb-2"
-                        >
-                          <Form.Control
-                            type="password"
-                            name="pass2"
-                            value={values.pass2}
-                            onChange={handleChange}
-                            isInvalid={!!errors.pass2}
-                            isValid={touched.pass2 && !errors.pass2}
-                            placeholder="Repetir contraseña"
-                          ></Form.Control>
-                          <Form.Control.Feedback type="invalid">
-                            {errors.pass2}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                        <Button variant="primary" type="submit">
-                          Restablecer
-                        </Button>
-                      </Form>
-                    </div>
-                  </div>
-                  <div className="footer-login p-3">
-                    <span>
-                      2019 | División de las Tecnologías de la Información y las
-                      Comunicaciones
-                    </span>
-                    <br />
-                    <span>
-                      Universidad del Cauca | clindesignunicauca@gmail.com
-                    </span>
-                    <br />
-                    <span>Version 1.0</span>
+          {({ handleSubmit, handleChange, values, touched, errors }) => (
+            <div className='app-all container-unicauca'>
+              <div className='center'>
+                <header className='app-header'></header>
+                <div className='content-box d-flex justify-content-center'>
+                  <div className='box'>
+                    <Form id='formUpdateUserPass' onSubmit={handleSubmit}>
+                      <div className='justify-content-center d-flex containt-logo'>
+                        <div className='logo-clindesign'></div>
+                      </div>
+                      <Form.Label className='mb-0'>
+                        <h3 className='title-login mt-2'>
+                          Restablecer Contraseña
+                        </h3>
+                      </Form.Label>
+                      <Form.Group
+                        controlId='validationFormik01'
+                        className='mb-2'
+                      >
+                        <Form.Control
+                          type='password'
+                          name='pass1'
+                          value={values.pass1}
+                          onChange={handleChange}
+                          isInvalid={!!errors.pass1}
+                          isValid={touched.pass1 && !errors.pass1}
+                          placeholder='Contraseña'
+                          required
+                        ></Form.Control>
+                        <Form.Control.Feedback type='invalid'>
+                          {errors.pass1}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                      <Form.Group
+                        controlId='validationFormik02'
+                        className='mb-2'
+                      >
+                        <Form.Control
+                          type='password'
+                          name='pass2'
+                          value={values.pass2}
+                          onChange={handleChange}
+                          isInvalid={!!errors.pass2}
+                          isValid={touched.pass2 && !errors.pass2}
+                          placeholder='Repetir contraseña'
+                          required
+                        ></Form.Control>
+                        <Form.Control.Feedback type='invalid'>
+                          {errors.pass2}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                      <Button variant='primary' type='submit'>
+                        Restablecer
+                      </Button>
+                    </Form>
                   </div>
                 </div>
-                <div className="antorcha"></div>
-                <div className="bandera"></div>
+                <FooterLogin></FooterLogin>
               </div>
-            </>
+              <AlertComponent
+                alertVariant={this.state.alertVariant}
+                alertMessage={this.state.alertMessage}
+              ></AlertComponent>
+              <div className='antorcha'></div>
+              <div className='bandera'></div>
+            </div>
           )}
         </Formik>
-      </>
+      </section>
     );
   }
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
+
+import { Button, Form, Modal } from 'react-bootstrap';
 import { URL } from '../../../utils/URLSever';
 
 export default class ForgetPassword extends Component {
@@ -13,29 +14,31 @@ export default class ForgetPassword extends Component {
     };
   }
 
-  handleCloseForgetPassword = () => {
-    this.props.handleCloseForgetPassword();
-  };
-  handleClose = () => {
-    this.props.handleClose();
-  };
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
+
+  handleClose = () => {
+    this.props.handleClose();
+  };
+
+  handleCloseForgetPassword = () => {
+    this.props.handleCloseForgetPassword();
+  };
+
   handleSubmit = event => {
     event.preventDefault();
     const { email } = this.state;
     axios
       .put(URL + '/users/password/recovery/', { email })
-      .then(response => {
-        console.log(response.data);
-      })
+      .then(() => {})
       .catch(error => {
         this.setState({
           message: JSON.parse(error.request.response).detail
         });
       });
   };
+
   render() {
     return (
       <>
@@ -64,7 +67,6 @@ export default class ForgetPassword extends Component {
             </Form.Row>
           </Form>
         </Modal.Body>
-
         <Modal.Footer>
           <Button variant='danger' onClick={this.handleClose}>
             Cancelar
