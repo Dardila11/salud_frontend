@@ -5,6 +5,7 @@ import { Button, Col, Form, Modal } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
+import capitalizeFLetter from '../../utils/utils'
 import AlertComponent from '../../layout/alert/alert.component';
 import * as Yup from 'yup';
 
@@ -58,11 +59,11 @@ class CreateUserFormik extends Component {
       user: {
         type: values.type,
         user_id: values.userId,
-        first_name: values.firstName,
-        last_name: values.lastName,
+        first_name: capitalizeFLetter(values.firstName),
+        last_name: capitalizeFLetter(values.lastName),
         email: values.email,
-        my_center: values.myCenter,
-        my_department: values.myDepartment
+        my_center: capitalizeFLetter(values.myCenter),
+        my_department: capitalizeFLetter(values.myDepartment)
       },
       permissions: []
     };
@@ -120,7 +121,7 @@ class CreateUserFormik extends Component {
           initialValues={{
             type: -1,
             userId: '',
-            firstName: '',
+            firstName: ''.toUppererCase,
             lastName: '',
             email: ''.toLowerCase(),
             confEmail: ''.toLowerCase(),
