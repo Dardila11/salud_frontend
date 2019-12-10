@@ -1,4 +1,5 @@
 import $ from 'jquery';
+
 export async function showAlert(alertId) {
   $('#' + alertId).hide();
   window.clearTimeout(alert);
@@ -10,11 +11,23 @@ export async function showAlert(alertId) {
     });
   }, 2000);
 }
-export default function capitalizeFLetter(word) { 
-  
-  return word.charAt(0).toUpperCase() + 
-   word.slice(1).toLowerCase(); 
-} 
+
+export default function toCapitalizer(string) {
+  var stringCapitalizer = '';
+  const stringVector = string.split(' ');
+  var i = 0;
+  stringVector.forEach(e => {
+    if (i === stringVector.length - 1) {
+      stringCapitalizer +=
+        e.charAt(0).toUpperCase() + e.slice(1).toLowerCase();
+    } else {
+      stringCapitalizer +=
+        e.charAt(0).toUpperCase() + e.slice(1).toLowerCase() + ' ';
+    }
+    i++;
+  });
+  return stringCapitalizer;
+}
 
 export function getHeader() {
   const token = JSON.parse(localStorage.getItem('token'));
@@ -24,8 +37,6 @@ export function getHeader() {
   };
   return headers;
 }
-
-export function getSerialize(e) {}
 
 export function translate(e) {
   if (JSON.parse(e.request.response).email !== undefined) {

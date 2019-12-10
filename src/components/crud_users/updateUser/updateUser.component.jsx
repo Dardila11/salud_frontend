@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { getHeader, showAlert, translate } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
+import toCapitalizer from '../../utils/utils'
 
 const schema = Yup.object({
   firstName: Yup.string()
@@ -123,8 +124,8 @@ class UpdateUserFormik extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            firstName: this.props.userInfo[0].first_name,
-            lastName: this.props.userInfo[0].last_name,
+            firstName: toCapitalizer(this.props.userInfo[0].first_name),
+            lastName: toCapitalizer(this.props.userInfo[0].last_name),
             email: this.props.email,
             confEmail: this.props.email,
             myCenter: this.props.userInfo[0].my_center,
