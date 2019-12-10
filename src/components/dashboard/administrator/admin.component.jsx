@@ -1,13 +1,17 @@
-import React, { Component } from "react";
-import NavAdmin from "../administrator/navAdmin/navAdmin.component";
-import { URL } from "../../utils/URLSever";
-import axios from "axios";
-import { vertificationToken } from "../../utils/verificationToken";
-import { Redirect } from "react-router-dom";
-import "../../../css/sb-admin-2.min.css";
-import "../../../vendor/fontawesome-free/css/all.min.css";
-import "./admin.styles.css";
-import { closeSession } from "../../utils/handleLocalStorage";
+import React, { Component } from 'react';
+import axios from 'axios';
+
+import { Redirect } from 'react-router-dom';
+
+import { closeSession } from '../../utils/handleLocalStorage';
+import { getHeader } from '../../utils/utils';
+import { URL } from '../../utils/URLSever';
+import { vertificationToken } from '../../utils/verificationToken';
+import NavAdmin from '../administrator/navAdmin/navAdmin.component';
+
+import './admin.styles.css';
+import '../../../css/sb-admin-2.min.css';
+import '../../../vendor/fontawesome-free/css/all.min.css';
 
 // TODO:
 // - Falta agregar sesión expirada por inactividad
@@ -29,13 +33,9 @@ class AdminDashboard extends Component {
   };
 
   vertificationAuthorization = () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT " + token
-    };
+    const headers = getHeader();
     axios
-      .post(URL + "/users/verificate/administrator/", {}, { headers: headers })
+      .post(URL + '/users/verificate/administrator/', {}, { headers: headers })
       .then(() => {
         this.setState({ isLogged: true });
       })
@@ -54,12 +54,12 @@ class AdminDashboard extends Component {
 
   render() {
     if (!this.state.isLogged) {
-      return <Redirect to="/" />;
+      return <Redirect to='/' />;
     }
     return (
       <section
-        id="wrapper"
-        className="h-100 container-fluid p-0"
+        id='wrapper'
+        className='h-100 container-fluid p-0'
         onMouseDown={this.vertification}
       >
         <NavAdmin></NavAdmin>

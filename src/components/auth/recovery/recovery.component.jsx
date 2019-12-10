@@ -29,11 +29,11 @@ class Recovery extends Component {
     this.state = {
       isSuccess: false,
       alertVariant: '',
-      alertMessage: ''
+      alertMessage: '',
+      alertId: 'alert-recovery'
     };
   }
 
- 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -58,7 +58,7 @@ class Recovery extends Component {
           alertVariant: 'danger',
           alertMessage: JSON.parse(error.request.response).detail
         });
-        showAlert();
+        showAlert(this.state.alertId);
       });
   };
 
@@ -143,6 +143,7 @@ class Recovery extends Component {
                 <FooterLogin></FooterLogin>
               </div>
               <AlertComponent
+                alertId={this.state.alertId}
                 alertVariant={this.state.alertVariant}
                 alertMessage={this.state.alertMessage}
               ></AlertComponent>

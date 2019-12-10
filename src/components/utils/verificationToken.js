@@ -1,15 +1,16 @@
-import axios from "axios";
-import { URL } from "./URLSever";
-import { closeSession } from "./handleLocalStorage";
+import axios from 'axios';
+import { URL } from './URLSever';
+import { closeSession } from './handleLocalStorage';
 
 export function vertificationToken() {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(localStorage.getItem('token'));
+  console.log(token);
   const data = {
     token: token
   };
   if (token !== null) {
     axios
-      .post(URL + "/users/token/verificate/", data)
+      .post(URL + '/users/token/verificate/', data)
       .then(() => {
         refreshToken();
       })
@@ -17,18 +18,18 @@ export function vertificationToken() {
         const status = JSON.parse(error.request.status);
         if (status === 400) {
           closeSession();
-          alert("La sesion ha expirado.");
+          alert('La sesion ha expirado.');
         }
       });
   }
 }
 
 function refreshToken() {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(localStorage.getItem('token'));
   const data = {
     token: token
   };
-  axios.post(URL + "/users/token/refresh/", data).then(response => {
-    localStorage.setItem("token", JSON.stringify(response.data.token));
+  axios.post(URL + '/users/token/refresh/', data).then(response => {
+    localStorage.setItem('token', JSON.stringify(response.data.token));
   });
 }

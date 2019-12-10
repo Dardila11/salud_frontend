@@ -7,11 +7,9 @@ import { URL } from '../../../utils/URLSever';
 export default class ForgetPassword extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
     this.state = {
       validated: false,
       email: this.props.email
-      
     };
   }
 
@@ -44,10 +42,10 @@ export default class ForgetPassword extends Component {
 
   render() {
     return (
-      <>
+      <section>
         <Modal.Header closeButton>
-          <Modal.Title class='h3 text-gray-800 mb-0'>
-            Recuperar Contraseña
+          <Modal.Title className='h3 text-gray-800 mb-0'>
+            Recuperar contraseña
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -58,19 +56,20 @@ export default class ForgetPassword extends Component {
             onSubmit={this.handleSubmit}
           >
             <Form.Row>
-              <Form.Label>Email de inscripción</Form.Label>
+              <Form.Label>Correo de inscripción</Form.Label>
               <Form.Control
                 required
                 type='email'
                 name='email'
                 defaultValue={this.state.email}
                 onChange={this.handleChange}
+                placeholder='Correo'
               />
             </Form.Row>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant='danger' onClick={this.handleClose}>
+          <Button variant='secondary' onClick={this.handleClose}>
             Cancelar
           </Button>
           <Button
@@ -78,10 +77,10 @@ export default class ForgetPassword extends Component {
             onClick={this.handleCloseForgetPassword}
             type='submit'
           >
-            Enviar Email
+            Enviar correo
           </Button>
         </Modal.Footer>
-      </>
+      </section>
     );
   }
 }

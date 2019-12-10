@@ -42,11 +42,14 @@ class ViewUserFormik extends Component {
   };
 
   isVisiblePermissions = () => {
-    if (this.isPermissionsCenters() !== '' || this.isPermissionsUsers() !== '') {
+    if (
+      this.isPermissionsCenters() !== '' ||
+      this.isPermissionsUsers() !== ''
+    ) {
       return true;
     }
     return false;
-  }
+  };
 
   render() {
     return (
@@ -84,7 +87,13 @@ class ViewUserFormik extends Component {
                 </Capitalize>
               </span>
             </ListGroup.Item>
-            <ListGroup.Item className={this.state.isAdmin && this.isVisiblePermissions() ? '' : 'hidden'}>
+            <ListGroup.Item
+              className={
+                this.state.isAdmin && this.isVisiblePermissions()
+                  ? ''
+                  : 'hidden'
+              }
+            >
               <span>
                 <b>Permisos sobre: </b>
                 {this.isPermissionsCenters()} {this.isPermissionsUsers()}
