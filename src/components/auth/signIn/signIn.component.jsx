@@ -6,6 +6,7 @@ import { Redirect } from 'react-router-dom';
 
 import { showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
+import ValidateEmail from '../../utils/utils'
 import AlertComponent from '../../layout/alert/alert.component';
 import ForgetPassword from './forgetPassword/forgetPassword.component';
 import FooterLogin from '../../layout/footer-login/footer-login.component';
@@ -30,8 +31,18 @@ class SignIn extends Component {
       alertVariant: '',
       alertMessage: '',
       alertId: 'alert-singIn',
+      fatherEmail:'',
       isVisibleForgetPassword: false
     };
+  }
+  componentDidMount() {
+    if(this.props.match.params.em && ValidateEmail(this.props.match.params.em))
+    {
+      this.setState({
+        fatherEmail: this.props.match.params.em
+      })
+        this.handleOpenForgetPassword()
+    }
   }
 
   /**
@@ -124,7 +135,7 @@ class SignIn extends Component {
           show={this.state.isVisibleForgetPassword}
           onHide={this.handleClose}
         >
-          <ForgetPassword
+          <ForgetPassword email={this.state.fatherEmail}
             handleCloseForgetPassword={this.handleCloseForgetPassword}
             handleClose={this.handleClose}
           ></ForgetPassword>

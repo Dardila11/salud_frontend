@@ -16,6 +16,7 @@ function App() {
           <Route exact path="/admin" component={AdminDashboard} />
           <Route exact path="/user" component={UserDashboard} />
           <Route exact path="/user/recovery/:tk" component={Recovery} />
+          <Route exact path="/:em" component={SignIn} />
           <Route component={PageNotFound} />
         </Switch>
       </Router>

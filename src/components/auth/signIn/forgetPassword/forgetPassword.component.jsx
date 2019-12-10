@@ -7,10 +7,11 @@ import { URL } from '../../../utils/URLSever';
 export default class ForgetPassword extends Component {
   constructor(props) {
     super(props);
-
+    console.log(this.props);
     this.state = {
       validated: false,
-      email: ''
+      email: this.props.email
+      
     };
   }
 
@@ -62,7 +63,6 @@ export default class ForgetPassword extends Component {
                 required
                 type='email'
                 name='email'
-                placeholder='Email'
                 defaultValue={this.state.email}
                 onChange={this.handleChange}
               />
