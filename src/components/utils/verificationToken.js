@@ -2,17 +2,16 @@ import axios from 'axios';
 import { URL } from './URLSever';
 import { closeSession } from './handleLocalStorage';
 
-export function vertificationToken() {
+export function vertificationToken(source) {
   const token = JSON.parse(localStorage.getItem('token'));
-  console.log(token);
   const data = {
     token: token
   };
   if (token !== null) {
     axios
-      .post(URL + '/users/token/verificate/', data)
+      .post(URL + '/users/token/verificate/', data, {}, { cancelToken: source })
       .then(() => {
-        refreshToken();
+        refreshToken(source);
       })
       .catch(error => {
         const status = JSON.parse(error.request.status);
@@ -24,12 +23,21 @@ export function vertificationToken() {
   }
 }
 
-function refreshToken() {
+function refreshToken(source) {
   const token = JSON.parse(localStorage.getItem('token'));
   const data = {
     token: token
   };
-  axios.post(URL + '/users/token/refresh/', data).then(response => {
-    localStorage.setItem('token', JSON.stringify(response.data.token));
-  });
+  axios
+    .post(URL + '/users/token/refresh/', data, {}, { cancelToken: source })
+    .then(response => {
+      localStorage.setItem('token', JSON.stringify(response.data.token));
+    })
+    .catch(error => {
+      const status = JSON.parse(error.request.status);
+      if (status === 400) {
+        closeSession();
+        alert('La sesion ha expirado.');
+      }
+    });
 }

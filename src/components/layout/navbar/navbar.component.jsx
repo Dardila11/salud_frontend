@@ -24,7 +24,6 @@ class NavBar extends Component {
     const headers = getHeader();
     axios.delete(URL + '/users/logout/', { headers: headers }).then(() => {
       closeSession();
-      console.log(JSON.parse(localStorage.getItem('token')));
       this.setState({ isLogged: false });
     });
   };
@@ -198,11 +197,7 @@ class NavBar extends Component {
               <span className='mr-2 d-none d-lg-inline text-gray-600 small'>
                 {this.email}
               </span>
-              <img
-                className='img-profile rounded-circle'
-                src='https://source.unsplash.com/QAB-WJcbgJk/60x60'
-                alt='profile'
-              />
+              <div className="doctor"></div>
             </a>
             <div
               className='dropdown-menu dropdown-menu-right shadow animated--grow-in'

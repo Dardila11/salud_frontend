@@ -171,6 +171,15 @@
   background-image: url('../../../img/change.png');
 }
 
+.doctor {
+  padding: 20px !important;
+  background: lightskyblue;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 35%;
+  background-image: url('../../../img/doctor.png');
+}
+
 .required {
   color: #dc3545;
   font-size: 15px;
@@ -183,4 +192,12 @@
 
 .hidden {
   display: none !important;
+}
+
+.mh {
+  min-width: 100%;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex !important;
 }

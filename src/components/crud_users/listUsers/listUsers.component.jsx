@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Capitalize from 'react-capitalize';
+import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
 
 import { getHeader, showAlert } from '../../utils/utils';
@@ -16,17 +17,31 @@ import ViewUserFormik from '../viewUser/viewUser.component';
 import 'react-table/react-table.css';
 import './listUsers.styles.css';
 
+const NoDataConst = props => (
+  <Loader
+    type='ThreeDots'
+    height={100}
+    width={100}
+    color='#00BFFF'
+    timeout={3000}
+    className='mh -loading -active'
+  />
+);
+
 /**
  * @author Dardila
  * @description Este componente se encarga de listar la informacion de todos los usuarios en una tabla
  * y de permitir su correspondiente CRUD
  */
 class ListUsers extends Component {
+  CancelToken = axios.CancelToken;
+  source = this.CancelToken.source();
   typeModal = 0;
 
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       emailToRead: '',
       info: [],
       infoCenters: [],
@@ -215,18 +230,24 @@ class ListUsers extends Component {
    */
   getUserByEmail = async email => {
     const headers = getHeader();
-    axios.get(URL + '/users/' + email, { headers: headers }).then(response => {
-      this.setState({ userInfo: response.data }, () => {
-        if (this.typeModal === 0) {
-          this.handleOpenUpdate();
-        } else if (this.typeModal === 1) {
-          this.handleOpenView();
-        } else if (this.typeModal === 2) {
-          this.handleOpenDelete();
-        }
-        this.typeModal = 0;
+    axios
+      .get(
+        URL + '/users/' + email,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ userInfo: response.data }, () => {
+          if (this.typeModal === 0) {
+            this.handleOpenUpdate();
+          } else if (this.typeModal === 1) {
+            this.handleOpenView();
+          } else if (this.typeModal === 2) {
+            this.handleOpenDelete();
+          }
+          this.typeModal = 0;
+        });
       });
-    });
   };
 
   /**
@@ -237,7 +258,11 @@ class ListUsers extends Component {
   getUserPermissions = async email => {
     const headers = getHeader();
     axios
-      .get(URL + '/users/permissions/all/' + email, { headers: headers })
+      .get(
+        URL + '/users/permissions/all/' + email,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ userPermissions: response.data }, () => {
           this.getUserByEmail(email);
@@ -252,7 +277,11 @@ class ListUsers extends Component {
   loadDepartaments = async () => {
     const headers = getHeader();
     axios
-      .get(URL + '/places/department/all/', { headers: headers })
+      .get(
+        URL + '/places/department/all/',
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ infoDepartaments: response.data }, () => {
           this.viewDepartmentsInfo();
@@ -281,7 +310,11 @@ class ListUsers extends Component {
   loadCenters = async () => {
     const headers = getHeader();
     axios
-      .get(URL + '/places/center/all/', { headers: headers })
+      .get(
+        URL + '/places/center/all/',
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ infoCenters: response.data }, () => {
           this.viewCentersInfo();
@@ -309,9 +342,17 @@ class ListUsers extends Component {
    */
   getUsers = async () => {
     const headers = getHeader();
-    axios.get(URL + '/users/all/', { headers: headers }).then(response => {
-      this.setState({ info: response.data });
-    });
+    this.setState({ loading: true }, () =>
+      axios
+        .get(
+          URL + '/users/all/',
+          { headers: headers },
+          { cancelToken: this.source.token }
+        )
+        .then(response => {
+          this.setState({ info: response.data, loading: false });
+        })
+    );
   };
 
   /**
@@ -357,6 +398,10 @@ class ListUsers extends Component {
     this.loadDepartaments();
   }
 
+  componentWillUnmount() {
+    this.source.cancel('cancel request');
+  }
+
   render() {
     return (
       <section>
@@ -370,13 +415,22 @@ class ListUsers extends Component {
           </span>
           <span className='text text-white'>Crear usuario</span>
         </button>
-        <ReactTable
-          columns={this.state.columns}
-          data={this.state.info}
-          defaultPageSize={6}
-          noDataText={'No existen usuarios'}
-          filterable
-        ></ReactTable>
+        {this.state.loading ? (
+          <ReactTable
+            columns={this.state.columns}
+            defaultPageSize={6}
+            NoDataComponent={NoDataConst}
+            filterable
+          ></ReactTable>
+        ) : (
+          <ReactTable
+            columns={this.state.columns}
+            data={this.state.info}
+            defaultPageSize={6}
+            NoDataComponent={NoDataConst}
+            filterable
+          ></ReactTable>
+        )}
         <Modal show={this.state.isVisibleCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
           <CreateUserFormik
