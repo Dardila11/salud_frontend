@@ -126,7 +126,7 @@ class CreateUserFormik extends Component {
             confEmail: ''.toLowerCase(),
             myCenter: -1,
             myDepartment: -1,
-            createCenters: false,
+            createCenters: true,
             createUsers: false,
             createProjects: false
           }}

@@ -22,3 +22,9 @@ export function getHeader() {
 }
 
 export function getSerialize(e) {}
+
+export function translate(e) {
+  if (JSON.parse(e.request.response).email !== undefined) {
+    return 'Ya existe un usuario con igual correo';
+  }
+}

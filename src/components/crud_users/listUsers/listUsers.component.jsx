@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Capitalize from 'react-capitalize';
 import ReactTable from 'react-table';
 
@@ -22,7 +22,7 @@ import './listUsers.styles.css';
  * y de permitir su correspondiente CRUD
  */
 class ListUsers extends Component {
-  modalUpdate = false;
+  typeModal = 0;
 
   constructor(props) {
     super(props);
@@ -102,27 +102,45 @@ class ListUsers extends Component {
           Cell: props => {
             return (
               <div>
-                <Button
-                  className='update'
-                  variant='outline-primary'
-                  onClick={() => {
-                    this.updateRow(props.original.email);
-                  }}
-                ></Button>
-                <Button
-                  className='ml-1 view'
-                  variant='outline-primary'
-                  onClick={() => {
-                    this.viewRow(props.original.email);
-                  }}
-                ></Button>
-                <Button
-                  className='ml-1 change'
-                  variant='outline-danger'
-                  onClick={() => {
-                    this.deleteRow(props.original.email);
-                  }}
-                ></Button>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Actualizar</Tooltip>}
+                >
+                  <Button
+                    className='update'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.updateRow(props.original.email);
+                    }}
+                  ></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Detalles</Tooltip>}
+                >
+                  <Button
+                    className='ml-1 view'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.viewRow(props.original.email);
+                    }}
+                  ></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement='left'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Estado</Tooltip>}
+                >
+                  <Button
+                    className='ml-1 change'
+                    variant='outline-danger'
+                    onClick={() => {
+                      this.deleteRow(props.original.email);
+                    }}
+                  ></Button>
+                </OverlayTrigger>
               </div>
             );
           }
@@ -134,7 +152,7 @@ class ListUsers extends Component {
   handleCloseCreate = () => {
     this.setState({ alertVariant: 'success', alertMessage: 'Usuario creado.' });
     this.handleClose();
-    showAlert();
+    showAlert(this.state.alertId);
   };
 
   handleCloseDelete = () => {
@@ -146,7 +164,7 @@ class ListUsers extends Component {
     showAlert(this.state.alertId);
   };
 
-  handleCloseUpdate = () => {    
+  handleCloseUpdate = () => {
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Usuario actualizado.'
@@ -155,14 +173,10 @@ class ListUsers extends Component {
     showAlert(this.state.alertId);
   };
 
-  handleCloseView = () => {
-    this.handleClose();
-  };
-
   /**
    * @function handleClose se encarga de cerrar todas los modales
    */
-  handleClose = () => {    
+  handleClose = () => {
     const { isVisibleCreate, isVisibleDelete, isVisibleUpdate } = this.state;
     if (
       isVisibleCreate === true ||
@@ -203,12 +217,14 @@ class ListUsers extends Component {
     const headers = getHeader();
     axios.get(URL + '/users/' + email, { headers: headers }).then(response => {
       this.setState({ userInfo: response.data }, () => {
-        if (this.modalUpdate) {
+        if (this.typeModal === 0) {
           this.handleOpenUpdate();
-        } else {
+        } else if (this.typeModal === 1) {
           this.handleOpenView();
+        } else if (this.typeModal === 2) {
+          this.handleOpenDelete();
         }
-        this.modalUpdate = false;
+        this.typeModal = 0;
       });
     });
   };
@@ -299,21 +315,11 @@ class ListUsers extends Component {
   };
 
   /**
-   * @function componentDidMount
-   * @description Carga los datos después que el componente carga
-   */
-  componentDidMount() {
-    this.getUsers();
-    this.loadCenters();
-    this.loadDepartaments();
-  }
-
-  /**
    * @function updateRow
    * @description Carga el modal de actualizar un usuario
    */
   updateRow = email => {
-    this.modalUpdate = true;
+    this.typeModal = 0;
     this.setState({ emailToRead: email }, () => {
       this.getUserPermissions(this.state.emailToRead);
     });
@@ -324,6 +330,7 @@ class ListUsers extends Component {
    * @description Carga el modal de ver la información del usuario
    */
   viewRow = email => {
+    this.typeModal = 1;
     this.setState({ emailToRead: email }, () => {
       this.getUserPermissions(this.state.emailToRead);
     });
@@ -334,9 +341,21 @@ class ListUsers extends Component {
    * @description Carga el modal de cambiar el estado del usuario
    */
   deleteRow = email => {
-    this.setState({ emailToRead: email });
-    this.handleOpenDelete();
+    this.typeModal = 2;
+    this.setState({ emailToRead: email }, () => {
+      this.getUserByEmail(this.state.emailToRead);
+    });
   };
+
+  /**
+   * @function componentDidMount
+   * @description Carga los datos después que el componente carga
+   */
+  componentDidMount() {
+    this.getUsers();
+    this.loadCenters();
+    this.loadDepartaments();
+  }
 
   render() {
     return (
@@ -373,6 +392,7 @@ class ListUsers extends Component {
             handleCloseDelete={this.handleCloseDelete}
             handleClose={this.handleClose}
             email={this.state.emailToRead}
+            is_active={this.state.userInfo[0].is_active}
           />
         </Modal>
         <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
@@ -392,7 +412,6 @@ class ListUsers extends Component {
           <ViewUserFormik
             infoDepartaments={this.state.infoDepartaments}
             infoCenters={this.state.infoCenters}
-            handleCloseView={this.handleCloseView}
             handleClose={this.handleClose}
             email={this.state.emailToRead}
             userInfo={this.state.userInfo}

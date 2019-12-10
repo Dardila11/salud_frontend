@@ -5,7 +5,7 @@ import { Col, Button, Form, Modal } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { getHeader, showAlert } from '../../utils/utils';
+import { getHeader, showAlert, translate } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 
@@ -36,6 +36,9 @@ class UpdateUserFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      createCenters: false,
+      createUsers: false,
+      isAdmin: this.props.userInfo[0].is_staff ? true : false,
       alertMessage: '',
       alertVariant: '',
       alertId: 'alert-create-update'
@@ -65,23 +68,52 @@ class UpdateUserFormik extends Component {
         my_center: values.myCenter,
         my_department: values.myDepartment
       },
-      permissions_add: [{ name: 'add_user' }, { name: 'change_user' }],
+      permissions_add: [],
       permissions_remove: []
     };
+    if (values.createCenters === true) {
+      data.permissions_add.push(
+        { name: 'add_center' },
+        { name: 'change_center' },
+        { name: 'view_center' }
+      );
+    } else {
+      data.permissions_remove.push(
+        { name: 'add_center' },
+        { name: 'change_center' },
+        { name: 'view_center' }
+      );
+    }
+    if (values.createUsers === true) {
+      data.permissions_add.push(
+        { name: 'add_user' },
+        { name: 'change_user' },
+        { name: 'view_user' }
+      );
+    } else {
+      data.permissions_remove.push(
+        { name: 'add_user' },
+        { name: 'change_user' },
+        { name: 'view_user' }
+      );
+    }
     axios
       .put(URL + '/users/', data, { headers: headers })
       .then(() => {
         this.handleCloseUpdate();
       })
       .catch(error => {
-        console.log(JSON.parse(error.request.response));
         this.setState({
           alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
+          alertMessage: translate(error)
         });
         showAlert(this.state.alertId);
       });
   };
+
+  componentDidMount() {
+    console.log(this.props.userPermissions);
+  }
 
   render() {
     return (
@@ -96,7 +128,16 @@ class UpdateUserFormik extends Component {
             email: this.props.email,
             confEmail: this.props.email,
             myCenter: this.props.userInfo[0].my_center,
-            myDepartment: this.props.userInfo[0].my_department
+            myDepartment: this.props.userInfo[0].my_department,
+            createCenters:
+              this.props.userPermissions.filter(e =>
+                e.user_permissions__codename.includes('_center')
+              ).length === 3,
+            createUsers:
+              this.props.userPermissions.filter(e =>
+                e.user_permissions__codename.includes('_user')
+              ).length === 3,
+            createProjects: false
           }}
           validationSchema={schema}
           onSubmit={this.updateUserInfo}
@@ -235,6 +276,40 @@ class UpdateUserFormik extends Component {
                       <Form.Control.Feedback type='invalid'>
                         {errors.myDepartment}
                       </Form.Control.Feedback>
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row className={this.state.isAdmin ? '' : 'hidden'}>
+                    <Form.Group controlId='formBasicCheckbox'>
+                      <Form.Label>Permisos de creación para: </Form.Label>
+                      <Form.Check
+                        disabled={!this.state.isAdmin}
+                        name='createCenters'
+                        type='checkbox'
+                        label='Centros'
+                        id='checkCenters'
+                        value={values.createCenters}
+                        checked={values.createCenters}
+                        onChange={handleChange}
+                      />
+                      <Form.Check
+                        disabled={!this.state.isAdmin}
+                        name='createUsers'
+                        type='checkbox'
+                        label='Usuarios'
+                        id='checkUsers'
+                        value={values.createUsers}
+                        checked={values.createUsers}
+                        onChange={handleChange}
+                      />
+                      {/* <Form.Check
+                        disabled
+                        name='createProjects'
+                        type='checkbox'
+                        label='Proyectos Clinicos'
+                        id='checkProjects'
+                        value={values.createCenters}
+                        onChange={handleChange}
+                      /> */}
                     </Form.Group>
                   </Form.Row>
                 </Form>

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { URL } from '../../utils/URLSever';
 import axios from 'axios';
+
+import { Button, Modal } from 'react-bootstrap';
+
 import { getHeader } from '../../utils/utils';
+import { URL } from '../../utils/URLSever';
 
 /**
  * @author Dardila
@@ -15,7 +17,7 @@ class DeleteUser extends Component {
     super(props);
     this.state = {
       emailToDelete: props.email,
-      is_active: -1
+      is_active: props.is_active
     };
   }
   handleClose = () => {
@@ -44,24 +46,29 @@ class DeleteUser extends Component {
   };
   render() {
     return (
-      <>
+      <section>
         <Modal.Header closeButton>
-          <Modal.Title>Activar o Desactivar Usuario</Modal.Title>
+          <Modal.Title className='h3 text-gray-800 mb-0'>
+            {this.state.is_active ? 'Desactivar' : 'Activar'} usuario
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <p>¿Esta seguro que desea desactivar el usuario?</p>
+          <p>
+            ¿Esta seguro que desea{' '}
+            {this.state.is_active ? 'desactivar' : 'activar'} el usuario?
+          </p>
         </Modal.Body>
 
         <Modal.Footer>
           <Button onClick={this.handleClose} variant='secondary'>
             Cancelar
           </Button>
-          <Button onClick={this.handleDelete} variant='danger'>
-            Eliminar
+          <Button onClick={this.handleDelete} variant={this.state.is_active ? 'danger' : 'primary'}>
+            {this.state.is_active ? 'Desactivar' : 'Activar'} usuario
           </Button>
         </Modal.Footer>
-      </>
+      </section>
     );
   }
 }
