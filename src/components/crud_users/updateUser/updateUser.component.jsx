@@ -5,10 +5,14 @@ import { Col, Button, Form, Modal } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { getHeader, showAlert, translate } from '../../utils/utils';
+import {
+  getHeader,
+  showAlert,
+  toCapitalizer,
+  translate
+} from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
-import toCapitalizer from '../../utils/utils'
 
 const schema = Yup.object({
   firstName: Yup.string()
@@ -37,8 +41,6 @@ class UpdateUserFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      createCenters: false,
-      createUsers: false,
       isAdmin: this.props.userInfo[0].is_staff ? true : false,
       alertMessage: '',
       alertVariant: '',
@@ -112,9 +114,27 @@ class UpdateUserFormik extends Component {
       });
   };
 
-  componentDidMount() {
-    console.log(this.props.userPermissions);
-  }
+  isPermissionsCenters = () => {
+    if (this.props.userPermissions.length > 1) {
+      return (
+        this.props.userPermissions.filter(e =>
+          e.user_permissions__codename.includes('_center')
+        ).length === 3
+      );
+    }
+    return false;
+  };
+
+  isPermissionsUsers = () => {
+    if (this.props.userPermissions.length > 1) {
+      return (
+        this.props.userPermissions.filter(e =>
+          e.user_permissions__codename.includes('_user')
+        ).length === 3
+      );
+    }
+    return false;
+  };
 
   render() {
     return (
@@ -130,15 +150,8 @@ class UpdateUserFormik extends Component {
             confEmail: this.props.email,
             myCenter: this.props.userInfo[0].my_center,
             myDepartment: this.props.userInfo[0].my_department,
-            createCenters:
-              this.props.userPermissions.filter(e =>
-                e.user_permissions__codename.includes('_center')
-              ).length === 3,
-            createUsers:
-              this.props.userPermissions.filter(e =>
-                e.user_permissions__codename.includes('_user')
-              ).length === 3,
-            createProjects: false
+            createCenters: this.isPermissionsCenters(),
+            createUsers: this.isPermissionsUsers()
           }}
           validationSchema={schema}
           onSubmit={this.updateUserInfo}
@@ -245,7 +258,7 @@ class UpdateUserFormik extends Component {
                         {this.props.infoCenters.map((option, index) => {
                           return (
                             <option key={index} value={option.myPk}>
-                              {option.myName}
+                              {toCapitalizer(option.myName)}
                             </option>
                           );
                         })}
@@ -269,7 +282,7 @@ class UpdateUserFormik extends Component {
                         {this.props.infoDepartaments.map((option, index) => {
                           return (
                             <option key={index} value={option.myPk}>
-                              {option.myName}
+                              {toCapitalizer(option.myName)}
                             </option>
                           );
                         })}

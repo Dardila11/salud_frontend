@@ -13,6 +13,7 @@ export async function showAlert(alertId) {
 }
 
 
+
 export default function ValidateEmail(mail) 
 {
  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
@@ -22,6 +23,7 @@ export default function ValidateEmail(mail)
     
     return (false)
 }
+
 
 export function toCapitalizer(string) {
   var stringCapitalizer = '';

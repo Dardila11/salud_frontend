@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Button,  Modal, ListGroup } from 'react-bootstrap';
+import { Button, Modal, ListGroup } from 'react-bootstrap';
 import Capitalize from 'react-capitalize';
 
 /**
@@ -10,15 +10,42 @@ import Capitalize from 'react-capitalize';
 class ViewUserFormik extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isAdmin: this.props.userInfo[0].is_staff ? true : false
+    };
   }
 
   handleClose = () => {
     this.props.handleClose();
   };
 
-  componentDidMount() {
-    console.log(this.props.userPermissions[0].user_permissions__codename);
+  isPermissionsCenters = () => {
+    if (this.props.userPermissions.length > 1) {
+      return this.props.userPermissions.filter(e =>
+        e.user_permissions__codename.includes('_center')
+      ).length === 3
+        ? 'centros'
+        : '';
+    }
+    return '';
+  };
+
+  isPermissionsUsers = () => {
+    if (this.props.userPermissions.length > 1) {
+      return this.props.userPermissions.filter(e =>
+        e.user_permissions__codename.includes('_user')
+      ).length === 3
+        ? 'usuarios'
+        : '';
+    }
+    return '';
+  };
+
+  isVisiblePermissions = () => {
+    if (this.isPermissionsCenters() !== '' || this.isPermissionsUsers() !== '') {
+      return true;
+    }
+    return false;
   }
 
   render() {
@@ -43,7 +70,7 @@ class ViewUserFormik extends Component {
             <ListGroup.Item>{this.props.userInfo[0].email}</ListGroup.Item>
             <ListGroup.Item>
               <span>
-                <b>Centro médico:{' '}</b>
+                <b>Centro médico: </b>
                 <Capitalize>
                   {this.props.userInfo[0].my_center__name}
                 </Capitalize>
@@ -51,10 +78,16 @@ class ViewUserFormik extends Component {
             </ListGroup.Item>
             <ListGroup.Item>
               <span>
-                <b>Departamento:{' '}</b>
+                <b>Departamento: </b>
                 <Capitalize>
                   {this.props.userInfo[0].my_department__name}
                 </Capitalize>
+              </span>
+            </ListGroup.Item>
+            <ListGroup.Item className={this.state.isAdmin && this.isVisiblePermissions() ? '' : 'hidden'}>
+              <span>
+                <b>Permisos sobre: </b>
+                {this.isPermissionsCenters()} {this.isPermissionsUsers()}
               </span>
             </ListGroup.Item>
           </ListGroup>
