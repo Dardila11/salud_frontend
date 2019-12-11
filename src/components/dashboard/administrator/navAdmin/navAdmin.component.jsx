@@ -16,36 +16,36 @@ class NavAdmin extends Component {
     super(props);
     this.state = {
       user: '',
-      tab: 1
+      tab: parseInt(localStorage.getItem('tab'))
     };
   }
 
   componentDidMount() {
-    if (localStorage.getItem('user') != null) {
-      this.setState({
-        user: localStorage
-          .getItem('user')
-          .replace(/[""]+/g, '')
-          .toLowerCase()
-      });
-    }
+    this.setState({
+      tab: parseInt(localStorage.getItem('tab'))
+    });
   }
 
   handleSelect = key => {
+    localStorage.setItem('tab', key);
     this.setState({ tab: key });
   };
+
   render() {
     return (
       <Tab.Container
         id='left-tabs-example'
         activeKey={this.state.tab}
-        onSelect={this.handleSelect}>
+        onSelect={this.handleSelect}
+      >
         <ul
           className='navbar-nav bg-gradient-primary sidebar sidebar-dark accordion'
-          id='accordionSidebar'>
+          id='accordionSidebar'
+        >
           <a
             className='sidebar-brand d-flex align-items-center justify-content-center'
-            href='index.html'>
+            href='index.html'
+          >
             <div className='sidebar-brand-icon'>
               <i className='demo-icon icon-fa-salud'></i>
             </div>
@@ -77,12 +77,13 @@ class NavAdmin extends Component {
             <button
               className='rounded-circle border-0'
               id='sidebarToggle'
-              onClick={buttonToogle}></button>
+              onClick={buttonToogle}
+            ></button>
           </div>
         </ul>
         <Tab.Content id='content-wrapper' className='d-flex flex-column'>
           <div id='content'>
-            <NavBar></NavBar>
+            <NavBar />
             <div className='container pt-2 pr-5 pl-5 pb-2'>
               <Tab.Pane unmountOnExit eventKey='1'>
                 <ListUsers />

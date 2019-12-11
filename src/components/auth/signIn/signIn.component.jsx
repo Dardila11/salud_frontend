@@ -6,6 +6,7 @@ import { Redirect } from 'react-router-dom';
 
 import { showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
+import ValidateEmail from '../../utils/utils';
 import AlertComponent from '../../layout/alert/alert.component';
 import ForgetPassword from './forgetPassword/forgetPassword.component';
 import FooterLogin from '../../layout/footer-login/footer-login.component';
@@ -30,6 +31,7 @@ class SignIn extends Component {
       alertVariant: '',
       alertMessage: '',
       alertId: 'alert-singIn',
+      fatherEmail: '',
       isVisibleForgetPassword: false
     };
   }
@@ -75,7 +77,6 @@ class SignIn extends Component {
       )
       .then(response => {
         this.saveUserInfo(response.data);
-        this.setState({ isLoggedIn: true });
       })
       .catch(error => {
         this.setState({
@@ -94,6 +95,8 @@ class SignIn extends Component {
     localStorage.setItem('id', JSON.stringify(data.user.id));
     localStorage.setItem('email', JSON.stringify(data.user.email));
     localStorage.setItem('token', JSON.stringify(data.token));
+    localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
+    localStorage.setItem('last_name', JSON.stringify(data.user.last_name));
     let role;
     role =
       data.user.is_staff === true ? (role = 'is_staff') : (role = 'is_simple');
@@ -105,6 +108,18 @@ class SignIn extends Component {
     }
   };
 
+  componentDidMount() {
+    if (
+      this.props.match.params.em &&
+      ValidateEmail(this.props.match.params.em)
+    ) {
+      this.setState({
+        fatherEmail: this.props.match.params.em
+      });
+      this.handleOpenForgetPassword();
+    }
+  }
+
   /**
    * Cancela todas las solicitudes `axios` al cerrar el ciclo de vida del componente
    */
@@ -114,6 +129,7 @@ class SignIn extends Component {
 
   render() {
     if (this.state.adminDashboard) {
+      localStorage.setItem('tab', 1);
       return <Redirect to='/admin' />;
     } else if (this.state.userDashboard) {
       return <Redirect to='/user' />;
@@ -125,6 +141,7 @@ class SignIn extends Component {
           onHide={this.handleClose}
         >
           <ForgetPassword
+            email={this.state.fatherEmail}
             handleCloseForgetPassword={this.handleCloseForgetPassword}
             handleClose={this.handleClose}
           ></ForgetPassword>
@@ -160,7 +177,7 @@ class SignIn extends Component {
                   />
                   <button
                     type='button'
-                    className='button-alert'
+                    className='button-link'
                     onClick={this.handleOpenForgetPassword}
                   >
                     Olvide mi contraseña

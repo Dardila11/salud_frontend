@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Capitalize from 'react-capitalize';
+import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
 
 import { getHeader, showAlert } from '../../utils/utils';
@@ -16,17 +17,31 @@ import ViewUserFormik from '../viewUser/viewUser.component';
 import 'react-table/react-table.css';
 import './listUsers.styles.css';
 
+const NoDataConst = props => (
+  <Loader
+    type='ThreeDots'
+    height={100}
+    width={100}
+    color='#00BFFF'
+    timeout={3000}
+    className='mh -loading -active'
+  />
+);
+
 /**
  * @author Dardila
  * @description Este componente se encarga de listar la informacion de todos los usuarios en una tabla
  * y de permitir su correspondiente CRUD
  */
 class ListUsers extends Component {
-  modalUpdate = false;
+  CancelToken = axios.CancelToken;
+  source = this.CancelToken.source();
+  typeModal = 0;
 
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       emailToRead: '',
       info: [],
       infoCenters: [],
@@ -77,16 +92,20 @@ class ListUsers extends Component {
           minWidth: 100
         },
         {
-          id: 'is_active',
           Header: 'Activo',
-          accessor: d => {
-            return d.is_active ? 'Si' : 'No';
-          },
+          accessor: 'is_active',
           sortable: true,
           filterable: false,
           width: 50,
           maxWidth: 50,
-          minWidth: 50
+          minWidth: 50,
+          Cell: props => {
+            return props.value ? (
+              <div className='success'></div>
+            ) : (
+              <div className='remove'></div>
+            );
+          }
         },
         {
           Header: 'Acciones',
@@ -98,27 +117,45 @@ class ListUsers extends Component {
           Cell: props => {
             return (
               <div>
-                <Button
-                  className='update'
-                  variant='outline-primary'
-                  onClick={() => {
-                    this.updateRow(props.original.email);
-                  }}
-                ></Button>
-                <Button
-                  className='ml-1 view'
-                  variant='outline-primary'
-                  onClick={() => {
-                    this.viewRow(props.original.email);
-                  }}
-                ></Button>
-                <Button
-                  className='ml-1 change'
-                  variant='outline-danger'
-                  onClick={() => {
-                    this.deleteRow(props.original.email);
-                  }}
-                ></Button>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Actualizar</Tooltip>}
+                >
+                  <Button
+                    className='update'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.updateRow(props.original.email);
+                    }}
+                  ></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Detalles</Tooltip>}
+                >
+                  <Button
+                    className='ml-1 view'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.viewRow(props.original.email);
+                    }}
+                  ></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement='left'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Estado</Tooltip>}
+                >
+                  <Button
+                    className='ml-1 change'
+                    variant='outline-danger'
+                    onClick={() => {
+                      this.deleteRow(props.original.email);
+                    }}
+                  ></Button>
+                </OverlayTrigger>
               </div>
             );
           }
@@ -130,7 +167,7 @@ class ListUsers extends Component {
   handleCloseCreate = () => {
     this.setState({ alertVariant: 'success', alertMessage: 'Usuario creado.' });
     this.handleClose();
-    showAlert();
+    showAlert(this.state.alertId);
   };
 
   handleCloseDelete = () => {
@@ -139,7 +176,7 @@ class ListUsers extends Component {
       alertMessage: 'Estado del usuario modificado.'
     });
     this.handleClose();
-    showAlert();
+    showAlert(this.state.alertId);
   };
 
   handleCloseUpdate = () => {
@@ -149,10 +186,6 @@ class ListUsers extends Component {
     });
     this.handleClose();
     showAlert(this.state.alertId);
-  };
-
-  handleCloseView = () => {
-    this.handleClose();
   };
 
   /**
@@ -197,16 +230,24 @@ class ListUsers extends Component {
    */
   getUserByEmail = async email => {
     const headers = getHeader();
-    axios.get(URL + '/users/' + email, { headers: headers }).then(response => {
-      this.setState({ userInfo: response.data }, () => {
-        if (this.modalUpdate) {
-          this.handleOpenUpdate();
-        } else {
-          this.handleOpenView();
-        }
-        this.modalUpdate = false;
+    axios
+      .get(
+        URL + '/users/' + email,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ userInfo: response.data }, () => {
+          if (this.typeModal === 0) {
+            this.handleOpenUpdate();
+          } else if (this.typeModal === 1) {
+            this.handleOpenView();
+          } else if (this.typeModal === 2) {
+            this.handleOpenDelete();
+          }
+          this.typeModal = 0;
+        });
       });
-    });
   };
 
   /**
@@ -217,7 +258,11 @@ class ListUsers extends Component {
   getUserPermissions = async email => {
     const headers = getHeader();
     axios
-      .get(URL + '/users/permissions/all/' + email, { headers: headers })
+      .get(
+        URL + '/users/permissions/all/' + email,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ userPermissions: response.data }, () => {
           this.getUserByEmail(email);
@@ -232,7 +277,11 @@ class ListUsers extends Component {
   loadDepartaments = async () => {
     const headers = getHeader();
     axios
-      .get(URL + '/places/department/all/', { headers: headers })
+      .get(
+        URL + '/places/department/all/',
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ infoDepartaments: response.data }, () => {
           this.viewDepartmentsInfo();
@@ -261,7 +310,11 @@ class ListUsers extends Component {
   loadCenters = async () => {
     const headers = getHeader();
     axios
-      .get(URL + '/places/center/all/', { headers: headers })
+      .get(
+        URL + '/places/center/all/',
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ infoCenters: response.data }, () => {
           this.viewCentersInfo();
@@ -289,8 +342,49 @@ class ListUsers extends Component {
    */
   getUsers = async () => {
     const headers = getHeader();
-    axios.get(URL + '/users/all/', { headers: headers }).then(response => {
-      this.setState({ info: response.data });
+    this.setState({ loading: true }, () =>
+      axios
+        .get(
+          URL + '/users/all/',
+          { headers: headers },
+          { cancelToken: this.source.token }
+        )
+        .then(response => {
+          this.setState({ info: response.data, loading: false });
+        })
+    );
+  };
+
+  /**
+   * @function updateRow
+   * @description Carga el modal de actualizar un usuario
+   */
+  updateRow = email => {
+    this.typeModal = 0;
+    this.setState({ emailToRead: email }, () => {
+      this.getUserPermissions(this.state.emailToRead);
+    });
+  };
+
+  /**
+   * @function viewRow
+   * @description Carga el modal de ver la información del usuario
+   */
+  viewRow = email => {
+    this.typeModal = 1;
+    this.setState({ emailToRead: email }, () => {
+      this.getUserPermissions(this.state.emailToRead);
+    });
+  };
+
+  /**
+   * @function deleteRow
+   * @description Carga el modal de cambiar el estado del usuario
+   */
+  deleteRow = email => {
+    this.typeModal = 2;
+    this.setState({ emailToRead: email }, () => {
+      this.getUserByEmail(this.state.emailToRead);
     });
   };
 
@@ -304,35 +398,9 @@ class ListUsers extends Component {
     this.loadDepartaments();
   }
 
-  /**
-   * @function updateRow
-   * @description Carga el modal de actualizar un usuario
-   */
-  updateRow = email => {
-    this.modalUpdate = true;
-    this.setState({ emailToRead: email }, () => {
-      this.getUserPermissions(this.state.emailToRead);
-    });
-  };
-
-  /**
-   * @function viewRow
-   * @description Carga el modal de ver la información del usuario
-   */
-  viewRow = email => {
-    this.setState({ emailToRead: email }, () => {
-      this.getUserPermissions(this.state.emailToRead);
-    });
-  };
-
-  /**
-   * @function deleteRow
-   * @description Carga el modal de cambiar el estado del usuario
-   */
-  deleteRow = email => {
-    this.setState({ emailToRead: email });
-    this.handleOpenDelete();
-  };
+  componentWillUnmount() {
+    this.source.cancel('cancel request');
+  }
 
   render() {
     return (
@@ -347,13 +415,22 @@ class ListUsers extends Component {
           </span>
           <span className='text text-white'>Crear usuario</span>
         </button>
-        <ReactTable
-          columns={this.state.columns}
-          data={this.state.info}
-          defaultPageSize={6}
-          noDataText={'No existen usuarios'}
-          filterable
-        ></ReactTable>
+        {this.state.loading ? (
+          <ReactTable
+            columns={this.state.columns}
+            defaultPageSize={6}
+            NoDataComponent={NoDataConst}
+            filterable
+          ></ReactTable>
+        ) : (
+          <ReactTable
+            columns={this.state.columns}
+            data={this.state.info}
+            defaultPageSize={6}
+            NoDataComponent={NoDataConst}
+            filterable
+          ></ReactTable>
+        )}
         <Modal show={this.state.isVisibleCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
           <CreateUserFormik
@@ -369,6 +446,7 @@ class ListUsers extends Component {
             handleCloseDelete={this.handleCloseDelete}
             handleClose={this.handleClose}
             email={this.state.emailToRead}
+            is_active={this.state.userInfo[0].is_active}
           />
         </Modal>
         <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
@@ -388,7 +466,6 @@ class ListUsers extends Component {
           <ViewUserFormik
             infoDepartaments={this.state.infoDepartaments}
             infoCenters={this.state.infoCenters}
-            handleCloseView={this.handleCloseView}
             handleClose={this.handleClose}
             email={this.state.emailToRead}
             userInfo={this.state.userInfo}

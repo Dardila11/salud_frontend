@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import { Button, Col, Form, Modal } from 'react-bootstrap';
 import { Formik } from 'formik';
-import { getHeader, showAlert } from '../../utils/utils';
+import { getHeader, toCapitalizer, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 import * as Yup from 'yup';
@@ -120,13 +120,13 @@ class CreateUserFormik extends Component {
           initialValues={{
             type: -1,
             userId: '',
-            firstName: '',
+            firstName: ''.toUppererCase,
             lastName: '',
             email: ''.toLowerCase(),
             confEmail: ''.toLowerCase(),
             myCenter: -1,
             myDepartment: -1,
-            createCenters: false,
+            createCenters: true,
             createUsers: false,
             createProjects: false
           }}
@@ -273,7 +273,7 @@ class CreateUserFormik extends Component {
                         {this.props.infoCenters.map((option, index) => {
                           return (
                             <option key={index} value={option.myPk}>
-                              {option.myName}
+                              {toCapitalizer(option.myName)}
                             </option>
                           );
                         })}
@@ -297,7 +297,7 @@ class CreateUserFormik extends Component {
                         {this.props.infoDepartaments.map((option, index) => {
                           return (
                             <option key={index} value={option.myPk}>
-                              {option.myName}
+                              {toCapitalizer(option.myName)}
                             </option>
                           );
                         })}
