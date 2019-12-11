@@ -1,13 +1,137 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Clases generales */
+.antorcha {
+  position: fixed;
+  width: 320px;
+  height: 650px;
+  background: url('./img/antorcha.png');
+  top: 0;
+  right: 10%;
+  z-index: 10;
+}
+
+.bandera {
+  position: fixed;
+  width: 100%;
+  height: 130px;
+  background: url('./img/bandera.png') no-repeat;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.container-alert {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  width: max-content;
+  top: 0;
+  z-index: 10;
+}
+
+.back {
+  z-index: -1 !important;
+}
+
+.success {
+  padding: 15px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/comprobado.png');
+}
+
+.create {
+  padding: 15px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/mas.png');
+}
+
+.view {
+  padding: 15px !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/ver.png');
+}
+
+.update {
+  padding: 15px !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/editar.png');
+}
+
+.upload {
+  padding: 15px !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/upload.png');
+}
+
+.remove {
+  padding: 15px !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/borrar.png');
+}
+
+.change {
+  padding: 15px !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('./img/change.png');
+}
+
+.doctor {
+  padding: 20px !important;
+  background: lightskyblue;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 45%;
+  background-image: url('./img/doctor.png');
+}
+
+.button-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.required {
+  color: #dc3545;
+  font-size: 15px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.mh {
+  min-width: 100%;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex !important;
+}
+
+.react-datepicker-wrapper {
+  width: 100% !important;
+}
+/* - - - - - - - - - - */

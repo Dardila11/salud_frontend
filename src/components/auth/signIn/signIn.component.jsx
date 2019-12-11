@@ -95,6 +95,8 @@ class SignIn extends Component {
     localStorage.setItem('id', JSON.stringify(data.user.id));
     localStorage.setItem('email', JSON.stringify(data.user.email));
     localStorage.setItem('token', JSON.stringify(data.token));
+    localStorage.setItem('first_name', JSON.stringify(data.user.first_name));
+    localStorage.setItem('last_name', JSON.stringify(data.user.last_name));
     let role;
     role =
       data.user.is_staff === true ? (role = 'is_staff') : (role = 'is_simple');
@@ -127,6 +129,7 @@ class SignIn extends Component {
 
   render() {
     if (this.state.adminDashboard) {
+      localStorage.setItem('tab', 1);
       return <Redirect to='/admin' />;
     } else if (this.state.userDashboard) {
       return <Redirect to='/user' />;
@@ -174,7 +177,7 @@ class SignIn extends Component {
                   />
                   <button
                     type='button'
-                    className='button-alert'
+                    className='button-link'
                     onClick={this.handleOpenForgetPassword}
                   >
                     Olvide mi contraseña

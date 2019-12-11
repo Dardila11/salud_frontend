@@ -4,10 +4,11 @@ export async function showAlert(alertId) {
   $('#' + alertId).hide();
   window.clearTimeout(alert);
   $('#' + alertId).show();
+  $('#' + alertId).removeClass('back');
   var alert = window.setTimeout(function() {
-    console.log('haciendo');
     $('#' + alertId).slideDown(function() {
       $('#' + alertId).hide();
+      $('#' + alertId).addClass('back');  
     });
   }, 2000);
 }

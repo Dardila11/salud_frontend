@@ -90,7 +90,18 @@ class AdminDashboard extends Component {
         className='h-100 container-fluid p-0'
         onMouseDown={vertificationToken(this.source.token)}
       >
-        <NavAdmin />
+        {this.state.loading ? (
+          <Loader
+            type='ThreeDots'
+            height={100}
+            width={100}
+            color='#00BFFF'
+            timeout={3000}
+            className='mh'
+          />
+        ) : (
+          <NavAdmin />
+        )}
       </section>
     );
   }

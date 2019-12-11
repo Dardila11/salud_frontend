@@ -14,31 +14,22 @@ import ListProjects from '../../../crud_projects/listProjects/listProjects.compo
 class NavAdmin extends Component {
   constructor(props) {
     super(props);
-    this._isMounted = true;
     this.state = {
       user: '',
-      tab: 1
+      tab: parseInt(localStorage.getItem('tab'))
     };
   }
 
   componentDidMount() {
-    if (localStorage.getItem('user') != null) {
-      this.setState({
-        user: localStorage
-          .getItem('user')
-          .replace(/[""]+/g, '')
-          .toLowerCase()
-      });
-    }
+    this.setState({
+      tab: parseInt(localStorage.getItem('tab'))
+    });
   }
 
   handleSelect = key => {
+    localStorage.setItem('tab', key);
     this.setState({ tab: key });
   };
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
 
   render() {
     return (
