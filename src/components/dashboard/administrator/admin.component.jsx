@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import Loader from 'react-loader-spinner';
 import { Redirect } from 'react-router-dom';
 
 import { closeSession } from '../../utils/handleLocalStorage';
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import { vertificationToken } from '../../utils/verificationToken';
-import Loader from 'react-loader-spinner';
-import NavAdmin from '../administrator/navAdmin/navAdmin.component';
+import NavAdminUsers from './contentAdmin/contentAdminUsers.component';
+import NavAdminStudies from './contentAdmin/contentAdminStudies.component';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
 import '../../../css/sb-admin-2.min.css';
 import '../../../vendor/fontawesome-free/css/all.min.css';
 
-// TODO:
-// - Falta agregar sesión expirada por inactividad
 class AdminDashboard extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
@@ -68,6 +67,14 @@ class AdminDashboard extends Component {
     this.source.cancel('cancel request');
   }
 
+  contentAdmin = () => {
+    if (this.props.match.path.split('/')[2] === 'users') {
+      return <NavAdminUsers />;
+    } else if ((this.props.match.path.split('/')[2] === 'studies')) {
+      return <NavAdminStudies />
+    }
+  };
+
   render() {
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
@@ -86,22 +93,10 @@ class AdminDashboard extends Component {
     }
     return (
       <section
-        id='wrapper'
         className='h-100 container-fluid p-0'
         onMouseDown={vertificationToken(this.source.token)}
       >
-        {this.state.loading ? (
-          <Loader
-            type='ThreeDots'
-            height={100}
-            width={100}
-            color='#00BFFF'
-            timeout={3000}
-            className='mh'
-          />
-        ) : (
-          <NavAdmin />
-        )}
+        <this.contentAdmin />
       </section>
     );
   }

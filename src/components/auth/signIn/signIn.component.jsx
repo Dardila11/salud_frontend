@@ -129,8 +129,7 @@ class SignIn extends Component {
 
   render() {
     if (this.state.adminDashboard) {
-      localStorage.setItem('tab', 1);
-      return <Redirect to='/admin' />;
+      return <Redirect to='/admin/users' />;
     } else if (this.state.userDashboard) {
       return <Redirect to='/user' />;
     }
