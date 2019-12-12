@@ -427,7 +427,7 @@ class ListUsers extends Component {
             columns={this.state.columns}
             data={this.state.info}
             defaultPageSize={6}
-            NoDataComponent={NoDataConst}
+            noDataText={'No existen usuarios'}
             filterable
           ></ReactTable>
         )}

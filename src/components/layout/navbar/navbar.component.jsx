@@ -119,7 +119,7 @@ class NavBar extends Component {
           <div className='topbar-divider d-none d-sm-block'></div>
           <li className='dropdown no-arrow'>
               <div className="nav-link dropdown-toggle">
-                <span className="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <span className="mr-2 d-none d-lg-inline text-gray-600 small">{this.email}</span>
               </div>
             <DropdownButton className='doctor' alignRight title='' id='profile'>
               <Dropdown.Item as='button'>

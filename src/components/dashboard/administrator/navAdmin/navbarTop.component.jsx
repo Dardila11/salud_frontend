@@ -8,10 +8,6 @@ import './navbarTop.styles.css';
 import '../../../../vendor/fontawesome-free/css/all.min.css';
 
 class NavBarTop extends Component {
-  componentDidMount() {
-    console.log(this.props);
-  }
-
   render() {
     return (
       <ul
@@ -25,7 +21,7 @@ class NavBarTop extends Component {
           <div className='sidebar-brand-icon'>
             <i className='demo-icon icon-fa-salud'></i>
           </div>
-          <div className='sidebar-brand-text mx-3 my-text'>ClinDesign</div>
+          <div className='sidebar-brand-text my-text'>ClinDesign</div>
         </a>
         <hr className='sidebar-divider my-0'></hr>
         <li className='nav-item active'>
