@@ -302,7 +302,6 @@ class CreateUserFormik extends Component {
                           );
                         })}
                       </Form.Control>
-
                       <Form.Control.Feedback type='invalid'>
                         {errors.myDepartment}
                       </Form.Control.Feedback>

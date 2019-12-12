@@ -10,7 +10,7 @@ export async function showAlert(alertId) {
       $('#' + alertId).hide();
       $('#' + alertId).addClass('back');  
     });
-  }, 2000);
+  }, 1200);
 }
 
 export default function ValidateEmail(mail) {

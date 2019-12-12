@@ -67,7 +67,7 @@ class NavAdmin extends Component {
             </Nav.Link>
           </li>
           <li className='nav-item'>
-            <Nav.Link className='nav-link' eventKey='2' name='2' role='button'>
+            <Nav.Link eventKey='2' name='2' role='button'>
               <i className='fas fa-fw fa-notes-medical'></i>
               <span>Estudios</span>
             </Nav.Link>
