@@ -1,30 +1,191 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Modal, Alert, Button } from 'react-bootstrap';
+import { Modal, Alert, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ReactTable from 'react-table';
-import { URL } from '../../utils/URLSever';
+import Loader from 'react-loader-spinner';
+/**
+ * hallar mejor forma para colocar en mayuscula la primera letra
+ */
+import Capitalize from 'react-capitalize';
+import AlertComponent from '../../layout/alert/alert.component';
 import CreateProjectFormik from '../createProject/createProject.component';
 import UpdateProjectFormik from '../updateProject/updateProject.component';
+
+import { getHeader, showAlert } from '../../utils/utils';
+import { URL } from '../../utils/URLSever';
 
 import 'react-table/react-table.css';
 import './listProjects.styles.css';
 
-var modalUpdate = false;
+/**
+ * @function NoDataConst
+ * @description se encarga de mostrar el spinner de carga
+ */
+const NoDataConst = () => (
+  <Loader
+    type='ThreeDots'
+    height={100}
+    width={100}
+    color='#00BFFF'
+    timeout={3000}
+    className='mh -loading -active'
+  />
+);
 class ListProjects extends Component {
+  CancelToken = axios.CancelToken;
+  source = this.CancelToken.source();
+  typeModal = 0;
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       idProjectToEdit: -1,
       projectInfo: [1],
       info: [],
       projectsInfo: [],
       usersInfo: [],
-      showCreate: false,
-      showUpdate: false,
-      showDelete: false,
-      showView: false,
+      isVisibleCreate: false,
+      isVisibleUpdate: false,
+      isVisibleDelete: false,
+      isVisibleView: false,
       showMessage: false,
-      message: false
+      message: false,
+      alertVariant: '',
+      alertMessage: '',
+      alertId: 'alert-listProjects',
+      /* En este caso, el accessor es la variable del array projectsInfoArray */
+      columns: [
+        {
+          Header: 'Título',
+          accessor: 'title',
+          width: 150,
+          maxWidth: 200,
+          minWidth: 100
+        },
+        {
+          Header: 'Fecha de Registro',
+          accessor: 'reg_date',
+          width: 150,
+          maxWidth: 200,
+          minWidth: 100
+        },
+        {
+          Header: 'Fecha de Inicio',
+          accessor: 'start_date',
+          width: 150,
+          maxWidth: 200,
+          minWidth: 100
+        },
+        {
+          Header: 'Fecha de Finalización',
+          accessor: 'end_date',
+          width: 150,
+          maxWidth: 200,
+          minWidth: 100
+        },
+        {
+          Header: 'Responsable del registro',
+          accessor: 'reg_responsible',
+          width: 150,
+          maxWidth: 200,
+          minWidth: 100
+        },
+        {
+          Header: 'Investigador Principal',
+          accessor: 'principal_investigator',
+          sortable: false,
+          filterable: false,
+          width: 100,
+          maxWidth: 100,
+          minWidth: 100
+        },
+        {
+          id: 'status',
+          Header: 'Estado',
+          accessor: d => {
+            switch (d.status) {
+              case 1:
+                return 'Registro';
+              case 2:
+                return 'Diseño';
+              case 3:
+                return 'Finalizado';
+            }
+          },
+          sortable: false,
+          filterable: false,
+          width: 150,
+          maxWidth: 150,
+          minWidth: 100
+        },
+        {
+          id: 'is_active',
+          Header: 'Activo',
+          accessor: 'is_active',
+          sortable: false,
+          filterable: false,
+          width: 150,
+          maxWidth: 150,
+          minWidth: 100,
+          Cell: props => {
+            return props.value ? (
+              <div className='success'></div>
+            ) : (
+              <div className='remove'></div>
+            );
+          }
+        },
+        {
+          Header: 'Acciones',
+          sortable: false,
+          filterable: false,
+          width: 250,
+          maxWidth: 250,
+          minWidth: 200,
+          Cell: props => {
+            return (
+              <>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Actualizar</Tooltip>}>
+                  <Button
+                    className='update'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.updateRow(props.original.id_pk);
+                    }}
+                  />
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Detalles</Tooltip>}>
+                  <Button
+                    className='ml-1 view'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.viewRow(props.original.id_pk);
+                    }}
+                  />
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 100 }}
+                  overlay={<Tooltip>Estado</Tooltip>}>
+                  <Button
+                    className='ml-1 change'
+                    variant='outline-primary'
+                    onClick={() => {
+                      this.deleteRow(props.original.id_pk);
+                    }}
+                  />
+                </OverlayTrigger>
+              </>
+            );
+          }
+        }
+      ]
     };
   }
 
@@ -33,16 +194,27 @@ class ListProjects extends Component {
     this.getProjects();
   }
 
+  componentWillUnmount() {
+    this.source.cancel('cancel request');
+  }
+
   /**
    * todos los handleShow, create, update, view, delete
    * se encargan de cambiar el estado del correspondiente variable
    */
-  handleCreate = () => {
-    this.setState({ showCreate: true });
+  handleOpenCreate = () => {
+    this.setState({ isVisibleCreate: true });
   };
 
-  handleUpdate = () => {
-    this.setState({ showUpdate: true });
+  handleOpenUpdate = () => {
+    this.setState({ isVisibleUpdate: true });
+  };
+
+  handleOpenDelete = () => {
+    this.setState({ isVisibleDelete: true });
+  };
+  handleOpenView = () => {
+    this.setState({ isVisibleView: true });
   };
   /**
    * @function handleClose se encarga de resetar los valores de las alertas
@@ -53,25 +225,28 @@ class ListProjects extends Component {
   handleClose = () => {
     this.setState(
       {
-        showAlert: false,
-        showCreate: false,
-        showUpdate: false,
-        showDelete: false,
-        showView: false
+        isVisibleCreate: false,
+        isVisibleUpdate: false,
+        isVisibleDelete: false,
+        isVisibleView: false
       },
       () => {
-        console.log('se actualizan los usuarios nuevamente');
+        console.log('se actualizan los proyectos nuevamente');
         this.getProjects();
       }
     );
   };
   /**
    * @function handleCloseCreate function enviada como prop de un componente.
-   * es llamada cuando un usuario es creado satisfactoriamente
+   * es llamada cuando un proyecto es creado satisfactoriamente
    */
   handleCloseCreate = () => {
-    this.setState({ showMessage: true, message: 'Proyecto Creado' });
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Proyecto creado.'
+    });
     this.handleClose();
+    showAlert(this.state.alertId);
   };
 
   /**
@@ -79,13 +254,23 @@ class ListProjects extends Component {
    * es llamada cuando un usuario es actualizado satisfactoriamente
    */
   handleCloseUpdate = () => {
-    this.setState({ showMessage: true, message: 'Proyecto Actualizado' });
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Proyecto Actualizado.'
+    });
     this.handleClose();
+    showAlert(this.state.alertId);
   };
 
-  handleDismiss = () => {
-    this.setState({ showMessage: false });
+  handleCloseDelete = () => {
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Estado del proyecto modificado.'
+    });
+    this.handleClose();
+    showAlert(this.state.alertId);
   };
+
   /**
    * @function getUsers
    * @description Realiza una peticion al servidor el cual obtiene todos los
@@ -94,13 +279,13 @@ class ListProjects extends Component {
    * @todo agregar el evento de error
    */
   getUsers = async () => {
-    const token = JSON.parse(localStorage.getItem('token'));
+    const headers = getHeader();
     axios
-      .get(URL + '/users/all/', {
-        headers: {
-          Authorization: 'JWT ' + token
-        }
-      })
+      .get(
+        URL + '/users/all/',
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ info: response.data }, () => {
           this.getUsersInfo();
@@ -113,22 +298,24 @@ class ListProjects extends Component {
   };
 
   getProjects = async () => {
-    const token = JSON.parse(localStorage.getItem('token'));
-    axios
-      .get(URL + '/studies/all/', {
-        headers: {
-          Authorization: 'JWT ' + token
-        }
-      })
-      .then(response => {
-        this.setState({ projectsInfo: response.data }, () => {
-          this.getProjectsInfo();
+    const headers = getHeader();
+    this.setState({ loading: true }, () => {
+      axios
+        .get(
+          URL + '/studies/all/',
+          { headers: headers },
+          { cancelToken: this.source.token }
+        )
+        .then(response => {
+          this.setState({ projectsInfo: response.data, loading: false }, () => {
+            this.getProjectsInfo();
+          });
+        })
+        .catch(error => {
+          console.log('oh no, hubo un error!');
+          console.log(error.status);
         });
-      })
-      .catch(error => {
-        console.log('oh no, hubo un error!');
-        console.log(error.status);
-      });
+    });
   };
 
   getProjectsInfo = () => {
@@ -155,6 +342,7 @@ class ListProjects extends Component {
         principal_investigator: principal_investigator,
         is_active: is_active
       });
+      console.log(title);
     }
     this.setState({ projectsInfo: projectsInfoArray });
   };
@@ -172,28 +360,30 @@ class ListProjects extends Component {
         userId: id
       });
     }
-    usersInfoArray.map(user => {
+    /* usersInfoArray.map(user => {
       console.log(user.userEmail + ' ' + user.userName);
-    });
+    }); */
     this.setState({ usersInfo: usersInfoArray });
   };
 
   getProjectById = async id => {
-    var token = JSON.parse(localStorage.getItem('token'));
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
-    };
+    const headers = getHeader();
     axios
-      .get(URL + '/studies/' + id, {
-        headers: headers
-      })
+      .get(
+        URL + '/studies/' + id,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
       .then(response => {
         this.setState({ projectInfo: response.data }, () => {
-          if (modalUpdate) {
-            this.handleUpdate();
+          if (this.typeModal === 0) {
+            this.handleOpenUpdate();
+          } else if (this.typeModal === 1) {
+            this.handleOpenView();
+          } else if (this.typeModal === 2) {
+            this.handleOpenDelete();
           }
-          modalUpdate = false;
+          this.typeModal = 0;
         });
       })
       .catch(error => {
@@ -204,176 +394,106 @@ class ListProjects extends Component {
 
   /**
    * @function updateRow
-   * @description Se encarga de mostrar el modal de actualizacion de usuario y cargar la informacion
-   * del usuario (su email)
+   * @description Se encarga de mostrar el modal de actualizacion de proyecto y cargar la informacion
+   * del proyecto (su id)
    */
   updateRow = id => {
-    modalUpdate = true;
+    this.typeModal = 0;
+    this.setState({ idProjectToEdit: id }, () => {
+      this.getProjectById(this.state.idProjectToEdit);
+    });
+  };
+
+  viewRow = id => {
+    this.typeModal = 1;
+    this.setState({ idProjectToEdit: id }, () => {
+      this.getProjectById(this.state.idProjectToEdit);
+    });
+  };
+
+  deleteRow = id => {
+    this.typeModal = 2;
     this.setState({ idProjectToEdit: id }, () => {
       this.getProjectById(this.state.idProjectToEdit);
     });
   };
 
   render() {
-    /* En este caso, el accessor es la variable del array projectsInfoArray */
-    const columns = [
-      {
-        Header: 'Título',
-        accessor: 'title',
-        width: 150,
-        maxWidth: 200,
-        minWidth: 100
-      },
-      {
-        Header: 'Fecha de Registro',
-        accessor: 'reg_date',
-        width: 150,
-        maxWidth: 200,
-        minWidth: 100
-      },
-      {
-        Header: 'Fecha de Inicio',
-        accessor: 'start_date',
-        width: 150,
-        maxWidth: 200,
-        minWidth: 100
-      },
-      {
-        Header: 'Fecha de Finalización',
-        accessor: 'end_date',
-        width: 150,
-        maxWidth: 200,
-        minWidth: 100
-      },
-      {
-        Header: 'Responsable del registro',
-        accessor: 'reg_responsible',
-        width: 150,
-        maxWidth: 200,
-        minWidth: 100
-      },
-      {
-        Header: 'Investigador Principal',
-        accessor: 'principal_investigator',
-        sortable: false,
-        filterable: false,
-        width: 100,
-        maxWidth: 100,
-        minWidth: 100
-      },
-      {
-        id: 'status',
-        Header: 'Estado',
-        accessor: d => {
-          switch (d.status) {
-            case 1:
-              return 'REGISTRO';
-            case 2:
-              return 'DISEÑO';
-            case 3:
-              return 'FINALIZADO';
-          }
-        },
-        sortable: false,
-        filterable: false,
-        width: 150,
-        maxWidth: 150,
-        minWidth: 100
-      },
-      {
-        id: 'is_active',
-        Header: 'Activo',
-        accessor: d => {
-          return d.is_active ? 'Si' : 'No';
-        },
-        sortable: false,
-        filterable: false,
-        width: 150,
-        maxWidth: 150,
-        minWidth: 100
-      },
-      {
-        Header: 'Acciones',
-        sortable: false,
-        filterable: false,
-        width: 250,
-        maxWidth: 250,
-        minWidth: 200,
-        Cell: props => {
-          return (
-            <>
-              <Button
-                onClick={() => {
-                  console.log(props.original.id_pk);
-                  this.updateRow(props.original.id_pk);
-                }}>
-                Editar
-              </Button>
-              <Button
-                className='ml-1'
-                onClick={() => {
-                  console.log(props.original.id);
-                  this.viewRow(props.original.id);
-                }}>
-                Ver
-              </Button>
-              <Button
-                className='ml-1'
-                onClick={() => {
-                  this.deleteRow(props.original.id);
-                }}>
-                Eliminar
-              </Button>
-            </>
-          );
-        }
-      }
-    ];
     return (
       <>
         <h1 className='h3 mb-2 text-gray-800'>Lista de proyectos</h1>
         <button
           className='btn btn-primary btn-icon-split p-0 mb-2'
-          onClick={this.handleCreate}>
+          onClick={this.handleOpenCreate}>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
           <span className='text text-white'>Crear proyecto</span>
         </button>
-        <ReactTable
-          columns={columns}
-          data={this.state.projectsInfo}
-          defaultPageSize={6}
-          noDataText={'No existen proyectos'}
-          filterable></ReactTable>
+        {this.state.loading ? (
+          <ReactTable
+            columns={this.state.columns}
+            defaultPageSize={6}
+            NoDataComponent={NoDataConst}
+            noDataText={'No existen proyectos'}
+            filterable
+          />
+        ) : (
+          <ReactTable
+            columns={this.state.columns}
+            data={this.state.projectsInfo}
+            defaultPageSize={6}
+            NoDataComponent={NoDataConst}
+            noDataText={'No existen proyectos'}
+            filterable
+          />
+        )}
 
-        <Modal size='lg' show={this.state.showCreate} onHide={this.handleClose}>
-          {/* Crear Estudio */}
+        <Modal
+          size='lg'
+          show={this.state.isVisibleCreate}
+          onHide={this.handleClose}>
+          {/* Crear Proyecto */}
           <CreateProjectFormik
             usersInfo={this.state.usersInfo}
             handleCloseCreate={this.handleCloseCreate}
             handleClose={this.handleClose}
           />
         </Modal>
-        <Modal show={this.state.showUpdate} onHide={this.handleClose}>
-          {/* Actualizar Usuario */}
+        <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
           <UpdateProjectFormik
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            usersInfo={this.state.usersInfo}
+            projectInfo={this.state.projectInfo}
+          />
+        </Modal>
+        <Modal show={this.state.isVisibleView} onHide={this.handleClose}>
+          {/* Ver Proyecto */}
+          {/* <ViewProjectFormik
             handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
             email={this.state.emailToEdit}
             usersInfo={this.state.usersInfo}
             projectInfo={this.state.projectInfo}
-          />
+          /> */}
         </Modal>
-        <div className='container-alert time'>
-          <Alert
-            variant='success'
-            show={this.state.showMessage}
-            onClose={this.handleDismiss}
-            dismissible>
-            <p className='mb-0'>{this.state.message}</p>
-          </Alert>
-        </div>
+        <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
+          {/* Eliminar Proyecto */}
+          {/* <UpdateProjectFormik
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            email={this.state.emailToEdit}
+            usersInfo={this.state.usersInfo}
+            projectInfo={this.state.projectInfo}
+          /> */}
+        </Modal>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        />
       </>
     );
   }
