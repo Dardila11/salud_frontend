@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Formik } from 'formik';
 import axios from 'axios';
 import { URL } from '../../utils/URLSever';
+import AlertComponent from '../../layout/alert/alert.component';
 import { Button, Modal, Form, Col } from 'react-bootstrap';
-import * as Yup from 'yup';
 //import Autosuggest from 'react-autosuggest';
 //import theme from './theme.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
+import * as Utils from '../../utils/utils';
+import * as Yup from 'yup';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
 registerLocale('es', es);
@@ -20,7 +22,7 @@ const schema = Yup.object({
   projectId: Yup.string()
     .test(
       'len',
-      'Debe tener exactamente 10 caracteres',
+      'Id bebe tener exactamente 10 caracteres',
       val => val.length === 10
     )
     .required('Campo Requerido'),
@@ -28,6 +30,13 @@ const schema = Yup.object({
     .min(5, 'Titulo debe tener minimo 5 caracteres')
     .max(150, 'Titulo debe tener maximo 150 caracteres')
     .required('Campo Requerido'),
+  registerDate: Yup.date().required('Campo Requerido'),
+  startDate: Yup.date().required('Campo Requerido'),
+  /* por si se salta la validacion de react-datepicker */
+  endDate: Yup.date().when(
+    'startDate',
+    (startDate, schema) => startDate && schema.min(startDate)
+  ),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
@@ -120,7 +129,10 @@ class CreateProjectFormik extends Component {
     super(props);
     this.state = {
       value: '',
-      suggestions: []
+      suggestions: [],
+      alertMessage: '',
+      alertVariant: '',
+      alertId: 'alert-create-project'
     };
   }
 
@@ -129,17 +141,6 @@ class CreateProjectFormik extends Component {
   };
   handleCloseCreate = () => {
     this.props.handleCloseCreate();
-  };
-
-  genId = length => {
-    var result = '';
-    var characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
   };
 
   // Autosuggest will call this function every time you need to update suggestions.
@@ -194,13 +195,12 @@ class CreateProjectFormik extends Component {
   };
 
   saveNewProjectInfo = async values => {
-    var token = JSON.parse(localStorage.getItem('token'));
-
+    const headers = Utils.getHeader();
     var json = {
       study: {
         study_id: values.projectId,
-        title_little: values.title,
-        title_long: values.title,
+        title_little: values.title.toLowerCase(),
+        title_long: values.title.toLowerCase(),
         status: 1,
         date_in_study: moment(values.startDate).format('YYYY-MM-DD'),
         date_prevout_end: null,
@@ -216,29 +216,19 @@ class CreateProjectFormik extends Component {
         manager_2: null
       }
     };
-    var myJson = JSON.stringify(json);
-    console.log(myJson);
-    /**
-     * headers: son necesarios para realizar la
-     * solicitud al servidor. se le envia el JWT y
-     * el token como autorización
-     */
-
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
-    };
     axios
       .post(URL + '/studies/', json, {
         headers: headers
       })
-      .then(response => {
-        console.log(response.status);
+      .then(() => {
         this.handleCloseCreate();
       })
       .catch(error => {
-        console.log('hubo un error');
-        console.log(error.status);
+        this.setState({
+          alertVariant: 'danger',
+          alertMessage: JSON.parse(error.request.response).detail
+        });
+        Utils.showAlert(this.state.alertId);
       });
   };
   render() {
@@ -256,7 +246,7 @@ class CreateProjectFormik extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            projectId: this.genId(10),
+            projectId: Utils.genId(10),
             title: '',
             registerDate: new Date(),
             startDate: new Date(),
@@ -286,6 +276,11 @@ class CreateProjectFormik extends Component {
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                <p>
+                  <i className='required'>
+                    * Todos los campos son obligatorios
+                  </i>
+                </p>
                 <Form id='formCreateProject' onSubmit={handleSubmit}>
                   <Form.Row>
                     <Form.Group as={Col} md='4' controlId='inputId'>
@@ -330,6 +325,8 @@ class CreateProjectFormik extends Component {
                         className='form-control'
                         name='registerDate'
                         onChange={date => setFieldValue('registerDate', date)}
+                        isValid={touched.registerDate && !errors.registerDate}
+                        isInvalid={!!errors.registerDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.registerDate}
@@ -450,6 +447,11 @@ class CreateProjectFormik extends Component {
             </>
           )}
         </Formik>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        />
       </>
     );
   }

@@ -8,9 +8,9 @@ export async function showAlert(alertId) {
   var alert = window.setTimeout(function() {
     $('#' + alertId).slideDown(function() {
       $('#' + alertId).hide();
-      $('#' + alertId).addClass('back');  
+      $('#' + alertId).addClass('back');
     });
-  }, 1200);
+  }, 2000);
 }
 
 export default function ValidateEmail(mail) {
@@ -47,4 +47,15 @@ export function translate(e) {
   if (JSON.parse(e.request.response).email !== undefined) {
     return 'Ya existe un usuario con igual correo';
   }
+}
+
+export function genId(length) {
+  var result = '';
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }
