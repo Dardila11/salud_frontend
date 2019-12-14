@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import axios from 'axios';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
-import { Button, Modal, Form, Col } from 'react-bootstrap';
+import { Button, Modal, Form, Col, ProgressBar } from 'react-bootstrap';
 //import Autosuggest from 'react-autosuggest';
 //import theme from './theme.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -118,18 +118,13 @@ function renderSectionTitle(section) {
  * @description Este componente se encarga de la creacion de nuevos
  * proyectos de estudios
  */
-
-/**
- * @todo
- * TODO: Las Fechas no las obtiene bien, da un dia menos.
- * Falta validacion de fechas
- */
 class CreateProjectFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: '',
       suggestions: [],
+      progress: false,
       alertMessage: '',
       alertVariant: '',
       alertId: 'alert-create-project'
@@ -216,20 +211,25 @@ class CreateProjectFormik extends Component {
         manager_2: null
       }
     };
-    axios
+    this.setState({progress: true} , () =>{
+      axios
       .post(URL + '/studies/', json, {
         headers: headers
       })
       .then(() => {
+        this.setState({ progress: false });
         this.handleCloseCreate();
       })
       .catch(error => {
         this.setState({
+          progress: false,
           alertVariant: 'danger',
           alertMessage: JSON.parse(error.request.response).detail
         });
         Utils.showAlert(this.state.alertId);
       });
+    })
+
   };
   render() {
     //const { value, suggestions } = this.state;
@@ -241,6 +241,16 @@ class CreateProjectFormik extends Component {
     }; */
     return (
       <>
+        {this.state.progress ? (
+          <ProgressBar
+            className='progress'
+            animated
+            now={100}
+            id='progress-admin'
+          />
+        ) : (
+          <></>
+        )}
         <Formik
           noValidate
           validateOnChange={false}

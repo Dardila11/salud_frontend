@@ -10,6 +10,7 @@ import Capitalize from 'react-capitalize';
 import AlertComponent from '../../layout/alert/alert.component';
 import CreateProjectFormik from '../createProject/createProject.component';
 import UpdateProjectFormik from '../updateProject/updateProject.component';
+import DeleteProject from '../deleteProject/deleteProject.component';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -376,6 +377,10 @@ class ListProjects extends Component {
       )
       .then(response => {
         this.setState({ projectInfo: response.data }, () => {
+          console.log(
+            'obteniendo la informacion del proyecto. ' +
+              this.state.projectInfo[0].fields.is_active
+          );
           if (this.typeModal === 0) {
             this.handleOpenUpdate();
           } else if (this.typeModal === 1) {
@@ -481,13 +486,12 @@ class ListProjects extends Component {
         </Modal>
         <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
           {/* Eliminar Proyecto */}
-          {/* <UpdateProjectFormik
+          <DeleteProject
             handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
-            email={this.state.emailToEdit}
-            usersInfo={this.state.usersInfo}
-            projectInfo={this.state.projectInfo}
-          /> */}
+            projectId={this.state.idProjectToEdit}
+            is_active={this.state.projectInfo}
+          />
         </Modal>
         <AlertComponent
           alertId={this.state.alertId}

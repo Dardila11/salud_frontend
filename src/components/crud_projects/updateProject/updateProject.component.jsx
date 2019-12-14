@@ -3,15 +3,17 @@ import { Formik } from 'formik';
 import axios from 'axios';
 import { URL } from '../../utils/URLSever';
 import { Button, Modal, Form, Col } from 'react-bootstrap';
-import * as Yup from 'yup';
 import DatePicker, { registerLocale } from 'react-datepicker';
+import AlertComponent from '../../layout/alert/alert.component';
+import * as Yup from 'yup';
+import * as Utils from '../../utils/utils';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
 registerLocale('es', es);
 var moment = require('moment');
 
 /**
- * @var schema Crear un objecto Yup el cual se encarga de todas las
+ * @var schema Crea un objecto Yup el cual se encarga de todas las
  * validaciones de los campos del formulario
  */
 const schema = Yup.object({
@@ -26,16 +28,17 @@ const schema = Yup.object({
     .min(5, 'Titulo debe tener minimo 5 caracteres')
     .max(150, 'Titulo debe tener maximo 150 caracteres')
     .required('Campo Requerido'),
+  registerDate: Yup.date().required('Campo Requerido'),
+  startDate: Yup.date().required('Campo Requerido'),
+  /* por si se salta la validacion de react-datepicker */
+  endDate: Yup.date().when(
+    'startDate',
+    (startDate, schema) => startDate && schema.min(startDate)
+  ),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido'),
   projectStatus: Yup.string().required('Campo Requerido')
 });
-
-/**
- * @todo
- * TODO: Las Fechas no las obtiene bien, da un dia menos.
- * Falta validacion de fechas
- */
 
 /**
  * @author Dardila
@@ -45,7 +48,11 @@ const schema = Yup.object({
 class UpdateProjectFormik extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      alertMessage: '',
+      alertVariant: '',
+      alertId: 'alert-update-project'
+    };
   }
   handleClose = () => {
     this.props.handleClose();
@@ -53,28 +60,14 @@ class UpdateProjectFormik extends Component {
   handleCloseUpdate = () => {
     this.props.handleCloseUpdate();
   };
-
-  componentDidMount() {
-    console.log(this.props.projectInfo);
-    console.log(this.props.projectInfo[0].pk);
-    console.log(this.props.projectInfo[0].fields.study_id);
-    console.log(this.props.projectInfo[0].fields.date_reg.substring(0, 10));
-
-    var date = moment('12-25-1995', 'MM-DD-YYYY');
-    console.log('my date ' + date);
-
-    var date2 = new Date(this.props.projectInfo[0].fields.date_reg);
-    console.log('my new date ' + date2);
-  }
-
   /**
    * @function updateProjectInfo
    * @description Se encarga de guardar los datos modificados en un json
    * y enviar una solicitud de actualizacion al servidor.
    */
   updateProjectInfo = async values => {
-    console.log(values.firstName);
-    var token = JSON.parse(localStorage.getItem('token'));
+    console.log('entra al updateProjectInfo');
+    const headers = Utils.getHeader();
     var json = {
       study_id: this.props.projectInfo[0].pk,
       study: {
@@ -98,20 +91,8 @@ class UpdateProjectFormik extends Component {
     };
     var myJson = JSON.stringify(json);
     console.log(myJson);
-    /**
-     * headers: son necesarios para realizar la
-     * solicitud al servidor. se le envia el JWT y
-     * el token como autorización
-     */
-
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + token
-    };
     axios
-      .put(URL + '/studies/', json, {
-        headers: headers
-      })
+      .put(URL + '/studies/', json, { headers: headers })
       .then(response => {
         console.log(response.status);
         this.handleCloseUpdate();
@@ -119,6 +100,11 @@ class UpdateProjectFormik extends Component {
       .catch(error => {
         console.log('hubo un error!');
         console.log(error.status);
+        this.setState({
+          alertVariant: 'danger',
+          alertMessage: JSON.parse(error.request.response).detail
+        });
+        Utils.showAlert(this.state.alertId);
       });
   };
   render() {
@@ -170,6 +156,11 @@ class UpdateProjectFormik extends Component {
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                <p>
+                  <i className='required'>
+                    * Todos los campos son obligatorios
+                  </i>
+                </p>
                 <Form id='formUpdateProject' onSubmit={handleSubmit}>
                   <Form.Row>
                     <Form.Group as={Col} md='4' controlId='inputId'>
@@ -354,6 +345,11 @@ class UpdateProjectFormik extends Component {
             </>
           )}
         </Formik>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        />
       </>
     );
   }
