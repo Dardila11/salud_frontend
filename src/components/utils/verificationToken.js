@@ -8,18 +8,16 @@ export function vertificationToken(source) {
     token: token
   };
   if (token !== null) {
-    axios
+    const request = axios
       .post(URL + '/users/token/verificate/', data, {}, { cancelToken: source })
       .then(() => {
         refreshToken(source);
+        return true;
       })
       .catch(error => {
-        const status = JSON.parse(error.request.status);
-        if (status === 400) {
-          closeSession();
-          alert('La sesion ha expirado.');
-        }
+        return Promise.reject(error);
       });
+    return request;
   }
 }
 

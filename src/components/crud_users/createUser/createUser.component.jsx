@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, Col, Form, Modal } from 'react-bootstrap';
+import { Button, Col, Form, Modal, ProgressBar } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { getHeader, toCapitalizer, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -40,6 +40,7 @@ class CreateUserFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      progress: false,
       isAdmin: false,
       alertMessage: '',
       alertVariant: '',
@@ -52,7 +53,7 @@ class CreateUserFormik extends Component {
    * @description Se encarga de cargar los datos del nuevo usuario
    * en un data y enviar una solicitud de creacion al servidor
    */
-  saveNewUserInfo = async values => {
+  saveNewUserInfo = values => {
     const headers = getHeader();
     var data = {
       user: {
@@ -80,20 +81,24 @@ class CreateUserFormik extends Component {
         { name: 'view_user' }
       );
     }
-    axios
-      .post(URL + '/users/', data, {
-        headers: headers
-      })
-      .then(() => {
-        this.handleCloseCreate();
-      })
-      .catch(error => {
-        this.setState({
-          alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
-        });
-        showAlert(this.state.alertId);
-      });
+    this.setState({ progress: true }, () =>
+      axios
+        .post(URL + '/users/', data, {
+          headers: headers
+        })
+        .then(() => {
+          this.setState({ progress: false });
+          this.handleCloseCreate();
+        })
+        .catch(error => {
+          this.setState({
+            progress: false,
+            alertVariant: 'danger',
+            alertMessage: JSON.parse(error.request.response).detail
+          });
+          showAlert(this.state.alertId);
+        })
+    );
   };
 
   handleChange = event => {
@@ -113,6 +118,16 @@ class CreateUserFormik extends Component {
   render() {
     return (
       <section>
+        {this.state.progress ? (
+          <ProgressBar
+            className='progress'
+            animated
+            now={100}
+            id='progress-admin'
+          />
+        ) : (
+          <></>
+        )}
         <Formik
           noValidate
           validateOnChange={false}
@@ -120,7 +135,7 @@ class CreateUserFormik extends Component {
           initialValues={{
             type: -1,
             userId: '',
-            firstName: ''.toUppererCase,
+            firstName: '',
             lastName: '',
             email: ''.toLowerCase(),
             confEmail: ''.toLowerCase(),
@@ -131,8 +146,7 @@ class CreateUserFormik extends Component {
             createProjects: false
           }}
           validationSchema={schema}
-          onSubmit={this.saveNewUserInfo}
-        >
+          onSubmit={this.saveNewUserInfo}>
           {({ handleSubmit, handleChange, values, touched, errors }) => (
             <>
               <Modal.Header closeButton>
@@ -159,8 +173,7 @@ class CreateUserFormik extends Component {
                           this.handleChange(e);
                         }}
                         isInvalid={!!errors.type}
-                        isValid={touched.type && !errors.type}
-                      >
+                        isValid={touched.type && !errors.type}>
                         <option value={-1}>---</option>
                         <option value={1}>Administrador</option>
                         <option value={2}>Usuario simple</option>
@@ -186,7 +199,7 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='6' controlId='validationCustom01'>
+                    <Form.Group as={Col} md='6' controlId='validationCustom02'>
                       <Form.Label>Nombres</Form.Label>
                       <Form.Control
                         type='text'
@@ -201,7 +214,7 @@ class CreateUserFormik extends Component {
                         {errors.firstName}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='6' controlId='validationCustom02'>
+                    <Form.Group as={Col} md='6' controlId='validationCustom03'>
                       <Form.Label>Apellidos</Form.Label>
                       <Form.Control
                         type='text'
@@ -221,8 +234,7 @@ class CreateUserFormik extends Component {
                     <Form.Group
                       as={Col}
                       md='6'
-                      controlId='validationCustomUsername'
-                    >
+                      controlId='validationCustomUsername'>
                       <Form.Label>Correo</Form.Label>
                       <Form.Control
                         name='email'
@@ -240,8 +252,7 @@ class CreateUserFormik extends Component {
                     <Form.Group
                       as={Col}
                       md='6'
-                      controlId='validationCustomUsername'
-                    >
+                      controlId='validationCustomUsername'>
                       <Form.Label>Confirmar correo</Form.Label>
                       <Form.Control
                         name='confEmail'
@@ -258,7 +269,7 @@ class CreateUserFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='validationCustom03'>
+                    <Form.Group as={Col} md='4' controlId='validationCustom04'>
                       <Form.Label>Centro</Form.Label>
                       <Form.Control
                         as='select'
@@ -267,8 +278,7 @@ class CreateUserFormik extends Component {
                         onChange={handleChange}
                         required
                         isInvalid={!!errors.myCenter}
-                        isValid={touched.myCenter && !errors.myCenter}
-                      >
+                        isValid={touched.myCenter && !errors.myCenter}>
                         <option value={-1}>---</option>
                         {this.props.infoCenters.map((option, index) => {
                           return (
@@ -282,7 +292,7 @@ class CreateUserFormik extends Component {
                         {errors.myCenter}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='validationCustom04'>
+                    <Form.Group as={Col} md='4' controlId='validationCustom05'>
                       <Form.Label>Departamento</Form.Label>
                       <Form.Control
                         as='select'
@@ -291,8 +301,7 @@ class CreateUserFormik extends Component {
                         value={values.myDepartment}
                         onChange={handleChange}
                         isInvalid={!!errors.myDepartment}
-                        isValid={touched.myDepartment && !errors.myDepartment}
-                      >
+                        isValid={touched.myDepartment && !errors.myDepartment}>
                         <option value={-1}>---</option>
                         {this.props.infoDepartaments.map((option, index) => {
                           return (
@@ -356,7 +365,7 @@ class CreateUserFormik extends Component {
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}
           alertMessage={this.state.alertMessage}
-        ></AlertComponent>
+        />
       </section>
     );
   }

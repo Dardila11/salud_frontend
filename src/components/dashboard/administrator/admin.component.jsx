@@ -8,8 +8,11 @@ import { closeSession } from '../../utils/handleLocalStorage';
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import { vertificationToken } from '../../utils/verificationToken';
-import NavAdminUsers from './contentAdmin/contentAdminUsers.component';
-import NavAdminStudies from './contentAdmin/contentAdminStudies.component';
+import NavBar from '../../layout/navbar/navbar.component';
+import NavBarLateral from './navAdmin/navbarLateral.component';
+import ListProjects from '../../crud_projects/listProjects/listProjects.component';
+import ListUsers from '../../crud_users/listUsers/listUsers.component';
+import ViewUserFormik from '../../crud_users/viewUser/viewUser.component';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
@@ -24,59 +27,91 @@ class AdminDashboard extends Component {
     super(props);
     this.state = {
       loading: true,
-      isLogged: true,
-      isNew: true
+      isAuthenticated: true
     };
   }
 
-  vertification = () => {
-    vertificationToken(this.source.token);
-    this.vertificationAuthorization();
+  vertification = reloaded => {
+    vertificationToken(this.source.token)
+      .then(() => {
+        this.vertificationAuthorization(reloaded);
+      })
+      .catch(error => {
+        const status = JSON.parse(error.request.status);
+        if (status === 400) {
+          closeSession();
+          alert('La sesion ha expirado.');
+          this.setState({ isAuthenticated: false });
+        }
+      });
   };
 
-  vertificationAuthorization = () => {
+  vertificationAuthorization = reloaded => {
     const headers = getHeader();
-    this.setState({ loading: true }, () =>
-      axios
-        .post(
-          URL + '/users/verificate/administrator/',
-          {},
-          { headers: headers },
-          { cancelToken: this.source.token }
+    reloaded
+      ? this.setState({ loading: true }, () =>
+          axios
+            .post(
+              URL + '/users/verificate/administrator/',
+              {},
+              { headers: headers },
+              { cancelToken: this.source.token }
+            )
+            .then(() => {
+              this.setState({ isAuthenticated: true }, () => {
+                this.setState({ loading: false });
+              });
+            })
+            .catch(error => {
+              const status = JSON.parse(error.request.status);
+              if (status === 401 || status === 500) {
+                closeSession();
+                this.setState({ isAuthenticated: false, loading: false });
+              }
+            })
         )
-        .then(() => {
-          this.setState({ isLogged: true }, () => {
-            this.setState({ loading: false });
+      : axios
+          .post(
+            URL + '/users/verificate/administrator/',
+            {},
+            { headers: headers },
+            { cancelToken: this.source.token }
+          )
+          .then(() => {
+            this.setState({ isAuthenticated: true });
+          })
+          .catch(error => {
+            const status = JSON.parse(error.request.status);
+            if (status === 401 || status === 500) {
+              closeSession();
+              this.setState({ isAuthenticated: false });
+            }
           });
-        })
-        .catch(error => {
-          const status = JSON.parse(error.request.status);
-          if (status === 401 || status === 500) {
-            closeSession();
-            this.setState({ isLogged: false });
-          }
-        })
-    );
+  };
+
+  contentAdmin = () => {
+    const path = this.props.match.path;
+    if (path.endsWith('/users') || path.endsWith('/users/')) {
+      return <ListUsers />;
+    } else if (path.endsWith('/studies') || path.endsWith('/users/')) {
+      return <ListProjects />;
+    } else if (path.startsWith('/admin/users/')) {
+      return <ViewUserFormik email={this.props.match.params.user} />;
+    } else if (path.startsWith('/admin/studies/')) {
+      return <p>{this.props.match.params.study}</p>;
+    }
   };
 
   componentDidMount() {
-    this.vertification();
+    this.vertification(true);
   }
 
   componentWillUnmount() {
     this.source.cancel('cancel request');
   }
 
-  contentAdmin = () => {
-    if (this.props.match.path.split('/')[2] === 'users') {
-      return <NavAdminUsers />;
-    } else if ((this.props.match.path.split('/')[2] === 'studies')) {
-      return <NavAdminStudies />
-    }
-  };
-
   render() {
-    if (!this.state.isLogged) {
+    if (!this.state.isAuthenticated) {
       return <Redirect to='/' />;
     }
     if (this.state.loading) {
@@ -93,10 +128,18 @@ class AdminDashboard extends Component {
     }
     return (
       <section
+        id='wrapper'
         className='h-100 container-fluid p-0'
-        onMouseDown={vertificationToken(this.source.token)}
-      >
-        <this.contentAdmin />
+        onMouseDown={() => this.vertification(false)}>
+        <NavBarLateral />
+        <div id='content-wrapper' className='d-flex flex-column'>
+          <div id='content'>
+            <NavBar />
+            <div className='container pt-2 pr-5 pl-5 pb-2'>
+              <this.contentAdmin />
+            </div>
+          </div>
+        </div>
       </section>
     );
   }

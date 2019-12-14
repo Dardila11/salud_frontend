@@ -6,6 +6,8 @@ import Capitalize from 'react-capitalize';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
 
+import { Link } from 'react-router-dom';
+
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
@@ -120,41 +122,34 @@ class ListUsers extends Component {
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Actualizar</Tooltip>}
-                >
+                  overlay={<Tooltip>Actualizar</Tooltip>}>
                   <Button
                     className='update'
                     variant='outline-primary'
                     onClick={() => {
                       this.updateRow(props.original.email);
-                    }}
-                  ></Button>
+                    }}></Button>
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Detalles</Tooltip>}
-                >
-                  <Button
-                    className='ml-1 view'
+                  overlay={<Tooltip>Detalles</Tooltip>}>
+                  <Link
+                    className='ml-1 view btn btn-outline-primary'
                     variant='outline-primary'
-                    onClick={() => {
-                      this.viewRow(props.original.email);
-                    }}
-                  ></Button>
+                    role='button'
+                    to={'/admin/users/' + props.original.email}></Link>
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement='left'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Estado</Tooltip>}
-                >
+                  overlay={<Tooltip>Estado</Tooltip>}>
                   <Button
                     className='ml-1 change'
                     variant='outline-danger'
                     onClick={() => {
                       this.deleteRow(props.original.email);
-                    }}
-                  ></Button>
+                    }}></Button>
                 </OverlayTrigger>
               </div>
             );
@@ -408,8 +403,7 @@ class ListUsers extends Component {
         <h1 className='h3 mb-2 text-gray-800'>Lista de usuarios</h1>
         <button
           className='btn btn-primary btn-icon-split p-0 mb-2'
-          onClick={this.handleOpenCreate}
-        >
+          onClick={this.handleOpenCreate}>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
@@ -420,16 +414,14 @@ class ListUsers extends Component {
             columns={this.state.columns}
             defaultPageSize={6}
             NoDataComponent={NoDataConst}
-            filterable
-          ></ReactTable>
+            filterable></ReactTable>
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.info}
             defaultPageSize={6}
             noDataText={'No existen usuarios'}
-            filterable
-          ></ReactTable>
+            filterable></ReactTable>
         )}
         <Modal show={this.state.isVisibleCreate} onHide={this.handleClose}>
           {/* Crear Usuario */}
@@ -475,8 +467,7 @@ class ListUsers extends Component {
         <AlertComponent
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}
-          alertMessage={this.state.alertMessage}
-        ></AlertComponent>
+          alertMessage={this.state.alertMessage}></AlertComponent>
       </section>
     );
   }
