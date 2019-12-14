@@ -12,24 +12,21 @@ import './App.css';
 
 function App() {
   return (
-    <>
-      <Router>
-        <p>Si imprimo</p>
-        <div className='App'>
-          <Switch>
-            <Route exact path='/' component={SignIn} />
-            <Route exact path='/admin/users' component={AdminDashboard} />
-            <Route exact path='/admin/studies' component={AdminDashboard} />
-            <Route path='/admin/users/:user' component={AdminDashboard} />
-            <Route path='/admin/studies/:study' component={AdminDashboard} />
-            <Route path='/user' component={UserDashboard} />
-            <Route path='/user/forget/:em' component={SignIn} />
-            <Route path='/user/recovery/:tk' component={Recovery} />
-            <Route component={PageNotFound} />
-          </Switch>
-        </div>
-      </Router>
-    </>
+    <Router>
+      <div className='App'>
+        <Switch>
+          <Route exact path='/' component={SignIn} />
+          <Route exact path='/admin/users' component={AdminDashboard} />
+          <Route exact path='/admin/studies' component={AdminDashboard} />
+          <Route path='/admin/users/:user' component={AdminDashboard} />
+          <Route path='/admin/studies/:study' component={AdminDashboard} />
+          <Route path='/user' component={UserDashboard} />
+          <Route path='/user/forget/:em' component={SignIn} />
+          <Route path='/user/recovery/:tk' component={Recovery} />
+          <Route component={PageNotFound} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
