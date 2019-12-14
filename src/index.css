@@ -39,7 +39,7 @@ code {
   justify-content: center;
   top: 5%;
   right: 5%;
-  z-index: 2;
+  z-index: 4;
 }
 
 .back {
@@ -160,13 +160,26 @@ code {
 
 .counter {
   position: absolute !important;
-  transform: scale(.7);
+  transform: scale(0.7);
   transform-origin: top right;
   right: -25%;
-  margin-top: -.25rem;
+  margin-top: -0.25rem;
 }
 
-.fa-bell::before {
+.fa-bell {
+  color: gray;
+}
+
+.fa-bell:hover {
   color: black;
+}
+
+.progress {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 1200 !important;
+  border-radius: 0 !important;
 }
 /* - - - - - - - - - - */

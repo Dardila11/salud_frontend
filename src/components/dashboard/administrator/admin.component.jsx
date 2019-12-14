@@ -2,14 +2,18 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import Loader from 'react-loader-spinner';
+import { ProgressBar } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 import { closeSession } from '../../utils/handleLocalStorage';
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import { vertificationToken } from '../../utils/verificationToken';
-import NavAdminUsers from './contentAdmin/contentAdminUsers.component';
-import NavAdminStudies from './contentAdmin/contentAdminStudies.component';
+import NavBar from '../../layout/navbar/navbar.component';
+import NavBarLateral from './navAdmin/navbarLateral.component';
+import ListProjects from '../../crud_projects/listProjects/listProjects.component';
+import ListUsers from '../../crud_users/listUsers/listUsers.component';
+import ViewUserFormik from '../../crud_users/viewUser/viewUser.component';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
@@ -32,6 +36,17 @@ class AdminDashboard extends Component {
   vertification = () => {
     vertificationToken(this.source.token);
     this.vertificationAuthorization();
+  };
+
+  vertificationToken = () => {
+    vertificationToken(this.source.token).catch(error => {
+      const status = JSON.parse(error.request.status);
+      if (status === 400) {
+        closeSession();
+        alert('La sesion ha expirado.');
+        this.setState({ isLogged: false });
+      }
+    });
   };
 
   vertificationAuthorization = () => {
@@ -59,6 +74,20 @@ class AdminDashboard extends Component {
     );
   };
 
+  contentAdmin = () => {
+    console.log(this.props.match);
+    const path = this.props.match.path;
+    if (path.endsWith('/users') || path.endsWith('/users/')) {
+      return <ListUsers />;
+    } else if (path.endsWith('/studies') || path.endsWith('/users/')) {
+      return <ListProjects />;
+    } else if (path.startsWith('/admin/users/')) {
+      return <ViewUserFormik email={this.props.match.params.user} />;
+    } else if (path.startsWith('/admin/studies/')) {
+      return <p>{this.props.match.params.study}</p>;
+    }
+  };
+
   componentDidMount() {
     this.vertification();
   }
@@ -66,14 +95,6 @@ class AdminDashboard extends Component {
   componentWillUnmount() {
     this.source.cancel('cancel request');
   }
-
-  contentAdmin = () => {
-    if (this.props.match.path.split('/')[2] === 'users') {
-      return <NavAdminUsers />;
-    } else if ((this.props.match.path.split('/')[2] === 'studies')) {
-      return <NavAdminStudies />
-    }
-  };
 
   render() {
     if (!this.state.isLogged) {
@@ -93,10 +114,18 @@ class AdminDashboard extends Component {
     }
     return (
       <section
+        id='wrapper'
         className='h-100 container-fluid p-0'
-        onMouseDown={vertificationToken(this.source.token)}
-      >
-        <this.contentAdmin />
+        onMouseDown={this.vertificationToken}>
+        <NavBarLateral />
+        <div id='content-wrapper' className='d-flex flex-column'>
+          <div id='content'>
+            <NavBar />
+            <div className='container pt-2 pr-5 pl-5 pb-2'>
+              <this.contentAdmin />
+            </div>
+          </div>
+        </div>
       </section>
     );
   }

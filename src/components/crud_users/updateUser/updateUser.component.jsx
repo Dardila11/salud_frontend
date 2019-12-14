@@ -154,8 +154,7 @@ class UpdateUserFormik extends Component {
             createUsers: this.isPermissionsUsers()
           }}
           validationSchema={schema}
-          onSubmit={this.updateUserInfo}
-        >
+          onSubmit={this.updateUserInfo}>
           {({ handleSubmit, handleChange, values, touched, errors }) => (
             <>
               <Modal.Header closeButton>
@@ -206,8 +205,7 @@ class UpdateUserFormik extends Component {
                     <Form.Group
                       as={Col}
                       md='6'
-                      controlId='validationCustomUsername'
-                    >
+                      controlId='validationCustomUsername'>
                       <Form.Label>Correo</Form.Label>
                       <Form.Control
                         name='email'
@@ -225,8 +223,7 @@ class UpdateUserFormik extends Component {
                     <Form.Group
                       as={Col}
                       md='6'
-                      controlId='validationCustomUsername'
-                    >
+                      controlId='validationCustomUsername'>
                       <Form.Label>Confirmar correo</Form.Label>
                       <Form.Control
                         name='confEmail'
@@ -252,8 +249,7 @@ class UpdateUserFormik extends Component {
                         onChange={handleChange}
                         required
                         isInvalid={!!errors.myCenter}
-                        isValid={touched.myCenter && !errors.myCenter}
-                      >
+                        isValid={touched.myCenter && !errors.myCenter}>
                         <option value={-1}>------</option>
                         {this.props.infoCenters.map((option, index) => {
                           return (
@@ -276,8 +272,7 @@ class UpdateUserFormik extends Component {
                         value={values.myDepartment}
                         onChange={handleChange}
                         isInvalid={!!errors.myDepartment}
-                        isValid={touched.myDepartment && !errors.myDepartment}
-                      >
+                        isValid={touched.myDepartment && !errors.myDepartment}>
                         <option value={-1}>------</option>
                         {this.props.infoDepartaments.map((option, index) => {
                           return (
@@ -342,8 +337,7 @@ class UpdateUserFormik extends Component {
         <AlertComponent
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}
-          alertMessage={this.state.alertMessage}
-        ></AlertComponent>
+          alertMessage={this.state.alertMessage}></AlertComponent>
       </section>
     );
   }

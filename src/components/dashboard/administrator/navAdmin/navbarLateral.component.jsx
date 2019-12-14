@@ -4,10 +4,10 @@ import { buttonToogle } from '../../../../js/sb-admin-2.min';
 import { Link } from 'react-router-dom';
 
 import './css/fontello.css';
-import './navbarTop.styles.css';
+import './navbarLateral.styles.css';
 import '../../../../vendor/fontawesome-free/css/all.min.css';
 
-class NavBarTop extends Component {
+class NavBarLateral extends Component {
   render() {
     return (
       <ul
@@ -57,4 +57,4 @@ class NavBarTop extends Component {
   }
 }
 
-export default NavBarTop;
+export default NavBarLateral;

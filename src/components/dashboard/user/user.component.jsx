@@ -5,7 +5,7 @@ import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import NavUser from "./navUser/navUser.component";
-import { vertificationToken } from "../../utils/verificationToken";
+// import { vertificationToken } from "../../utils/verificationToken";
 
 class UserDashboard extends Component {
   CancelToken = axios.CancelToken;
@@ -20,7 +20,7 @@ class UserDashboard extends Component {
   }
 
   vertification = () => {
-    vertificationToken();
+    // vertificationToken();
     this.vertificationAuthorization();
   };
 

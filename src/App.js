@@ -18,6 +18,8 @@ function App() {
           <Route exact path='/' component={SignIn} />
           <Route exact path='/admin/users' component={AdminDashboard} />
           <Route exact path='/admin/studies' component={AdminDashboard} />
+          <Route exact path='/admin/users/:user' component={AdminDashboard} />
+          <Route exact path='/admin/studies/:study' component={AdminDashboard} />
           <Route exact path='/user' component={UserDashboard} />
           <Route exact path='/user/forget/:em' component={SignIn} />
           <Route exact path='/user/recovery/:tk' component={Recovery} />          
