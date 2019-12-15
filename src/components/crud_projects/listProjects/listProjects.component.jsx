@@ -224,7 +224,7 @@ class ListProjects extends Component {
    *      cuando son creados, actualizados o borrados
    */
   handleClose = () => {
-    this.getProjects();
+    this.getProjects()
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
