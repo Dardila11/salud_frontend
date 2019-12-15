@@ -25,12 +25,12 @@ export default class ForgetPassword extends Component {
     this.props.handleCloseForgetPassword();
   };
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault();
     const data = {
       email: this.state.email
     };
-    axios
+    await axios
       .put(URL + '/users/password/recovery/', data)
       .then(() => {})
       .catch(error => {

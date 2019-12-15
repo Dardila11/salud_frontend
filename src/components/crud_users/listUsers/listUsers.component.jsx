@@ -14,12 +14,11 @@ import AlertComponent from '../../layout/alert/alert.component';
 import CreateUserFormik from '../createUser/createUser.component';
 import DeleteUser from '../deleteUser/deleteUser.component';
 import UpdateUserFormik from '../updateUser/updateUser.component';
-import ViewUserFormik from '../viewUser/viewUser.component';
 
 import 'react-table/react-table.css';
 import './listUsers.styles.css';
 
-const NoDataConst = props => (
+const NoDataConst = () => (
   <Loader
     type='ThreeDots'
     height={100}
@@ -38,7 +37,7 @@ const NoDataConst = props => (
 class ListUsers extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
-  typeModal = 0;
+  isUpdate = true;
 
   constructor(props) {
     super(props);
@@ -49,10 +48,9 @@ class ListUsers extends Component {
       infoCenters: [],
       infoDepartaments: [],
       userInfo: [1],
-      userPermissions: [1],
+      userPermissions: [],
       isVisibleCreate: false,
       isVisibleUpdate: false,
-      isVisibleView: false,
       isVisibleDelete: false,
       alertVariant: '',
       alertMessage: '',
@@ -79,7 +77,10 @@ class ListUsers extends Component {
           accessor: 'email',
           width: 200,
           maxWidth: 200,
-          minWidth: 100
+          minWidth: 100,
+          Cell: props => (
+            <Link to={'/admin/users/' + props.value}>{props.value}</Link>
+          )
         },
         {
           id: 'is_simple',
@@ -187,14 +188,7 @@ class ListUsers extends Component {
    * @function handleClose se encarga de cerrar todas los modales
    */
   handleClose = () => {
-    const { isVisibleCreate, isVisibleDelete, isVisibleUpdate } = this.state;
-    if (
-      isVisibleCreate === true ||
-      isVisibleDelete === true ||
-      isVisibleUpdate === true
-    ) {
-      this.getUsers();
-    }
+    this.getUsers();
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
@@ -215,17 +209,13 @@ class ListUsers extends Component {
     this.setState({ isVisibleUpdate: true });
   };
 
-  handleOpenView = () => {
-    this.setState({ isVisibleView: true });
-  };
-
   /**
    * @function getUserByEmail
    * @description obtiene la informacion del usuario por medio de su email.
    */
   getUserByEmail = async email => {
     const headers = getHeader();
-    axios
+    await axios
       .get(
         URL + '/users/' + email,
         { headers: headers },
@@ -233,14 +223,11 @@ class ListUsers extends Component {
       )
       .then(response => {
         this.setState({ userInfo: response.data }, () => {
-          if (this.typeModal === 0) {
+          if (this.isUpdate) {
             this.handleOpenUpdate();
-          } else if (this.typeModal === 1) {
-            this.handleOpenView();
-          } else if (this.typeModal === 2) {
+          } else {
             this.handleOpenDelete();
           }
-          this.typeModal = 0;
         });
       });
   };
@@ -252,7 +239,7 @@ class ListUsers extends Component {
    */
   getUserPermissions = async email => {
     const headers = getHeader();
-    axios
+    await axios
       .get(
         URL + '/users/permissions/all/' + email,
         { headers: headers },
@@ -271,7 +258,7 @@ class ListUsers extends Component {
    */
   loadDepartaments = async () => {
     const headers = getHeader();
-    axios
+    await axios
       .get(
         URL + '/places/department/all/',
         { headers: headers },
@@ -304,7 +291,7 @@ class ListUsers extends Component {
    */
   loadCenters = async () => {
     const headers = getHeader();
-    axios
+    await axios
       .get(
         URL + '/places/center/all/',
         { headers: headers },
@@ -355,18 +342,7 @@ class ListUsers extends Component {
    * @description Carga el modal de actualizar un usuario
    */
   updateRow = email => {
-    this.typeModal = 0;
-    this.setState({ emailToRead: email }, () => {
-      this.getUserPermissions(this.state.emailToRead);
-    });
-  };
-
-  /**
-   * @function viewRow
-   * @description Carga el modal de ver la información del usuario
-   */
-  viewRow = email => {
-    this.typeModal = 1;
+    this.isUpdate = true;
     this.setState({ emailToRead: email }, () => {
       this.getUserPermissions(this.state.emailToRead);
     });
@@ -377,7 +353,7 @@ class ListUsers extends Component {
    * @description Carga el modal de cambiar el estado del usuario
    */
   deleteRow = email => {
-    this.typeModal = 2;
+    this.isUpdate = false;
     this.setState({ emailToRead: email }, () => {
       this.getUserByEmail(this.state.emailToRead);
     });
@@ -412,7 +388,7 @@ class ListUsers extends Component {
         {this.state.loading ? (
           <ReactTable
             columns={this.state.columns}
-            defaultPageSize={6}
+            defaultPageSize={5}
             NoDataComponent={NoDataConst}
             filterable></ReactTable>
         ) : (
@@ -447,17 +423,6 @@ class ListUsers extends Component {
             infoDepartaments={this.state.infoDepartaments}
             infoCenters={this.state.infoCenters}
             handleCloseUpdate={this.handleCloseUpdate}
-            handleClose={this.handleClose}
-            email={this.state.emailToRead}
-            userInfo={this.state.userInfo}
-            userPermissions={this.state.userPermissions}
-          />
-        </Modal>
-        <Modal show={this.state.isVisibleView} onHide={this.handleClose}>
-          {/* Ver Usuario */}
-          <ViewUserFormik
-            infoDepartaments={this.state.infoDepartaments}
-            infoCenters={this.state.infoCenters}
             handleClose={this.handleClose}
             email={this.state.emailToRead}
             userInfo={this.state.userInfo}

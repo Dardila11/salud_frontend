@@ -224,18 +224,13 @@ class ListProjects extends Component {
    *      cuando son creados, actualizados o borrados
    */
   handleClose = () => {
-    this.setState(
-      {
-        isVisibleCreate: false,
-        isVisibleUpdate: false,
-        isVisibleDelete: false,
-        isVisibleView: false
-      },
-      () => {
-        console.log('se actualizan los proyectos nuevamente');
-        this.getProjects();
-      }
-    );
+    this.getProjects();
+    this.setState({
+      isVisibleCreate: false,
+      isVisibleUpdate: false,
+      isVisibleDelete: false,
+      isVisibleView: false
+    });
   };
   /**
    * @function handleCloseCreate function enviada como prop de un componente.
@@ -487,7 +482,7 @@ class ListProjects extends Component {
         <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
           {/* Eliminar Proyecto */}
           <DeleteProject
-            handleCloseUpdate={this.handleCloseUpdate}
+            handleCloseDelete={this.handleCloseDelete}
             handleClose={this.handleClose}
             projectId={this.state.idProjectToEdit}
             is_active={this.state.projectInfo}

@@ -123,18 +123,18 @@ class NavBar extends Component {
                 {this.email}
               </span>
             </div>
-            <DropdownButton className='doctor' alignRight title='' id='profile'>
+            <DropdownButton className='doctor dropdown-doctor' alignRight title='' id='profile'>
               <Dropdown.Item as='button'>
                 <i className='fas fa-user fa-sm fa-fw mr-2 text-gray-400'></i>
-                Profile
+                Perfil
               </Dropdown.Item>
               <Dropdown.Item as='button'>
                 <i className='fas fa-list fa-sm fa-fw mr-2 text-gray-400'></i>
-                Activity Log
+                Registro de actividad
               </Dropdown.Item>
               <Dropdown.Item onClick={this.onLogout}>
                 <i className='fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400'></i>
-                Logout
+                Salir
               </Dropdown.Item>
             </DropdownButton>
           </li>

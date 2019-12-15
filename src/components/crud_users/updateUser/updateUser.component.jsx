@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Col, Button, Form, Modal } from 'react-bootstrap';
+import { Col, Button, Form, Modal, ProgressBar } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -41,6 +41,7 @@ class UpdateUserFormik extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      progress: false,
       isAdmin: this.props.userInfo[0].is_staff ? true : false,
       alertMessage: '',
       alertVariant: '',
@@ -100,18 +101,22 @@ class UpdateUserFormik extends Component {
         { name: 'view_user' }
       );
     }
-    axios
-      .put(URL + '/users/', data, { headers: headers })
-      .then(() => {
-        this.handleCloseUpdate();
-      })
-      .catch(error => {
-        this.setState({
-          alertVariant: 'danger',
-          alertMessage: translate(error)
-        });
-        showAlert(this.state.alertId);
-      });
+    this.setState({ progress: true }, () =>
+      axios
+        .put(URL + '/users/', data, { headers: headers })
+        .then(() => {
+          this.setState({ progress: false });
+          this.handleCloseUpdate();
+        })
+        .catch(error => {
+          this.setState({
+            progress: false,
+            alertVariant: 'danger',
+            alertMessage: translate(error)
+          });
+          showAlert(this.state.alertId);
+        })
+    );
   };
 
   isPermissionsCenters = () => {
@@ -139,6 +144,16 @@ class UpdateUserFormik extends Component {
   render() {
     return (
       <section>
+        {this.state.progress ? (
+          <ProgressBar
+            className='progress'
+            animated
+            now={100}
+            id='progress-admin'
+          />
+        ) : (
+          <></>
+        )}
         <Formik
           noValidate
           validateOnChange={false}

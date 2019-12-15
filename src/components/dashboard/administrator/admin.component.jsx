@@ -89,6 +89,10 @@ class AdminDashboard extends Component {
           });
   };
 
+  /**
+   * @function contectAdmin()
+   * @description Segun sea el path de la URL decide cual vista mostrar
+   */
   contentAdmin = () => {
     const path = this.props.match.path;
     if (path.endsWith('/users') || path.endsWith('/users/')) {
