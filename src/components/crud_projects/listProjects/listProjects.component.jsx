@@ -84,6 +84,8 @@ class ListProjects extends Component {
           maxWidth: 200,
           minWidth: 100
         },
+        //ahorrando espacio
+        /*
         {
           Header: 'Responsable del registro',
           accessor: 'reg_responsible',
@@ -91,6 +93,7 @@ class ListProjects extends Component {
           maxWidth: 200,
           minWidth: 100
         },
+        
         {
           Header: 'Investigador Principal',
           accessor: 'principal_investigator',
@@ -99,7 +102,7 @@ class ListProjects extends Component {
           width: 100,
           maxWidth: 100,
           minWidth: 100
-        },
+        },*/
         {
           id: 'status',
           Header: 'Estado',
