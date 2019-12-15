@@ -118,8 +118,8 @@ class ListProjects extends Component {
           },
           sortable: false,
           filterable: false,
-          width: 150,
-          maxWidth: 150,
+          width: 100,
+          maxWidth: 100,
           minWidth: 100
         },
         {
@@ -128,9 +128,9 @@ class ListProjects extends Component {
           accessor: 'is_active',
           sortable: false,
           filterable: false,
-          width: 150,
-          maxWidth: 150,
-          minWidth: 100,
+          width: 50,
+          maxWidth: 50,
+          minWidth: 50,
           Cell: props => {
             return props.value ? (
               <div className='success'></div>
@@ -463,7 +463,7 @@ class ListProjects extends Component {
             handleClose={this.handleClose}
           />
         </Modal>
-        <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+        <Modal size='lg' show={this.state.isVisibleUpdate} onHide={this.handleClose}>
           {/* Actualizar Proyecto */}
           <UpdateProjectFormik
             handleCloseUpdate={this.handleCloseUpdate}

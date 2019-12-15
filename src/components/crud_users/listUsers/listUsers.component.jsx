@@ -114,9 +114,9 @@ class ListUsers extends Component {
           Header: 'Acciones',
           sortable: false,
           filterable: false,
-          width: 150,
-          maxWidth: 150,
-          minWidth: 150,
+          width: 250,
+          maxWidth: 250,
+          minWidth: 200,
           Cell: props => {
             return (
               <div>
@@ -142,7 +142,7 @@ class ListUsers extends Component {
                     to={'/admin/users/' + props.original.email}></Link>
                 </OverlayTrigger>
                 <OverlayTrigger
-                  placement='left'
+                  placement='right'
                   delay={{ show: 250, hide: 100 }}
                   overlay={<Tooltip>Estado</Tooltip>}>
                   <Button
