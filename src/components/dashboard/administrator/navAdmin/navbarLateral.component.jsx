@@ -12,12 +12,10 @@ class NavBarLateral extends Component {
     return (
       <ul
         className='navbar-nav bg-gradient-primary sidebar sidebar-dark accordion'
-        id='accordionSidebar'
-      >
+        id='accordionSidebar'>
         <a
           className='sidebar-brand d-flex align-items-center justify-content-center'
-          href='index.html'
-        >
+          href='index.html'>
           <div className='sidebar-brand-icon'>
             <i className='demo-icon icon-fa-salud'></i>
           </div>
@@ -41,7 +39,7 @@ class NavBarLateral extends Component {
         <li className='nav-item'>
           <Link role='button' className='nav-link' to={'/admin/studies/'}>
             <i className='fas fa-fw fa-notes-medical'></i>
-            <span>Estudios</span>
+            <span>Proyectos</span>
           </Link>
         </li>
         <hr className='sidebar-divider'></hr>
@@ -49,8 +47,7 @@ class NavBarLateral extends Component {
           <button
             className='rounded-circle border-0'
             id='sidebarToggle'
-            onClick={buttonToogle}
-          ></button>
+            onClick={buttonToogle}></button>
         </div>
       </ul>
     );

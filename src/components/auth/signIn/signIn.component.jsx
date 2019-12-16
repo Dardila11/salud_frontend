@@ -66,10 +66,10 @@ class SignIn extends Component {
    * @params `email`, `password`
    * @returns la información del usuario si este existe, junto con el token.
    */
-  onLogin = event => {
+  onLogin = async event => {
     event.preventDefault();
     const { email, password } = this.state;
-    axios
+    await axios
       .post(
         URL + '/users/login/',
         { email, password },

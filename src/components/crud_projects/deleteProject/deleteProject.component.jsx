@@ -29,23 +29,18 @@ class DeleteProject extends Component {
 
   handleDelete = () => {
     const headers = getHeader();
-    const data = {
-      id_instance: this.state.idToDelete
-    };
+    const { idToDelete } = this.state;
 
-    /**
-     * TODO: Falta realizar la llamada del API
-     */
-    this.setState({ progress: true }, () =>
+    this.setState({ progress: true }, () => {
       axios
-        .delete(URL + '/studies/' + this.state.idToDelete + '/', {
+        .delete(URL + '/studies/' + idToDelete + '/', {
           headers: headers
         })
         .then(() => {
-          console.log('se ha cambiado el estado');
+          this.setState({ progress: false });
           this.handleCloseDelete();
-        })
-    );
+        });
+    });
   };
 
   handleCloseDelete = () => {

@@ -45,7 +45,7 @@ class Recovery extends Component {
    *  */
   savePassword = async values => {
     var token = this.props.match.params.tk;
-    axios
+    await axios
       .post(URL + '/users/password/' + token + '/', {
         password: values.pass1
       })

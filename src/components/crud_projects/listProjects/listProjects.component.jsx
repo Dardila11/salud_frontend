@@ -84,6 +84,8 @@ class ListProjects extends Component {
           maxWidth: 200,
           minWidth: 100
         },
+        //ahorrando espacio
+        /*
         {
           Header: 'Responsable del registro',
           accessor: 'reg_responsible',
@@ -91,6 +93,7 @@ class ListProjects extends Component {
           maxWidth: 200,
           minWidth: 100
         },
+        
         {
           Header: 'Investigador Principal',
           accessor: 'principal_investigator',
@@ -99,7 +102,7 @@ class ListProjects extends Component {
           width: 100,
           maxWidth: 100,
           minWidth: 100
-        },
+        },*/
         {
           id: 'status',
           Header: 'Estado',
@@ -115,8 +118,8 @@ class ListProjects extends Component {
           },
           sortable: false,
           filterable: false,
-          width: 150,
-          maxWidth: 150,
+          width: 100,
+          maxWidth: 100,
           minWidth: 100
         },
         {
@@ -125,9 +128,9 @@ class ListProjects extends Component {
           accessor: 'is_active',
           sortable: false,
           filterable: false,
-          width: 150,
-          maxWidth: 150,
-          minWidth: 100,
+          width: 50,
+          maxWidth: 50,
+          minWidth: 50,
           Cell: props => {
             return props.value ? (
               <div className='success'></div>
@@ -224,18 +227,13 @@ class ListProjects extends Component {
    *      cuando son creados, actualizados o borrados
    */
   handleClose = () => {
-    this.setState(
-      {
-        isVisibleCreate: false,
-        isVisibleUpdate: false,
-        isVisibleDelete: false,
-        isVisibleView: false
-      },
-      () => {
-        console.log('se actualizan los proyectos nuevamente');
-        this.getProjects();
-      }
-    );
+    this.getProjects();
+    this.setState({
+      isVisibleCreate: false,
+      isVisibleUpdate: false,
+      isVisibleDelete: false,
+      isVisibleView: false
+    });
   };
   /**
    * @function handleCloseCreate function enviada como prop de un componente.
@@ -343,8 +341,9 @@ class ListProjects extends Component {
         principal_investigator: principal_investigator,
         is_active: is_active
       });
-      console.log(title);
+      console.log(this.state.projectsInfo[i].is_active);
     }
+    console.log(this.state.projectsInfo);
     this.setState({ projectsInfo: projectsInfoArray });
   };
 
@@ -377,10 +376,7 @@ class ListProjects extends Component {
       )
       .then(response => {
         this.setState({ projectInfo: response.data }, () => {
-          console.log(
-            'obteniendo la informacion del proyecto. ' +
-              this.state.projectInfo[0].fields.is_active
-          );
+          console.log(this.state.projectInfo);
           if (this.typeModal === 0) {
             this.handleOpenUpdate();
           } else if (this.typeModal === 1) {
@@ -465,7 +461,10 @@ class ListProjects extends Component {
             handleClose={this.handleClose}
           />
         </Modal>
-        <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+        <Modal
+          size='lg'
+          show={this.state.isVisibleUpdate}
+          onHide={this.handleClose}>
           {/* Actualizar Proyecto */}
           <UpdateProjectFormik
             handleCloseUpdate={this.handleCloseUpdate}

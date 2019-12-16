@@ -89,6 +89,10 @@ class AdminDashboard extends Component {
           });
   };
 
+  /**
+   * @function contectAdmin()
+   * @description Segun sea el path de la URL decide cual vista mostrar
+   */
   contentAdmin = () => {
     const path = this.props.match.path;
     if (path.endsWith('/users') || path.endsWith('/users/')) {
@@ -118,10 +122,9 @@ class AdminDashboard extends Component {
       return (
         <Loader
           type='ThreeDots'
+          color='#00BFFF'
           height={100}
           width={100}
-          color='#00BFFF'
-          timeout={3000}
           className='mh'
         />
       );

@@ -10,9 +10,9 @@ export function vertificationToken(source) {
   if (token !== null) {
     const request = axios
       .post(URL + '/users/token/verificate/', data, {}, { cancelToken: source })
-      .then(() => {
+      .then((response) => {
         refreshToken(source);
-        return true;
+        return Promise.resolve(response)
       })
       .catch(error => {
         return Promise.reject(error);

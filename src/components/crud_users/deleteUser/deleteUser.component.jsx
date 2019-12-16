@@ -22,6 +22,7 @@ class DeleteUser extends Component {
       is_active: props.is_active
     };
   }
+  
   handleClose = () => {
     this.props.handleClose();
   };
@@ -47,6 +48,7 @@ class DeleteUser extends Component {
   handleCloseDelete = () => {
     this.props.handleCloseDelete();
   };
+
   render() {
     return (
       <section>

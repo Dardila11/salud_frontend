@@ -4,9 +4,8 @@ import axios from 'axios';
 export async function getCenters() {
   var infoCenters = [];
 
-  console.log('se ejecuta loadCenters');
   const token = JSON.parse(localStorage.getItem('token'));
-  axios
+  await axios
     .get(URL + '/places/center/all/', {
       headers: {
         Authorization: 'JWT ' + token

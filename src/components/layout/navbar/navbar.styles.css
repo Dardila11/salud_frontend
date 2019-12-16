@@ -1,0 +1,4 @@
+.dropdown-doctor > .dropdown-menu {
+  transform: translate3d(-173px, 38px, 0px) !important;
+  width: max-content !important;
+}
