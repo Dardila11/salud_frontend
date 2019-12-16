@@ -132,7 +132,7 @@ class NavBar extends Component {
                 <i className='fas fa-list fa-sm fa-fw mr-2 text-gray-400'></i>
                 Registro de actividad
               </Dropdown.Item>
-              <Dropdown.Item onClick={this.onLogout}>
+              <Dropdown.Item as='button' onClick={this.onLogout}>
                 <i className='fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400'></i>
                 Salir
               </Dropdown.Item>
