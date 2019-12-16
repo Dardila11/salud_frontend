@@ -50,6 +50,10 @@ class DeleteProject extends Component {
     this.props.handleCloseDelete();
   };
 
+  componentDidMount() {
+    console.log(this.props.is_active);
+  }
+
   render() {
     return (
       <>

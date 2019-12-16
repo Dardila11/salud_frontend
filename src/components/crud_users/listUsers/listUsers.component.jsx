@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Capitalize from 'react-capitalize';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
-
-import { Link } from 'react-router-dom';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -21,10 +20,9 @@ import './listUsers.styles.css';
 const NoDataConst = () => (
   <Loader
     type='ThreeDots'
+    color='#00BFFF'
     height={100}
     width={100}
-    color='#00BFFF'
-    timeout={3000}
     className='mh -loading -active'
   />
 );
@@ -432,7 +430,8 @@ class ListUsers extends Component {
         <AlertComponent
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}
-          alertMessage={this.state.alertMessage}></AlertComponent>
+          alertMessage={this.state.alertMessage}
+        />
       </section>
     );
   }

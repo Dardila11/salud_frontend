@@ -227,7 +227,7 @@ class ListProjects extends Component {
    *      cuando son creados, actualizados o borrados
    */
   handleClose = () => {
-    this.getProjects()
+    this.getProjects();
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
@@ -341,8 +341,9 @@ class ListProjects extends Component {
         principal_investigator: principal_investigator,
         is_active: is_active
       });
-      console.log(title);
+      console.log(this.state.projectsInfo[i].is_active);
     }
+    console.log(this.state.projectsInfo);
     this.setState({ projectsInfo: projectsInfoArray });
   };
 
@@ -374,11 +375,8 @@ class ListProjects extends Component {
         { cancelToken: this.source.token }
       )
       .then(response => {
-        this.setState({ projectInfo: response.data }, () => {
-          console.log(
-            'obteniendo la informacion del proyecto. ' +
-              this.state.projectInfo[0].fields.is_active
-          );
+        this.setState({ projectInfo: response.data[0].fields }, () => {
+          console.log(this.state.projectInfo);
           if (this.typeModal === 0) {
             this.handleOpenUpdate();
           } else if (this.typeModal === 1) {
@@ -463,7 +461,10 @@ class ListProjects extends Component {
             handleClose={this.handleClose}
           />
         </Modal>
-        <Modal size='lg' show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+        <Modal
+          size='lg'
+          show={this.state.isVisibleUpdate}
+          onHide={this.handleClose}>
           {/* Actualizar Proyecto */}
           <UpdateProjectFormik
             handleCloseUpdate={this.handleCloseUpdate}
@@ -488,7 +489,7 @@ class ListProjects extends Component {
             handleCloseDelete={this.handleCloseDelete}
             handleClose={this.handleClose}
             projectId={this.state.idProjectToEdit}
-            is_active={this.state.projectInfo}
+            is_active={this.state.projectInfo.is_active}
           />
         </Modal>
         <AlertComponent
