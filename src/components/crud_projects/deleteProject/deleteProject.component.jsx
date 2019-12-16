@@ -17,7 +17,7 @@ class DeleteProject extends Component {
     this.state = {
       progress: false,
       idToDelete: props.projectId,
-      is_active: props.is_active,
+      is_active: props.is_active[0].fields.is_active,
       alertId: 'alert-delete-project',
       alertMessage: '',
       alertVariant: ''
@@ -36,12 +36,16 @@ class DeleteProject extends Component {
     /**
      * TODO: Falta realizar la llamada del API
      */
-    this.setState({ progress: true }, () => {
-      axios.delete(URL + '/studies/', {
-        headers: headers,
-        data: data
-      });
-    });
+    this.setState({ progress: true }, () =>
+      axios
+        .delete(URL + '/studies/' + this.state.idToDelete + '/', {
+          headers: headers
+        })
+        .then(() => {
+          console.log('se ha cambiado el estado');
+          this.handleCloseDelete();
+        })
+    );
   };
 
   handleCloseDelete = () => {

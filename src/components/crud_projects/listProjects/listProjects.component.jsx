@@ -487,7 +487,7 @@ class ListProjects extends Component {
         <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
           {/* Eliminar Proyecto */}
           <DeleteProject
-            handleCloseUpdate={this.handleCloseUpdate}
+            handleCloseDelete={this.handleCloseDelete}
             handleClose={this.handleClose}
             projectId={this.state.idProjectToEdit}
             is_active={this.state.projectInfo}
