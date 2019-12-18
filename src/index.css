@@ -226,3 +226,10 @@ code {
   font-size: 12px;
   color: #777;
 }
+
+.react-autosuggest__input {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  height: calc(1.5em + .75rem + 2px);
+}
