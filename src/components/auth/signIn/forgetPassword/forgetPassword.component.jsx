@@ -32,11 +32,14 @@ export default class ForgetPassword extends Component {
     };
     await axios
       .put(URL + '/users/password/recovery/', data)
-      .then(() => {})
+      .then(() => {
+        this.handleCloseForgetPassword()
+      })
       .catch(error => {
+        /*
         this.setState({
           message: JSON.parse(error.request.response).detail
-        });
+        });*/
       });
   };
 
@@ -51,11 +54,9 @@ export default class ForgetPassword extends Component {
         <Modal.Body>
           <Form
             id='formForgetPassword'
-            noValidate
-            validated={this.state.validated}
             onSubmit={this.handleSubmit}
           >
-            <Form.Row>
+            
               <Form.Label>Correo de inscripción</Form.Label>
               <Form.Control
                 required
@@ -63,9 +64,9 @@ export default class ForgetPassword extends Component {
                 name='email'
                 defaultValue={this.state.email}
                 onChange={this.handleChange}
-                placeholder='Correo'
+                placeholder='Correo'                
               />
-            </Form.Row>
+            
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -74,7 +75,6 @@ export default class ForgetPassword extends Component {
           </Button>
           <Button
             form='formForgetPassword'
-            onClick={this.handleCloseForgetPassword}
             type='submit'
           >
             Enviar correo

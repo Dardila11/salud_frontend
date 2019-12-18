@@ -58,7 +58,7 @@ class SignIn extends Component {
       alertVariant: 'success',
       alertMessage: 'Revisa la bandeja de entrada de tu correo.'
     });
-    showAlert();
+    showAlert(this.state.alertId);
   };
 
   /**
