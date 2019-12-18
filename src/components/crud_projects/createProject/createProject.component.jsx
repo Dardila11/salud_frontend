@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
-import { Formik } from 'formik';
 import axios from 'axios';
+
+import { Button, Col, Form, Modal, ProgressBar } from 'react-bootstrap';
+import { Formik } from 'formik';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
-import { Button, Modal, Form, Col, ProgressBar } from 'react-bootstrap';
-//import Autosuggest from 'react-autosuggest';
-//import theme from './theme.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
+
+import AutosuggestUsers from '../autosuggest/autosuggest.component';
+
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
+
 registerLocale('es', es);
+
 var moment = require('moment');
 
 /**
@@ -41,78 +45,6 @@ const schema = Yup.object({
   responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
 
-const theme = {
-  container: {
-    position: 'relative'
-  },
-  input: {
-    width: 240,
-    height: 30,
-    padding: '10px 20px',
-    fontFamily: 'Helvetica, sans-serif',
-    fontWeight: 300,
-    fontSize: 16,
-    border: '1px solid #aaa',
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4
-  },
-  inputFocused: {
-    outline: 'none'
-  },
-  inputOpen: {
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0
-  },
-  suggestionsContainer: {
-    display: 'none'
-  },
-  suggestionsContainerOpen: {
-    display: 'block',
-    position: 'absolute',
-    top: 51,
-    width: 280,
-    border: '1px solid #aaa',
-    backgroundColor: '#fff',
-    fontFamily: 'Helvetica, sans-serif',
-    fontWeight: 300,
-    fontSize: 16,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    zIndex: 2
-  },
-  suggestionsList: {
-    margin: 0,
-    padding: 0,
-    listStyleType: 'none'
-  },
-  suggestion: {
-    cursor: 'pointer',
-    padding: '10px 20px'
-  },
-  suggestionHighlighted: {
-    backgroundColor: '#ddd'
-  }
-};
-
-// When suggestion is clicked, Autosuggest needs to populate the input
-// based on the clicked suggestion. Teach Autosuggest how to calculate the
-// input value for every given suggestion.
-const getSuggestionValue = suggestion => suggestion.userName;
-
-function getSectionSuggestions(section) {
-  return section.userName;
-}
-
-function renderSuggestion(suggestion) {
-  return <span>{suggestion.userName}</span>;
-}
-
-function renderSectionTitle(section) {
-  return <strong>{section.userEmail}</strong>;
-}
-
 /**
  * @author Dardila
  * @description Este componente se encarga de la creacion de nuevos
@@ -134,59 +66,9 @@ class CreateProjectFormik extends Component {
   handleClose = () => {
     this.props.handleClose();
   };
+
   handleCloseCreate = () => {
     this.props.handleCloseCreate();
-  };
-
-  // Autosuggest will call this function every time you need to update suggestions.
-  // You already implemented this logic above, so just use it.
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: this.getSuggestions(value)
-    });
-  };
-
-  escapeRegexCharacters = str => {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  };
-  // Teach Autosuggest how to calculate suggestions for any given input value.
-  getSuggestions = value => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
-    const escapedValue = this.escapeRegexCharacters(value.trim());
-
-    if (escapedValue === '') {
-      return [];
-    }
-
-    const regex = new RegExp('^' + escapedValue, 'i');
-
-    if (escapedValue === '') {
-      return [];
-    }
-
-    return this.props.projectsInfo
-      .map(section => {
-        console.log('EMAIL ' + section.userEmail);
-        return {
-          userEmail: section.userEmail,
-          userName: section.userName.filter(sec => regex.test(sec.name))
-        };
-      })
-      .filter(section => section.userName.length > 0);
-  };
-
-  onChange = (event, { newValue }) => {
-    this.setState({
-      value: newValue
-    });
-  };
-
-  // Autosuggest will call this function every time you need to clear suggestions.
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: []
-    });
   };
 
   saveNewProjectInfo = async values => {
@@ -211,34 +93,27 @@ class CreateProjectFormik extends Component {
         manager_2: null
       }
     };
-    this.setState({progress: true} , () =>{
+    this.setState({ progress: true }, () => {
       axios
-      .post(URL + '/studies/', json, {
-        headers: headers
-      })
-      .then(() => {
-        this.setState({ progress: false });
-        this.handleCloseCreate();
-      })
-      .catch(error => {
-        this.setState({
-          progress: false,
-          alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
+        .post(URL + '/studies/', json, {
+          headers: headers
+        })
+        .then(() => {
+          this.setState({ progress: false });
+          this.handleCloseCreate();
+        })
+        .catch(error => {
+          this.setState({
+            progress: false,
+            alertVariant: 'danger',
+            alertMessage: JSON.parse(error.request.response).detail
+          });
+          Utils.showAlert(this.state.alertId);
         });
-        Utils.showAlert(this.state.alertId);
-      });
-    })
-
+    });
   };
+
   render() {
-    //const { value, suggestions } = this.state;
-    // Autosuggest will pass through all these props to the input.
-    /* const inputProps = {
-      placeholder: 'Investigador Responsable',
-      value,
-      onChange: this.onChange
-    }; */
     return (
       <>
         {this.state.progress ? (
@@ -272,17 +147,15 @@ class CreateProjectFormik extends Component {
           {({
             handleSubmit,
             handleChange,
-            handleBlur,
             values,
             touched,
-            isValid,
             errors,
             setFieldValue
           }) => (
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Crear Proyecto
+                  Crear proyecto
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
@@ -378,26 +251,6 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    {/*<Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable principal</Form.Label>
-                      <Autosuggest
-                        multiSection={true}
-                        suggestions={suggestions}
-                        onSuggestionsFetchRequested={
-                          this.onSuggestionsFetchRequested
-                        }
-                        onSuggestionsClearRequested={
-                          this.onSuggestionsClearRequested
-                        }
-                        getSuggestionValue={getSuggestionValue}
-                        renderSuggestion={renderSuggestion}
-                        renderSectionTitle={renderSectionTitle}
-                        getSectionSuggestions={getSectionSuggestions}
-                        inputProps={inputProps}
-                        theme={theme}
-                      />
-                      
-                    </Form.Group>*/}
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Responsable del Registro </Form.Label>
                       <Form.Control
@@ -418,29 +271,22 @@ class CreateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Investigador Principal </Form.Label>
-                      <Form.Control
-                        as='select'
+                      <Form.Label>Responsable principal</Form.Label>
+                      <AutosuggestUsers
+                        id='principal'
+                        placeholder='Responsable principal'
                         name='principalInvestigator'
-                        value={values.principalInvestigator}
                         onChange={handleChange}
-                        required
-                        isInvalid={!!errors.principalInvestigator}
+                        setFieldValue={setFieldValue}
+                        users={this.props.usersInfo}
                         isValid={
                           touched.principalInvestigator &&
                           !errors.principalInvestigator
-                        }>
-                        <option value={-1}>------</option>
-                        {this.props.usersInfo.map((option, index) => {
-                          return (
-                            <option key={index} value={option.userId}>
-                              {option.userName} | {option.userEmail}
-                            </option>
-                          );
-                        })}
-                      </Form.Control>
+                        }
+                        isInvalid={!!errors.principalInvestigator}
+                      />
                       <Form.Control.Feedback type='invalid'>
-                        {errors.myCenter}
+                        {errors.principalInvestigator}
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>

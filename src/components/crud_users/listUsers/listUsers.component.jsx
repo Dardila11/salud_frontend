@@ -27,6 +27,107 @@ const NoDataConst = () => (
   />
 );
 
+const columns = [
+  {
+    Header: 'Nombres',
+    accessor: 'first_name',
+    width: 150,
+    maxWidth: 200,
+    minWidth: 100,
+    Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
+  },
+  {
+    Header: 'Apellidos',
+    accessor: 'last_name',
+    width: 150,
+    maxWidth: 200,
+    minWidth: 100,
+    Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
+  },
+  {
+    Header: 'Correo',
+    accessor: 'email',
+    width: 200,
+    maxWidth: 200,
+    minWidth: 100,
+    Cell: props => <Link to={'/admin/users/' + props.value}>{props.value}</Link>
+  },
+  {
+    id: 'is_simple',
+    Header: 'Rol',
+    accessor: d => {
+      return d.is_simple ? 'Usuario' : 'Administrador';
+    },
+    sortable: false,
+    filterable: false,
+    width: 150,
+    maxWidth: 150,
+    minWidth: 100
+  },
+  {
+    Header: 'Activo',
+    accessor: 'is_active',
+    sortable: true,
+    filterable: false,
+    width: 50,
+    maxWidth: 50,
+    minWidth: 50,
+    Cell: props => {
+      return props.value ? (
+        <div className='success'></div>
+      ) : (
+        <div className='remove'></div>
+      );
+    }
+  },
+  {
+    Header: 'Acciones',
+    sortable: false,
+    filterable: false,
+    width: 250,
+    maxWidth: 250,
+    minWidth: 200,
+    Cell: props => {
+      return (
+        <div>
+          <OverlayTrigger
+            placement='right'
+            delay={{ show: 250, hide: 100 }}
+            overlay={<Tooltip>Actualizar</Tooltip>}>
+            <Button
+              className='update'
+              variant='outline-primary'
+              onClick={() => {
+                this.updateRow(props.original.email);
+              }}></Button>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement='right'
+            delay={{ show: 250, hide: 100 }}
+            overlay={<Tooltip>Detalles</Tooltip>}>
+            <Link
+              className='ml-1 view btn btn-outline-primary'
+              variant='outline-primary'
+              role='button'
+              to={'/admin/users/' + props.original.email}></Link>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement='right'
+            delay={{ show: 250, hide: 100 }}
+            overlay={<Tooltip>Estado</Tooltip>}>
+            <Button
+              className='ml-1 change'
+              variant='outline-danger'
+              onClick={() => {
+                this.deleteRow(props.original.email);
+              }}></Button>
+          </OverlayTrigger>
+        </div>
+      );
+    }
+  }
+];
+
 /**
  * @author Dardila
  * @description Este componente se encarga de listar la informacion de todos los usuarios en una tabla
@@ -52,119 +153,19 @@ class ListUsers extends Component {
       isVisibleDelete: false,
       alertVariant: '',
       alertMessage: '',
-      alertId: 'alert-listUsers',
-      columns: [
-        {
-          Header: 'Nombres',
-          accessor: 'first_name',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100,
-          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
-        },
-        {
-          Header: 'Apellidos',
-          accessor: 'last_name',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100,
-          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
-        },
-        {
-          Header: 'Correo',
-          accessor: 'email',
-          width: 200,
-          maxWidth: 200,
-          minWidth: 100,
-          Cell: props => (
-            <Link to={'/admin/users/' + props.value}>{props.value}</Link>
-          )
-        },
-        {
-          id: 'is_simple',
-          Header: 'Rol',
-          accessor: d => {
-            return d.is_simple ? 'Usuario' : 'Administrador';
-          },
-          sortable: false,
-          filterable: false,
-          width: 150,
-          maxWidth: 150,
-          minWidth: 100
-        },
-        {
-          Header: 'Activo',
-          accessor: 'is_active',
-          sortable: true,
-          filterable: false,
-          width: 50,
-          maxWidth: 50,
-          minWidth: 50,
-          Cell: props => {
-            return props.value ? (
-              <div className='success'></div>
-            ) : (
-              <div className='remove'></div>
-            );
-          }
-        },
-        {
-          Header: 'Acciones',
-          sortable: false,
-          filterable: false,
-          width: 250,
-          maxWidth: 250,
-          minWidth: 200,
-          Cell: props => {
-            return (
-              <div>
-                <OverlayTrigger
-                  placement='right'
-                  delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Actualizar</Tooltip>}>
-                  <Button
-                    className='update'
-                    variant='outline-primary'
-                    onClick={() => {
-                      this.updateRow(props.original.email);
-                    }}></Button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement='right'
-                  delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Detalles</Tooltip>}>
-                  <Link
-                    className='ml-1 view btn btn-outline-primary'
-                    variant='outline-primary'
-                    role='button'
-                    to={'/admin/users/' + props.original.email}></Link>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement='right'
-                  delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Estado</Tooltip>}>
-                  <Button
-                    className='ml-1 change'
-                    variant='outline-danger'
-                    onClick={() => {
-                      this.deleteRow(props.original.email);
-                    }}></Button>
-                </OverlayTrigger>
-              </div>
-            );
-          }
-        }
-      ]
+      alertId: 'alert-listUsers'
     };
   }
 
   handleCloseCreate = () => {
+    this.getUsers();
     this.setState({ alertVariant: 'success', alertMessage: 'Usuario creado.' });
     this.handleClose();
     showAlert(this.state.alertId);
   };
 
   handleCloseDelete = () => {
+    this.getUsers();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Estado del usuario modificado.'
@@ -174,6 +175,7 @@ class ListUsers extends Component {
   };
 
   handleCloseUpdate = () => {
+    this.getUsers();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Usuario actualizado.'
@@ -186,7 +188,6 @@ class ListUsers extends Component {
    * @function handleClose se encarga de cerrar todas los modales
    */
   handleClose = () => {
-    this.getUsers();
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
@@ -385,13 +386,13 @@ class ListUsers extends Component {
         </button>
         {this.state.loading ? (
           <ReactTable
-            columns={this.state.columns}
+            columns={columns}
             defaultPageSize={5}
             NoDataComponent={NoDataConst}
             filterable></ReactTable>
         ) : (
           <ReactTable
-            columns={this.state.columns}
+            columns={columns}
             data={this.state.info}
             defaultPageSize={6}
             noDataText={'No existen usuarios'}
