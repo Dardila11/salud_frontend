@@ -33,10 +33,12 @@ const schema = Yup.object({
   registerDate: Yup.date().required('Campo Requerido'),
   startDate: Yup.date().required('Campo Requerido'),
   /* por si se salta la validacion de react-datepicker */
-  endDate: Yup.date().when(
-    'startDate',
-    (startDate, schema) => startDate && schema.min(startDate)
-  ),
+  endDate: Yup.date()
+    .when(
+      'startDate',
+      (startDate, schema) => startDate && schema.min(startDate)
+    )
+    .required('Campo Requerido'),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
@@ -211,25 +213,24 @@ class CreateProjectFormik extends Component {
         manager_2: null
       }
     };
-    this.setState({progress: true} , () =>{
+    this.setState({ progress: true }, () => {
       axios
-      .post(URL + '/studies/', json, {
-        headers: headers
-      })
-      .then(() => {
-        this.setState({ progress: false });
-        this.handleCloseCreate();
-      })
-      .catch(error => {
-        this.setState({
-          progress: false,
-          alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
+        .post(URL + '/studies/', json, {
+          headers: headers
+        })
+        .then(() => {
+          this.setState({ progress: false });
+          this.handleCloseCreate();
+        })
+        .catch(error => {
+          this.setState({
+            progress: false,
+            alertVariant: 'danger',
+            alertMessage: JSON.parse(error.request.response).detail
+          });
+          Utils.showAlert(this.state.alertId);
         });
-        Utils.showAlert(this.state.alertId);
-      });
-    })
-
+    });
   };
   render() {
     //const { value, suggestions } = this.state;
@@ -259,8 +260,8 @@ class CreateProjectFormik extends Component {
             projectId: Utils.genId(10),
             title: '',
             registerDate: new Date(),
-            startDate: new Date(),
-            endDate: new Date(),
+            startDate: '',
+            endDate: '',
             principalInvestigator: '',
             responsibleInvestigator:
               JSON.parse(localStorage.getItem('first_name')) +
@@ -282,7 +283,7 @@ class CreateProjectFormik extends Component {
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Crear Proyecto
+                  Crear proyecto
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
@@ -309,7 +310,7 @@ class CreateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='7' controlId='inputId'>
-                      <Form.Label>Titulo del proyecto</Form.Label>
+                      <Form.Label>Título del proyecto</Form.Label>
                       <Form.Control
                         type='text'
                         name='title'
@@ -330,7 +331,7 @@ class CreateProjectFormik extends Component {
                       <DatePicker
                         selected={values.registerDate}
                         dateFormat='yyyy-MM-dd'
-                        disabled
+                        readOnly
                         locale='es'
                         className='form-control'
                         name='registerDate'
@@ -354,6 +355,8 @@ class CreateProjectFormik extends Component {
                         className='form-control'
                         name='startDate'
                         onChange={date => setFieldValue('startDate', date)}
+                        isValid={touched.startDate && !errors.startDate}
+                        isInvalid={!!errors.startDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
@@ -371,6 +374,8 @@ class CreateProjectFormik extends Component {
                         className='form-control'
                         name='endDate'
                         onChange={date => setFieldValue('endDate', date)}
+                        isValid={touched.endDate && !errors.endDate}
+                        isInvalid={!!errors.endDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.endDate}
