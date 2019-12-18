@@ -36,6 +36,7 @@ export default class ForgetPassword extends Component {
         this.handleCloseForgetPassword()
       })
       .catch(error => {
+        this.handleCloseForgetPassword()
         /*
         this.setState({
           message: JSON.parse(error.request.response).detail
