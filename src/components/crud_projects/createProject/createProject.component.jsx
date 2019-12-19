@@ -37,7 +37,9 @@ const schema = Yup.object({
   registerDate: Yup.date().required('Campo Requerido'),
   startDate: Yup.date().required('Campo Requerido'),
   /* por si se salta la validacion de react-datepicker */
-  endDate: Yup.date().when(
+  endDate: Yup.date()
+    .required('Campo Requerido')
+    .when(
     'startDate',
     (startDate, schema) =>
       startDate &&
@@ -232,9 +234,6 @@ class CreateProjectFormik extends Component {
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
                       </Form.Control.Feedback>
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.startDate}
-                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Finalización </Form.Label>
@@ -248,9 +247,6 @@ class CreateProjectFormik extends Component {
                         isValid={touched.endDate && !errors.endDate}
                         isInvalid={!!errors.endDate}
                       />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.endDate}
-                      </Form.Control.Feedback>
                       <Form.Control.Feedback type='invalid'>
                         {errors.endDate}
                       </Form.Control.Feedback>
