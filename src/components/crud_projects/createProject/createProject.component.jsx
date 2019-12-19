@@ -37,7 +37,9 @@ const schema = Yup.object({
   registerDate: Yup.date().required('Campo Requerido'),
   startDate: Yup.date().required('Campo Requerido'),
   /* por si se salta la validacion de react-datepicker */
-  endDate: Yup.date().when(
+  endDate: Yup.date()
+    .required('Campo Requerido')
+    .when(
     'startDate',
     (startDate, schema) => startDate && schema.min(startDate,'La fecha final debe ser posterior a la inicial')
   ),
