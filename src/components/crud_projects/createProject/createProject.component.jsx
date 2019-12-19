@@ -232,9 +232,6 @@ class CreateProjectFormik extends Component {
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
                       </Form.Control.Feedback>
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.startDate}
-                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Finalización </Form.Label>
@@ -248,9 +245,6 @@ class CreateProjectFormik extends Component {
                         isValid={touched.endDate && !errors.endDate}
                         isInvalid={!!errors.endDate}
                         />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.endDate}
-                      </Form.Control.Feedback>
                       <Form.Control.Feedback type='invalid'>
                         {errors.endDate}
                       </Form.Control.Feedback>
