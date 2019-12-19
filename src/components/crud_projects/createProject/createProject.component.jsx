@@ -26,7 +26,7 @@ const schema = Yup.object({
   projectId: Yup.string()
     .test(
       'len',
-      'Id bebe tener exactamente 10 caracteres',
+      'Id debe tener exactamente 10 caracteres',
       val => val.length === 10
     )
     .required('Campo Requerido'),
@@ -37,12 +37,12 @@ const schema = Yup.object({
   registerDate: Yup.date().required('Campo Requerido'),
   startDate: Yup.date().required('Campo Requerido'),
   /* por si se salta la validacion de react-datepicker */
-  endDate: Yup.date()
-    .when(
-      'startDate',
-      (startDate, schema) => startDate && schema.min(startDate)
-    )
-    .required('Campo Requerido'),
+  endDate: Yup.date().when(
+    'startDate',
+    (startDate, schema) =>
+      startDate &&
+      schema.min(startDate, 'La fecha final debe ser posterior a la inicial')
+  ),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
@@ -204,8 +204,8 @@ class CreateProjectFormik extends Component {
                       <Form.Label>Fecha registro</Form.Label>
                       <DatePicker
                         selected={values.registerDate}
-                        dateFormat='yyyy-MM-dd'
-                        readOnly
+                        dateFormat='dd-MM-yyyy'
+                        disabled
                         locale='es'
                         className='form-control'
                         name='registerDate'
@@ -219,38 +219,38 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Inicio </Form.Label>
-                      <DatePicker
-                        selectsStart
-                        selected={values.startDate}
-                        endDate={values.endDate}
-                        dateFormat='yyyy-MM-dd'
-                        placeholderText='Fecha inicio'
+                      <Form.Control
+                        type='Date'
+                        value={values.startDate}
+                        onChange={handleChange}
                         locale='es'
                         className='form-control'
                         name='startDate'
-                        onChange={date => setFieldValue('startDate', date)}
                         isValid={touched.startDate && !errors.startDate}
                         isInvalid={!!errors.startDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
                       </Form.Control.Feedback>
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.startDate}
+                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Finalización </Form.Label>
-                      <DatePicker
-                        selected={values.endDate}
-                        startDate={values.startDate}
-                        minDate={values.startDate}
-                        dateFormat='yyyy-MM-dd'
-                        placeholderText='Fecha Final'
+                      <Form.Control
+                        type='Date'
+                        value={values.endDate}
+                        onChange={handleChange}
                         locale='es'
                         className='form-control'
                         name='endDate'
-                        onChange={date => setFieldValue('endDate', date)}
                         isValid={touched.endDate && !errors.endDate}
                         isInvalid={!!errors.endDate}
                       />
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.endDate}
+                      </Form.Control.Feedback>
                       <Form.Control.Feedback type='invalid'>
                         {errors.endDate}
                       </Form.Control.Feedback>

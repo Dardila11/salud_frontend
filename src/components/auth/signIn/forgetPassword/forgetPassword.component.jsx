@@ -58,7 +58,7 @@ export default class ForgetPassword extends Component {
             onSubmit={this.handleSubmit}
           >
             
-              <Form.Label>Correo de inscripción</Form.Label>
+              <Form.Label>Correo de Registro</Form.Label>
               <Form.Control
                 required
                 type='email'
