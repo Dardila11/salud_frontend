@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import Capitalize from 'react-capitalize';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
+import matchSorter from 'match-sorter'
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -60,6 +61,9 @@ class ListUsers extends Component {
           width: 150,
           maxWidth: 200,
           minWidth: 100,
+          filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["first_name"] }),
+          filterAll: true,
           Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
         },
         {
@@ -68,6 +72,9 @@ class ListUsers extends Component {
           width: 150,
           maxWidth: 200,
           minWidth: 100,
+          filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["last_name"] }),
+          filterAll: true,
           Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
         },
         {
@@ -76,6 +83,9 @@ class ListUsers extends Component {
           width: 200,
           maxWidth: 200,
           minWidth: 100,
+          filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["email"] }),
+          filterAll: true,
           Cell: props => (
             <Link to={'/admin/users/' + props.value}>{props.value}</Link>
           )
@@ -159,12 +169,14 @@ class ListUsers extends Component {
   }
 
   handleCloseCreate = () => {
+    this.getUsers();
     this.setState({ alertVariant: 'success', alertMessage: 'Usuario creado.' });
     this.handleClose();
     showAlert(this.state.alertId);
   };
 
   handleCloseDelete = () => {
+    this.getUsers();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Estado del usuario modificado.'
@@ -174,6 +186,7 @@ class ListUsers extends Component {
   };
 
   handleCloseUpdate = () => {
+    this.getUsers();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Usuario actualizado.'
@@ -186,7 +199,6 @@ class ListUsers extends Component {
    * @function handleClose se encarga de cerrar todas los modales
    */
   handleClose = () => {
-    this.getUsers();
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
@@ -387,13 +399,12 @@ class ListUsers extends Component {
           <ReactTable
             columns={this.state.columns}
             defaultPageSize={5}
-            NoDataComponent={NoDataConst}
-            filterable></ReactTable>
+            NoDataComponent={NoDataConst}></ReactTable>
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.info}
-            defaultPageSize={6}
+            defaultPageSize={5}
             noDataText={'No existen usuarios'}
             filterable></ReactTable>
         )}

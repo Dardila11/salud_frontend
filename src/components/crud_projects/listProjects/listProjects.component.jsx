@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Modal, Alert, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import ReactTable from 'react-table';
 import Loader from 'react-loader-spinner';
+import matchSorter from 'match-sorter';
+import ReactTable from 'react-table';
 /**
  * hallar mejor forma para colocar en mayuscula la primera letra
  */
@@ -61,7 +62,10 @@ class ListProjects extends Component {
           accessor: 'title',
           width: 150,
           maxWidth: 200,
-          minWidth: 100
+          minWidth: 100,
+          filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ['title'] }),
+          filterAll: true
         },
         {
           Header: 'Fecha de Registro',
@@ -84,25 +88,6 @@ class ListProjects extends Component {
           maxWidth: 200,
           minWidth: 100
         },
-        //ahorrando espacio
-        /*
-        {
-          Header: 'Responsable del registro',
-          accessor: 'reg_responsible',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100
-        },
-        
-        {
-          Header: 'Investigador Principal',
-          accessor: 'principal_investigator',
-          sortable: false,
-          filterable: false,
-          width: 100,
-          maxWidth: 100,
-          minWidth: 100
-        },*/
         {
           id: 'status',
           Header: 'Estado',
@@ -341,9 +326,7 @@ class ListProjects extends Component {
         principal_investigator: principal_investigator,
         is_active: is_active
       });
-      console.log(this.state.projectsInfo[i].is_active);
     }
-    console.log(this.state.projectsInfo);
     this.setState({ projectsInfo: projectsInfoArray });
   };
 
@@ -360,9 +343,6 @@ class ListProjects extends Component {
         userId: id
       });
     }
-    /* usersInfoArray.map(user => {
-      console.log(user.userEmail + ' ' + user.userName);
-    }); */
     this.setState({ usersInfo: usersInfoArray });
   };
 
@@ -436,15 +416,12 @@ class ListProjects extends Component {
             columns={this.state.columns}
             defaultPageSize={6}
             NoDataComponent={NoDataConst}
-            noDataText={'No existen proyectos'}
-            filterable
           />
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.projectsInfo}
             defaultPageSize={6}
-            NoDataComponent={NoDataConst}
             noDataText={'No existen proyectos'}
             filterable
           />
