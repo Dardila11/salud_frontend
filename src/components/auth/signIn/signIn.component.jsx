@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal, ProgressBar } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 import { showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
-import ValidateEmail from '../../utils/utils';
 import AlertComponent from '../../layout/alert/alert.component';
-import ForgetPassword from './forgetPassword/forgetPassword.component';
 import FooterLogin from '../../layout/footer-login/footer-login.component';
+import ForgetPassword from './forgetPassword/forgetPassword.component';
+import ValidateEmail from '../../utils/utils';
 
 import './signIn.styles.css';
 
@@ -28,11 +28,12 @@ class SignIn extends Component {
       password: '',
       adminDashboard: false,
       userDashboard: false,
+      fatherEmail: '',
+      isVisibleForgetPassword: false,
+      progress: false,
       alertVariant: '',
       alertMessage: '',
-      alertId: 'alert-singIn',
-      fatherEmail: '',
-      isVisibleForgetPassword: false
+      alertId: 'alert-singIn'
     };
   }
 
@@ -66,25 +67,29 @@ class SignIn extends Component {
    * @params `email`, `password`
    * @returns la información del usuario si este existe, junto con el token.
    */
-  onLogin = async event => {
+  onLogin = event => {
     event.preventDefault();
     const { email, password } = this.state;
-    await axios
-      .post(
-        URL + '/users/login/',
-        { email, password },
-        { cancelToken: this.source.token }
-      )
-      .then(response => {
-        this.saveUserInfo(response.data);
-      })
-      .catch(error => {
-        this.setState({
-          alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
+    this.setState({ progress: true }, () => {
+      axios
+        .post(
+          URL + '/users/login/',
+          { email, password },
+          { cancelToken: this.source.token }
+        )
+        .then(response => {
+          this.saveUserInfo(response.data);
+          this.setState({ progress: false });
+        })
+        .catch(error => {
+          this.setState({
+            alertVariant: 'danger',
+            alertMessage: JSON.parse(error.request.response).detail
+          });
+          this.setState({ progress: false });
+          showAlert(this.state.alertId);
         });
-        showAlert(this.state.alertId);
-      });
+    });
   };
 
   /**
@@ -113,10 +118,12 @@ class SignIn extends Component {
       this.props.match.params.em &&
       ValidateEmail(this.props.match.params.em)
     ) {
-      this.setState({
-        fatherEmail: this.props.match.params.em
-      });
-      this.handleOpenForgetPassword();
+      this.setState(
+        {
+          fatherEmail: this.props.match.params.em
+        },
+        () => this.handleOpenForgetPassword()
+      );
     }
   }
 
@@ -135,16 +142,16 @@ class SignIn extends Component {
     }
     return (
       <section>
-        <Modal
-          show={this.state.isVisibleForgetPassword}
-          onHide={this.handleClose}
-        >
-          <ForgetPassword
-            email={this.state.fatherEmail}
-            handleCloseForgetPassword={this.handleCloseForgetPassword}
-            handleClose={this.handleClose}
-          ></ForgetPassword>
-        </Modal>
+        {this.state.progress ? (
+          <ProgressBar
+            className='progress'
+            animated
+            now={100}
+            id='progress-admin'
+          />
+        ) : (
+          <></>
+        )}
         <div className='app-all container-unicauca'>
           <div className='center'>
             <div className='content-box d-flex justify-content-center'>
@@ -177,8 +184,7 @@ class SignIn extends Component {
                   <button
                     type='button'
                     className='button-link'
-                    onClick={this.handleOpenForgetPassword}
-                  >
+                    onClick={this.handleOpenForgetPassword}>
                     Olvide mi contraseña
                   </button>{' '}
                   <br />
@@ -188,16 +194,25 @@ class SignIn extends Component {
                 </Form>
               </div>
             </div>
-            <FooterLogin></FooterLogin>
+            <FooterLogin />
           </div>
           <AlertComponent
             alertId={this.state.alertId}
             alertVariant={this.state.alertVariant}
             alertMessage={this.state.alertMessage}
-          ></AlertComponent>
+          />
           <div className='antorcha'></div>
           <div className='bandera'></div>
         </div>
+        <Modal
+          show={this.state.isVisibleForgetPassword}
+          onHide={this.handleClose}>
+          <ForgetPassword
+            email={this.state.fatherEmail}
+            handleCloseForgetPassword={this.handleCloseForgetPassword}
+            handleClose={this.handleClose}
+          />
+        </Modal>
       </section>
     );
   }

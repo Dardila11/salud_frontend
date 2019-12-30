@@ -59,3 +59,16 @@ export function genId(length) {
   }
   return result;
 }
+
+export function getDateFormat(date) {
+  const newDate = new Date(date);
+  newDate.setHours(newDate.getHours() + 5);  
+  const day =
+    newDate.getDate() < 10 ? '0' + newDate.getDate() : '' + newDate.getDate();
+  const month =
+    newDate.getMonth() < 9
+      ? '0' + (newDate.getMonth() + 1)
+      : '' + (newDate.getMonth() + 1);
+  const year = newDate.getFullYear() + '';
+  return year + '-' + month + '-' + day;
+}

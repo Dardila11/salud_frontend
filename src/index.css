@@ -243,6 +243,7 @@ code {
 
 .MuiAutocomplete-inputRoot {
   padding: 0 3.3rem 0 0.375rem !important;
+  font-size: 1rem !important;
 }
 
 .MuiFormHelperText-root {
@@ -250,10 +251,15 @@ code {
   margin-top: 0.25rem !important;
   font-size: 80% !important;
   color: #dc3545 !important;
+  font-size: 1rem !important;
 }
 
 .MuiFormHelperText-contained {
   margin: 8px 0 !important;
-  font-family: unset !important;
   letter-spacing: 0 !important;
+  font-size: 1rem !important;
+}
+
+.MuiInputBase-root {
+  font-family: 'Jaldi', sans-serif !important;
 }

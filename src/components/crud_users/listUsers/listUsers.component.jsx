@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import Capitalize from 'react-capitalize';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
-import matchSorter from 'match-sorter'
+import matchSorter from 'match-sorter';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -62,7 +62,7 @@ class ListUsers extends Component {
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["first_name"] }),
+            matchSorter(rows, filter.value, { keys: ['first_name'] }),
           filterAll: true,
           Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
         },
@@ -73,7 +73,7 @@ class ListUsers extends Component {
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["last_name"] }),
+            matchSorter(rows, filter.value, { keys: ['last_name'] }),
           filterAll: true,
           Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
         },
@@ -84,7 +84,7 @@ class ListUsers extends Component {
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["email"] }),
+            matchSorter(rows, filter.value, { keys: ['email'] }),
           filterAll: true,
           Cell: props => (
             <Link to={'/admin/users/' + props.value}>{props.value}</Link>
@@ -147,7 +147,8 @@ class ListUsers extends Component {
                     className='ml-1 view btn btn-outline-primary'
                     variant='outline-primary'
                     role='button'
-                    to={'/admin/users/' + props.original.email}></Link>
+                    to={'/admin/users/' + props.original.email}
+                  />
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement='right'

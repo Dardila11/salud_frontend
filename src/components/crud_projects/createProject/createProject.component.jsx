@@ -50,9 +50,6 @@ const schema = Yup.object({
   responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
 
-const filterOptions = (options, { inputValue }) =>
-  matchSorter(options, inputValue, { keys: ['first_name'] });
-
 /**
  * @author Dardila
  * @description Este componente se encarga de la creacion de nuevos
@@ -139,7 +136,7 @@ class CreateProjectFormik extends Component {
           <></>
         )}
         <Formik
-          noValidate
+          noValidate          
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
@@ -159,6 +156,7 @@ class CreateProjectFormik extends Component {
           {({
             handleSubmit,
             handleChange,
+            handleBlur,
             values,
             touched,
             errors,
@@ -233,6 +231,7 @@ class CreateProjectFormik extends Component {
                         type='Date'
                         value={values.startDate}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         locale='es'
                         className='form-control'
                         name='startDate'

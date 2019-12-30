@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, ProgressBar } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { Redirect } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -28,6 +28,7 @@ class Recovery extends Component {
     super(props);
     this.state = {
       isSuccess: false,
+      progress: false,
       alertVariant: '',
       alertMessage: '',
       alertId: 'alert-recovery'
@@ -43,23 +44,27 @@ class Recovery extends Component {
    * @params `token`, `password`
    * @returns la informacion del usuario si este existe. junto con el token.
    *  */
-  savePassword = async values => {
-    var token = this.props.match.params.tk;
-    await axios
-      .post(URL + '/users/password/' + token + '/', {
-        password: values.pass1
-      })
-      .then(response => {
-        alert(response.data.detail);
-        this.setState({ isSuccess: true });
-      })
-      .catch(error => {
-        this.setState({
-          alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
+  savePassword = values => {
+    const token = this.props.match.params.tk;
+    this.setState({ progress: true }, () => {
+      axios
+        .post(URL + '/users/password/' + token + '/', {
+          password: values.pass1
+        })
+        .then(response => {
+          this.setState({ progress: false });
+          alert(response.data.detail);
+          this.setState({ isSuccess: true });
+        })
+        .catch(error => {
+          this.setState({
+            alertVariant: 'danger',
+            alertMessage: JSON.parse(error.request.response).detail
+          });
+          this.setState({ progress: false });
+          showAlert(this.state.alertId);
         });
-        showAlert(this.state.alertId);
-      });
+    });
   };
 
   componentWillUnmount() {
@@ -72,6 +77,16 @@ class Recovery extends Component {
     }
     return (
       <section>
+        {this.state.progress ? (
+          <ProgressBar
+            className='progress'
+            animated
+            now={100}
+            id='progress-admin'
+          />
+        ) : (
+          <></>
+        )}
         <Formik
           noValidate
           validateOnChange={false}
@@ -81,8 +96,7 @@ class Recovery extends Component {
             pass2: ''
           }}
           validationSchema={schema}
-          onSubmit={this.savePassword}
-        >
+          onSubmit={this.savePassword}>
           {({ handleSubmit, handleChange, values, touched, errors }) => (
             <div className='app-all container-unicauca'>
               <div className='center'>
@@ -100,8 +114,7 @@ class Recovery extends Component {
                       </Form.Label>
                       <Form.Group
                         controlId='validationFormik01'
-                        className='mb-2'
-                      >
+                        className='mb-2'>
                         <Form.Control
                           type='password'
                           name='pass1'
@@ -110,16 +123,14 @@ class Recovery extends Component {
                           isInvalid={!!errors.pass1}
                           isValid={touched.pass1 && !errors.pass1}
                           placeholder='Contraseña'
-                          required
-                        ></Form.Control>
+                          required></Form.Control>
                         <Form.Control.Feedback type='invalid'>
                           {errors.pass1}
                         </Form.Control.Feedback>
                       </Form.Group>
                       <Form.Group
                         controlId='validationFormik02'
-                        className='mb-2'
-                      >
+                        className='mb-2'>
                         <Form.Control
                           type='password'
                           name='pass2'
@@ -128,8 +139,7 @@ class Recovery extends Component {
                           isInvalid={!!errors.pass2}
                           isValid={touched.pass2 && !errors.pass2}
                           placeholder='Repetir contraseña'
-                          required
-                        ></Form.Control>
+                          required></Form.Control>
                         <Form.Control.Feedback type='invalid'>
                           {errors.pass2}
                         </Form.Control.Feedback>
@@ -145,8 +155,7 @@ class Recovery extends Component {
               <AlertComponent
                 alertId={this.state.alertId}
                 alertVariant={this.state.alertVariant}
-                alertMessage={this.state.alertMessage}
-              ></AlertComponent>
+                alertMessage={this.state.alertMessage}></AlertComponent>
               <div className='antorcha'></div>
               <div className='bandera'></div>
             </div>
