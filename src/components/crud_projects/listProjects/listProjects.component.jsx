@@ -67,16 +67,18 @@ class ListProjects extends Component {
             matchSorter(rows, filter.value, { keys: ['title'] }),
           filterAll: true,
           Cell: props => (
-            <Link to={'/admin/studies/' + props.original.id_pk}>{props.value}</Link>
+            <Link to={'/admin/studies/' + props.original.id_pk}>
+              {props.value}
+            </Link>
           )
         },
-        {
+        /* {
           Header: 'Fecha de Registro',
           accessor: 'reg_date',
           width: 150,
           maxWidth: 200,
           minWidth: 100
-        },
+        }, */
         {
           Header: 'Fecha de Inicio',
           accessor: 'start_date',
@@ -116,9 +118,9 @@ class ListProjects extends Component {
           accessor: 'is_active',
           sortable: false,
           filterable: false,
-          width: 50,
-          maxWidth: 50,
-          minWidth: 50,
+          width: 100,
+          maxWidth: 100,
+          minWidth: 100,
           Cell: props => {
             return props.value ? (
               <div className='success'></div>
@@ -131,9 +133,9 @@ class ListProjects extends Component {
           Header: 'Acciones',
           sortable: false,
           filterable: false,
-          width: 250,
-          maxWidth: 250,
-          minWidth: 200,
+          width: 150,
+          maxWidth: 150,
+          minWidth: 150,
           Cell: props => {
             return (
               <>

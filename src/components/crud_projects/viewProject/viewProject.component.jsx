@@ -7,6 +7,7 @@ import { URL } from '../../utils/URLSever';
 import Loader from 'react-loader-spinner';
 
 import { getDateFormat } from '../../utils/utils';
+import AddParticipant from '../../projects/addParticipant/addParticipant';
 
 export default class ViewProject extends Component {
   CancelToken = axios.CancelToken;
@@ -17,6 +18,7 @@ export default class ViewProject extends Component {
     this.state = {
       loading: false,
       studyInfo: [],
+      isVisibleAddParticipant: false,
       isAdmin: true
     };
   }
@@ -74,6 +76,19 @@ export default class ViewProject extends Component {
         ) : (
           <h4>El proyecto no existe</h4>
         )}
+
+        <Modal
+          size='lg'
+          show={this.state.isVisibleAddParticipant}
+          onHide={this.handleClose}>
+          {/* Agregar Nuevo Integrante a un Proyecto */}
+          <AddParticipant
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            usersInfo={this.state.usersInfo}
+            projectInfo={this.state.projectInfo}
+          />
+        </Modal>
       </>
     );
   }
