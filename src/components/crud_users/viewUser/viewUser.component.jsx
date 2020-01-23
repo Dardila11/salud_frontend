@@ -4,7 +4,6 @@ import axios from 'axios';
 import { ListGroup } from 'react-bootstrap';
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
-import Capitalize from 'react-capitalize';
 import Loader from 'react-loader-spinner';
 
 /**
@@ -130,24 +129,24 @@ class ViewUserFormik extends Component {
               </h5>
             </ListGroup.Item>
             <ListGroup.Item>
-              <Capitalize>{this.state.userInfo[0].first_name}</Capitalize>{' '}
-              <Capitalize>{this.state.userInfo[0].last_name}</Capitalize>
+              <span className='cap'>{this.state.userInfo[0].first_name}</span>{' '}
+              <span className='cap'>{this.state.userInfo[0].last_name}</span>
             </ListGroup.Item>
             <ListGroup.Item>{this.state.userInfo[0].email}</ListGroup.Item>
             <ListGroup.Item>
               <span>
                 <b>Centro médico: </b>
-                <Capitalize>
+                <span className='cap'>
                   {this.state.userInfo[0].my_center__name}
-                </Capitalize>
+                </span>
               </span>
             </ListGroup.Item>
             <ListGroup.Item>
               <span>
                 <b>Departamento: </b>
-                <Capitalize>
+                <span className='cap'>
                   {this.state.userInfo[0].my_department__name}
-                </Capitalize>
+                </span>
               </span>
             </ListGroup.Item>
             <ListGroup.Item

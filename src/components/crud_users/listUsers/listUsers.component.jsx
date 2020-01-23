@@ -3,7 +3,6 @@ import axios from 'axios';
 
 import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Capitalize from 'react-capitalize';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
@@ -64,7 +63,7 @@ class ListUsers extends Component {
           filterMethod: (filter, rows) =>
             matchSorter(rows, filter.value, { keys: ['first_name'] }),
           filterAll: true,
-          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
+          Cell: props => <span className='cap'>{props.value}</span>
         },
         {
           Header: 'Apellidos',
@@ -75,7 +74,7 @@ class ListUsers extends Component {
           filterMethod: (filter, rows) =>
             matchSorter(rows, filter.value, { keys: ['last_name'] }),
           filterAll: true,
-          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
+          Cell: props => <span className='cap'>{props.value}</span>
         },
         {
           Header: 'Correo',

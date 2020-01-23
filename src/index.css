@@ -263,3 +263,7 @@ code {
 .MuiInputBase-root {
   font-family: 'Jaldi', sans-serif !important;
 }
+
+.cap {
+  text-transform: capitalize;
+}

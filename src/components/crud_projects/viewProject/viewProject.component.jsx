@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+  import React, { Component } from 'react';
 import axios from 'axios';
 
-import { ListGroup } from 'react-bootstrap';
+import { Col, ListGroup, Row } from 'react-bootstrap';
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import Loader from 'react-loader-spinner';

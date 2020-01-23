@@ -67,7 +67,11 @@ class ListProjects extends Component {
             matchSorter(rows, filter.value, { keys: ['title'] }),
           filterAll: true,
           Cell: props => (
-            <Link to={'/admin/studies/' + props.original.id_pk}>{props.value}</Link>
+            <Link
+              to={'/admin/studies/' + props.original.id_pk}
+              style={{ textTransform: 'capitalize' }}>
+              {props.value}
+            </Link>
           )
         },
         {
@@ -406,14 +410,14 @@ class ListProjects extends Component {
         {this.state.loading ? (
           <ReactTable
             columns={this.state.columns}
-            defaultPageSize={6}
+            defaultPageSize={5}
             NoDataComponent={NoDataConst}
           />
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.projectsInfo}
-            defaultPageSize={6}
+            defaultPageSize={5}
             noDataText={'No existen proyectos'}
             filterable
           />
