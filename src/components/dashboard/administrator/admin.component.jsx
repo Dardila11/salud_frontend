@@ -13,6 +13,7 @@ import NavBarLateral from './navAdmin/navbarLateral.component';
 import ListProjects from '../../crud_projects/listProjects/listProjects.component';
 import ListUsers from '../../crud_users/listUsers/listUsers.component';
 import ViewUserFormik from '../../crud_users/viewUser/viewUser.component';
+import ViewProject from '../../crud_projects/viewProject/viewProject.component';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
@@ -102,7 +103,7 @@ class AdminDashboard extends Component {
     } else if (path.startsWith('/admin/users/')) {
       return <ViewUserFormik email={this.props.match.params.user} />;
     } else if (path.startsWith('/admin/studies/')) {
-      return <p>{this.props.match.params.study}</p>;
+      return <ViewProject project={this.props.match.params.study} />;
     }
   };
 

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Modal, Alert, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import ReactTable from 'react-table';
+
+import { Link } from 'react-router-dom';
+import { Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Loader from 'react-loader-spinner';
+import matchSorter from 'match-sorter';
+import ReactTable from 'react-table';
 /**
  * hallar mejor forma para colocar en mayuscula la primera letra
  */
-import Capitalize from 'react-capitalize';
 import AlertComponent from '../../layout/alert/alert.component';
 import CreateProjectFormik from '../createProject/createProject.component';
 import UpdateProjectFormik from '../updateProject/updateProject.component';
@@ -48,7 +50,6 @@ class ListProjects extends Component {
       isVisibleCreate: false,
       isVisibleUpdate: false,
       isVisibleDelete: false,
-      isVisibleView: false,
       showMessage: false,
       message: false,
       alertVariant: '',
@@ -61,7 +62,13 @@ class ListProjects extends Component {
           accessor: 'title',
           width: 150,
           maxWidth: 200,
-          minWidth: 100
+          minWidth: 100,
+          filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ['title'] }),
+          filterAll: true,
+          Cell: props => (
+            <Link to={'/admin/studies/' + props.original.id_pk}>{props.value}</Link>
+          )
         },
         {
           Header: 'Fecha de Registro',
@@ -84,25 +91,6 @@ class ListProjects extends Component {
           maxWidth: 200,
           minWidth: 100
         },
-        //ahorrando espacio
-        /*
-        {
-          Header: 'Responsable del registro',
-          accessor: 'reg_responsible',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100
-        },
-        
-        {
-          Header: 'Investigador Principal',
-          accessor: 'principal_investigator',
-          sortable: false,
-          filterable: false,
-          width: 100,
-          maxWidth: 100,
-          minWidth: 100
-        },*/
         {
           id: 'status',
           Header: 'Estado',
@@ -165,12 +153,11 @@ class ListProjects extends Component {
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
                   overlay={<Tooltip>Detalles</Tooltip>}>
-                  <Button
-                    className='ml-1 view'
+                  <Link
+                    className='ml-1 view btn btn-outline-primary'
                     variant='outline-primary'
-                    onClick={() => {
-                      this.viewRow(props.original.id_pk);
-                    }}
+                    role='button'
+                    to={'/admin/studies/' + props.original.id_pk}
                   />
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -179,7 +166,7 @@ class ListProjects extends Component {
                   overlay={<Tooltip>Estado</Tooltip>}>
                   <Button
                     className='ml-1 change'
-                    variant='outline-primary'
+                    variant='outline-danger'
                     onClick={() => {
                       this.deleteRow(props.original.id_pk);
                     }}
@@ -217,9 +204,6 @@ class ListProjects extends Component {
   handleOpenDelete = () => {
     this.setState({ isVisibleDelete: true });
   };
-  handleOpenView = () => {
-    this.setState({ isVisibleView: true });
-  };
   /**
    * @function handleClose se encarga de resetar los valores de las alertas
    * y finaliza actualizando nuevamente los usuarios.
@@ -227,12 +211,10 @@ class ListProjects extends Component {
    *      cuando son creados, actualizados o borrados
    */
   handleClose = () => {
-    this.getProjects();
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
-      isVisibleDelete: false,
-      isVisibleView: false
+      isVisibleDelete: false
     });
   };
   /**
@@ -240,6 +222,7 @@ class ListProjects extends Component {
    * es llamada cuando un proyecto es creado satisfactoriamente
    */
   handleCloseCreate = () => {
+    this.getProjects();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Proyecto creado.'
@@ -253,6 +236,7 @@ class ListProjects extends Component {
    * es llamada cuando un usuario es actualizado satisfactoriamente
    */
   handleCloseUpdate = () => {
+    this.getProjects();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Proyecto Actualizado.'
@@ -262,6 +246,7 @@ class ListProjects extends Component {
   };
 
   handleCloseDelete = () => {
+    this.getProjects();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Estado del proyecto modificado.'
@@ -341,9 +326,7 @@ class ListProjects extends Component {
         principal_investigator: principal_investigator,
         is_active: is_active
       });
-      console.log(this.state.projectsInfo[i].is_active);
     }
-    console.log(this.state.projectsInfo);
     this.setState({ projectsInfo: projectsInfoArray });
   };
 
@@ -360,9 +343,6 @@ class ListProjects extends Component {
         userId: id
       });
     }
-    /* usersInfoArray.map(user => {
-      console.log(user.userEmail + ' ' + user.userName);
-    }); */
     this.setState({ usersInfo: usersInfoArray });
   };
 
@@ -376,7 +356,6 @@ class ListProjects extends Component {
       )
       .then(response => {
         this.setState({ projectInfo: response.data }, () => {
-          console.log(this.state.projectInfo);
           if (this.typeModal === 0) {
             this.handleOpenUpdate();
           } else if (this.typeModal === 1) {
@@ -400,13 +379,6 @@ class ListProjects extends Component {
    */
   updateRow = id => {
     this.typeModal = 0;
-    this.setState({ idProjectToEdit: id }, () => {
-      this.getProjectById(this.state.idProjectToEdit);
-    });
-  };
-
-  viewRow = id => {
-    this.typeModal = 1;
     this.setState({ idProjectToEdit: id }, () => {
       this.getProjectById(this.state.idProjectToEdit);
     });
@@ -436,15 +408,12 @@ class ListProjects extends Component {
             columns={this.state.columns}
             defaultPageSize={6}
             NoDataComponent={NoDataConst}
-            noDataText={'No existen proyectos'}
-            filterable
           />
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.projectsInfo}
             defaultPageSize={6}
-            NoDataComponent={NoDataConst}
             noDataText={'No existen proyectos'}
             filterable
           />
@@ -472,16 +441,6 @@ class ListProjects extends Component {
             usersInfo={this.state.usersInfo}
             projectInfo={this.state.projectInfo}
           />
-        </Modal>
-        <Modal show={this.state.isVisibleView} onHide={this.handleClose}>
-          {/* Ver Proyecto */}
-          {/* <ViewProjectFormik
-            handleCloseUpdate={this.handleCloseUpdate}
-            handleClose={this.handleClose}
-            email={this.state.emailToEdit}
-            usersInfo={this.state.usersInfo}
-            projectInfo={this.state.projectInfo}
-          /> */}
         </Modal>
         <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
           {/* Eliminar Proyecto */}

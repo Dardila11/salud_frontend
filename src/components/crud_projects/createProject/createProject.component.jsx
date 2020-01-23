@@ -5,11 +5,12 @@ import { Button, Col, Form, Modal, ProgressBar } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
 import DatePicker, { registerLocale } from 'react-datepicker';
+import matchSorter from 'match-sorter';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
-
-import AutosuggestUsers from '../autosuggest/autosuggest.component';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
@@ -40,11 +41,11 @@ const schema = Yup.object({
   endDate: Yup.date()
     .required('Campo Requerido')
     .when(
-    'startDate',
-    (startDate, schema) =>
-      startDate &&
-      schema.min(startDate, 'La fecha final debe ser posterior a la inicial')
-  ),
+      'startDate',
+      (startDate, schema) =>
+        startDate &&
+        schema.min(startDate, 'La fecha final debe ser posterior a la inicial')
+    ),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido')
 });
@@ -92,7 +93,7 @@ class CreateProjectFormik extends Component {
         financial_entity: null,
         amount: null,
         manager_reg: JSON.parse(localStorage.getItem('id')),
-        principal_inv: values.principalInvestigator,
+        principal_inv: values.principalInvestigator.userId,
         manager_1: null,
         manager_2: null
       }
@@ -116,6 +117,10 @@ class CreateProjectFormik extends Component {
         });
     });
   };
+
+  componentDidMount() {
+    console.log(this.props.usersInfo);
+  }
 
   render() {
     return (
@@ -151,6 +156,7 @@ class CreateProjectFormik extends Component {
           {({
             handleSubmit,
             handleChange,
+            handleBlur,
             values,
             touched,
             errors,
@@ -225,6 +231,7 @@ class CreateProjectFormik extends Component {
                         type='Date'
                         value={values.startDate}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         locale='es'
                         className='form-control'
                         name='startDate'
@@ -274,18 +281,54 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Responsable principal</Form.Label>
-                      <AutosuggestUsers
-                        id='principal'
-                        placeholder='Responsable principal'
-                        name='principalInvestigator'
-                        onChange={handleChange}
-                        setFieldValue={setFieldValue}
-                        users={this.props.usersInfo}
-                        isValid={
-                          touched.principalInvestigator &&
-                          !errors.principalInvestigator
+                      <Autocomplete
+                        id='combo-box-demo'
+                        options={this.props.usersInfo}
+                        getOptionLabel={option =>
+                          typeof option === 'string'
+                            ? option
+                            : Utils.toCapitalizer(option.userName)
                         }
-                        isInvalid={!!errors.principalInvestigator}
+                        style={{ width: 300 }}
+                        renderOption={option => (
+                          <React.Fragment>
+                            <div>
+                              <span>{option.userEmail}</span>
+                              <br />
+                              <span>
+                                {Utils.toCapitalizer(option.userName)}
+                              </span>
+                              <hr />
+                            </div>
+                          </React.Fragment>
+                        )}
+                        value={values.principalInvestigator}
+                        name='principalInvestigator'
+                        onChange={(e, value) => {
+                          setFieldValue('principalInvestigator', value);
+                        }}
+                        filterOptions={(options, { inputValue }) =>
+                          matchSorter(options, inputValue, {
+                            keys: ['userName']
+                          })
+                        }
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            name='principalInvestigator'
+                            variant='outlined'
+                            fullWidth
+                            helperText={
+                              touched.principalInvestigator
+                                ? errors.principalInvestigator
+                                : ''
+                            }
+                            error={
+                              touched.principalInvestigator &&
+                              Boolean(errors.principalInvestigator)
+                            }
+                          />
+                        )}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.principalInvestigator}

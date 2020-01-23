@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
-import { Formik } from 'formik';
 import axios from 'axios';
+
+import { Button, Col, Form, Modal } from 'react-bootstrap';
+import { Formik } from 'formik';
 import { URL } from '../../utils/URLSever';
-import { Button, Modal, Form, Col } from 'react-bootstrap';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import AlertComponent from '../../layout/alert/alert.component';
-import * as Yup from 'yup';
-import * as Utils from '../../utils/utils';
-import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
+import matchSorter from 'match-sorter';
+import TextField from '@material-ui/core/TextField';
+import * as Yup from 'yup';
+
+import AlertComponent from '../../layout/alert/alert.component';
+import * as Utils from '../../utils/utils';
+
+import 'react-datepicker/dist/react-datepicker.css';
+
 registerLocale('es', es);
 var moment = require('moment');
 
@@ -20,7 +27,7 @@ const schema = Yup.object({
   projectId: Yup.string()
     .test(
       'len',
-      'Debe tener exactamente 10 caracteres',
+      'Id debe tener exactamente 10 caracteres',
       val => val.length === 10
     )
     .required('Campo Requerido'),
@@ -31,10 +38,14 @@ const schema = Yup.object({
   registerDate: Yup.date().required('Campo Requerido'),
   startDate: Yup.date().required('Campo Requerido'),
   /* por si se salta la validacion de react-datepicker */
-  endDate: Yup.date().when(
-    'startDate',
-    (startDate, schema) => startDate && schema.min(startDate)
-  ),
+  endDate: Yup.date()
+    .required('Campo Requerido')
+    .when(
+      'startDate',
+      (startDate, schema) =>
+        startDate &&
+        schema.min(startDate, 'La fecha final debe ser posterior a la inicial')
+    ),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido'),
   projectStatus: Yup.string().required('Campo Requerido')
@@ -54,9 +65,11 @@ class UpdateProjectFormik extends Component {
       alertId: 'alert-update-project'
     };
   }
+
   handleClose = () => {
     this.props.handleClose();
   };
+
   handleCloseUpdate = () => {
     this.props.handleCloseUpdate();
   };
@@ -65,7 +78,7 @@ class UpdateProjectFormik extends Component {
    * @description Se encarga de guardar los datos modificados en un json
    * y enviar una solicitud de actualizacion al servidor.
    */
-  updateProjectInfo = async values => {
+  updateProjectInfo = values => {
     console.log('entra al updateProjectInfo');
     const headers = Utils.getHeader();
     var json = {
@@ -84,13 +97,11 @@ class UpdateProjectFormik extends Component {
         financial_entity: null,
         amount: null,
         manager_reg: JSON.parse(localStorage.getItem('id')),
-        principal_inv: values.principalInvestigator,
+        principal_inv: values.principalInvestigator.userId,
         manager_1: null,
         manager_2: null
       }
     };
-    var myJson = JSON.stringify(json);
-    console.log(myJson);
     axios
       .put(URL + '/studies/', json, { headers: headers })
       .then(response => {
@@ -98,37 +109,36 @@ class UpdateProjectFormik extends Component {
         this.handleCloseUpdate();
       })
       .catch(error => {
-        console.log('hubo un error!');
-        console.log(error.status);
+        console.log(error);
         this.setState({
           alertVariant: 'danger',
           alertMessage: JSON.parse(error.request.response).detail
         });
         Utils.showAlert(this.state.alertId);
       });
+    console.log('update');
   };
+
   render() {
     return (
       <>
         <Formik
           noValidate
-          enableReinitialize
           validateOnChange={false}
-          validateOnBlur={false}
+          validateOnBlur={true}
           initialValues={{
             projectStatus: this.props.projectInfo[0].fields.status,
             projectId: this.props.projectInfo[0].fields.study_id,
             title: this.props.projectInfo[0].fields.title_little,
-            /*  GMT-5 zona horaria de Colombia */
             registerDate: new Date(
               this.props.projectInfo[0].fields.date_reg.substring(0, 10)
             ),
-            startDate: new Date(this.props.projectInfo[0].fields.date_in_study),
-            endDate: new Date(
-              this.props.projectInfo[0].fields.date_trueaout_end
-            ),
-            principalInvestigator: this.props.projectInfo[0].fields
-              .principal_inv,
+            startDate: Utils.getDateFormat(this.props.projectInfo[0].fields.date_in_study),
+            endDate: Utils.getDateFormat(this.props.projectInfo[0].fields.date_trueaout_end),
+            principalInvestigator: this.props.usersInfo.filter(
+              value =>
+                value.userId === this.props.projectInfo[0].fields.principal_inv
+            )[0],
             responsibleInvestigator:
               JSON.parse(localStorage.getItem('first_name')) +
               ' ' +
@@ -142,14 +152,13 @@ class UpdateProjectFormik extends Component {
             handleBlur,
             values,
             touched,
-            isValid,
-            setFieldValue,
-            errors
+            errors,
+            setFieldValue
           }) => (
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Actualizar Proyecto
+                  Actualizar proyecto
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
@@ -180,6 +189,7 @@ class UpdateProjectFormik extends Component {
                       <Form.Control
                         type='text'
                         name='title'
+                        onBlur={handleBlur}
                         placeholder='Titulo del proyecto'
                         value={values.title}
                         onChange={handleChange}
@@ -196,46 +206,39 @@ class UpdateProjectFormik extends Component {
                       <Form.Label>Fecha registro</Form.Label>
                       <DatePicker
                         selected={values.registerDate}
-                        dateFormat='yyyy-MM-dd'
+                        dateFormat='dd-MM-yyyy'
                         disabled
                         locale='es'
                         className='form-control'
                         name='registerDate'
-                        onChange={date => setFieldValue('registerDate', date)}
                       />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.registerDate}
-                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha Inicio </Form.Label>
-                      <DatePicker
-                        selectsStart
-                        selected={values.startDate}
-                        endDate={values.endDate}
-                        dateFormat='yyyy-MM-dd'
-                        placeholderText='Fecha inicio'
-                        locale='es'
-                        className='form-control'
+                      <Form.Label>Fecha inicio </Form.Label>
+                      <Form.Control
+                        type='date'
+                        value={values.startDate}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
                         name='startDate'
-                        onChange={date => setFieldValue('startDate', date)}
+                        isValid={touched.startDate && !errors.startDate}
+                        isInvalid={!!errors.startDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha Finalización </Form.Label>
-                      <DatePicker
-                        selected={values.endDate}
-                        startDate={values.startDate}
-                        minDate={values.startDate}
-                        dateFormat='yyyy-MM-dd'
-                        placeholderText='Fecha Final'
+                      <Form.Label>Fecha finalización </Form.Label>
+                      <Form.Control
+                        type='Date'
+                        value={values.endDate}
+                        onChange={handleChange}
                         locale='es'
                         className='form-control'
                         name='endDate'
-                        onChange={date => setFieldValue('endDate', date)}
+                        isValid={touched.endDate && !errors.endDate}
+                        isInvalid={!!errors.endDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.endDate}
@@ -243,28 +246,8 @@ class UpdateProjectFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    {/*<Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable principal</Form.Label>
-                      <Autosuggest
-                        multiSection={true}
-                        suggestions={suggestions}
-                        onSuggestionsFetchRequested={
-                          this.onSuggestionsFetchRequested
-                        }
-                        onSuggestionsClearRequested={
-                          this.onSuggestionsClearRequested
-                        }
-                        getSuggestionValue={getSuggestionValue}
-                        renderSuggestion={renderSuggestion}
-                        renderSectionTitle={renderSectionTitle}
-                        getSectionSuggestions={getSectionSuggestions}
-                        inputProps={inputProps}
-                        theme={theme}
-                      />
-                      
-                    </Form.Group>*/}
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable del Registro </Form.Label>
+                      <Form.Label>Responsable del registro </Form.Label>
                       <Form.Control
                         type='text'
                         disabled
@@ -282,30 +265,59 @@ class UpdateProjectFormik extends Component {
                         {errors.responsibleInvestigator}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Investigador Principal </Form.Label>
-                      <Form.Control
-                        as='select'
-                        name='principalInvestigator'
+                    <Form.Group as={Col} md='8' controlId='inputId'>
+                      <Form.Label>Responsable principal</Form.Label>
+                      <Autocomplete
+                        id='combo-box-demo'
+                        options={this.props.usersInfo}
+                        getOptionLabel={option =>
+                          typeof option === 'string'
+                            ? option
+                            : Utils.toCapitalizer(option.userName)
+                        }
+                        style={{ width: 300 }}
+                        renderOption={option => (
+                          <React.Fragment>
+                            <div>
+                              <span>{option.userEmail}</span>
+                              <br />
+                              <span>
+                                {Utils.toCapitalizer(option.userName)}
+                              </span>
+                              <hr />
+                            </div>
+                          </React.Fragment>
+                        )}
                         value={values.principalInvestigator}
-                        onChange={handleChange}
-                        required
-                        isInvalid={!!errors.principalInvestigator}
-                        isValid={
-                          touched.principalInvestigator &&
-                          !errors.principalInvestigator
-                        }>
-                        <option value={-1}>------</option>
-                        {this.props.usersInfo.map((option, index) => {
-                          return (
-                            <option key={index} value={option.userId}>
-                              {option.userName} | {option.userEmail}
-                            </option>
-                          );
-                        })}
-                      </Form.Control>
+                        name='principalInvestigator'
+                        onChange={(e, value) => {
+                          setFieldValue('principalInvestigator', value);
+                        }}
+                        filterOptions={(options, { inputValue }) =>
+                          matchSorter(options, inputValue, {
+                            keys: ['userName']
+                          })
+                        }
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            name='principalInvestigator'
+                            variant='outlined'
+                            fullWidth
+                            helperText={
+                              touched.principalInvestigator
+                                ? errors.principalInvestigator
+                                : ''
+                            }
+                            error={
+                              touched.principalInvestigator &&
+                              Boolean(errors.principalInvestigator)
+                            }
+                          />
+                        )}
+                      />
                       <Form.Control.Feedback type='invalid'>
-                        {errors.myCenter}
+                        {errors.principalInvestigator}
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
@@ -336,7 +348,7 @@ class UpdateProjectFormik extends Component {
                   Cancelar
                 </Button>
                 <Button form='formUpdateProject' type='submit'>
-                  Actualizar Proyecto
+                  Actualizar proyecto
                 </Button>
               </Modal.Footer>
             </>
