@@ -14,6 +14,7 @@ import ListProjects from '../../crud_projects/listProjects/listProjects.componen
 import ListUsers from '../../crud_users/listUsers/listUsers.component';
 import ViewUserFormik from '../../crud_users/viewUser/viewUser.component';
 import ViewProject from '../../crud_projects/viewProject/viewProject.component';
+import ListMembers from '../../crud_members/listMembers/listMembers.component';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
@@ -28,7 +29,8 @@ class AdminDashboard extends Component {
     super(props);
     this.state = {
       loading: true,
-      isAuthenticated: true
+      isAuthenticated: true,
+      projectBar:true
     };
   }
 
@@ -105,6 +107,10 @@ class AdminDashboard extends Component {
     } else if (path.startsWith('/admin/studies/')) {
       return <ViewProject project={this.props.match.params.study} />;
     }
+    else if (path.startsWith('/admin/studies/members/')) {
+      return <ListMembers project={this.props.match.params.study} />;
+    }
+
   };
 
   componentDidMount() {
@@ -130,22 +136,23 @@ class AdminDashboard extends Component {
         />
       );
     }
-    return (
-      <section
-        id='wrapper'
-        className='h-100 container-fluid p-0'
-        onMouseDown={() => this.vertification(false)}>
-        <NavBarLateral />
-        <div id='content-wrapper' className='d-flex flex-column'>
-          <div id='content'>
-            <NavBar />
-            <div className='container pt-2 pr-5 pl-5 pb-2'>
-              <this.contentAdmin />
+    if(this.state.projectBar)
+      return (
+        <section
+          id='wrapper'
+          className='h-100 container-fluid p-0'
+          onMouseDown={() => this.vertification(false)}>
+          <NavBarLateral />
+          <div id='content-wrapper' className='d-flex flex-column'>
+            <div id='content'>
+              <NavBar />
+              <div className='container pt-2 pr-5 pl-5 pb-2'>
+                <this.contentAdmin />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    );
+        </section>
+      );
   }
 }
 
