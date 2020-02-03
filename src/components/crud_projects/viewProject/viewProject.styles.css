@@ -1,0 +1,78 @@
+.clearfix {
+  overflow: auto;
+  clear: both;
+}
+.viewContainer {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #dfe0e2;
+  border-radius: 2px;
+
+  min-width: 40em;
+}
+
+.viewContainer h5 {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  float: center;
+}
+.viewContainer h6 {
+  text-align: left;
+  margin-bottom: 10px;
+
+  font-weight: bold;
+  width: 100%;
+  float: left;
+}
+
+.wideContainer {
+  width: 100%;
+  display: block;
+}
+
+.halfWidthContainer {
+  width: 50%;
+  float: left;
+}
+
+.padding {
+  padding: 10px 10px 10px 20px;
+}
+
+.btIntegrantes,
+.btCentros {
+  margin-top: 15px;
+  padding: 10px 80px 0 10px;
+  width: 8em;
+  background-color: #007bff;
+  border-radius: 4.5px;
+  display: block;
+  font-size: 1rem;
+  line-height: 1.3rem;
+  color: #ffffff;
+  height: 70px;
+  text-align: center;
+  width: 150px;
+}
+
+.btIntegrantes > span,
+.btCentros > span {
+  font-size: 0.7rem;
+}
+
+.btIntegrantes {
+  background-image: url("../../../img/ico-integrantes.png");
+  background-repeat: no-repeat;
+  background-position: 85% center;
+}
+
+.btCentros {
+  background-image: url("../../../img/ico-centros.png");
+  background-repeat: no-repeat;
+  background-position: 85% center;
+}
+
+.state {
+  width: 100%;
+}
