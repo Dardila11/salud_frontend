@@ -5,7 +5,7 @@ import { Col, ListGroup, Row, Tab, Button, Modal } from "react-bootstrap";
 import { getHeader } from "../../utils/utils";
 import { URL } from "../../utils/URLSever";
 import Loader from "react-loader-spinner";
-
+import { Link } from 'react-router-dom';
 import UpdateProjectFormik from "../updateProject/updateProject.component";
 import "./viewProject.styles.css";
 import AlertComponent from "../../layout/alert/alert.component";
@@ -158,11 +158,14 @@ export default class ViewProject extends Component {
                         <div className="halfWidthContainer padding">
                           <h6>Componentes:</h6>
                           <div className="clearfix"></div>
-                          <a action href="#" className="btIntegrantes">
+                          <Link
+                            className='btIntegrantes'
+                            to={'/admin/studies/members/' +this.props.project}
+                            style={{ textTransform: 'capitalize' }}>
                             Integrantes
                             <br />
                             <span>[2]</span>
-                          </a>
+                        </Link>
                           <div className="clearfix"></div>
                           <a action href="#" className="btCentros">
                             Centros
