@@ -280,7 +280,7 @@ class CreateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable principal</Form.Label>
+                      <Form.Label>Investigador principal</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
                         options={this.props.usersInfo}

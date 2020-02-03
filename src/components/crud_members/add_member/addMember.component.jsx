@@ -4,10 +4,10 @@ import { ProgressBar, Modal, Form, Col, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import * as Utils from '../../../utils/utils';
+import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
 import matchSorter from 'match-sorter';
-import { getDateFormat } from '../../../utils/utils';
+import { getDateFormat } from '../../utils/utils';
 
 /**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
@@ -37,25 +37,28 @@ class AddMember extends Component {
       alertId: 'alert-add-member-to-project',
       projectPermissions: [
         {
+          num: 0,
           id: 'checkParametrizacion',
           name: 'change_parameterization',
           key: 'change_parameterization',
           label: 'Parametrización',
-          checked: true
+          checked: false
         },
         {
+          num: 0,
           id: 'checkCuestionarios',
           name: 'change_questionnaire',
           key: 'change_questionnaire',
           label: 'Cuestionarios',
-          checked: true
+          checked: false
         },
         {
+          num: 0,
           id: 'checkAnalisis',
           name: 'change_analysis',
           key: 'change_analysis',
           label: 'Analisis',
-          checked: true
+          checked: false
         }
       ],
       registryPermissions: [
@@ -104,7 +107,7 @@ class AddMember extends Component {
     this.props.handleClose();
   };
 
-  handleCloseAddParticipant = () => {
+  handleCloseAddMember = () => {
     this.props.handleCloseAddMember();
   };
 
@@ -113,9 +116,11 @@ class AddMember extends Component {
     // para cada permiso verificamos si es un permiso del rol.
     // está checked ? lo agregamos a la lista de permisos a agregar
     // esta función retorna la lista de permisos que se van a agregar a permissions[]
+    console.log('rol en el proyecto ' + role);
   };
 
   saveNewMemberInfo = values => {
+    this.saveMemberPermissions(values.RolInProject);
     const headers = Utils.getHeader();
     var json = {
       study: {
@@ -135,7 +140,7 @@ class AddMember extends Component {
         })
         .then(() => {
           this.setState({ progress: false });
-          this.handleCloseAddParticipant();
+          this.handleCloseAddMember();
         })
         .catch(error => {
           this.setState({
@@ -148,7 +153,33 @@ class AddMember extends Component {
     });
   };
 
-  handleCheck = (permissionArray, id, arrayName) => {};
+  handleResetCheckbox = () => {
+    // reseteamos registryPermissions
+  };
+
+  /**
+   * handleCheck se encarga de cambiar el estado del checkbox que se ha clickeado.
+   * para ello necesita el id y el nombre del array (ej: registryPermissions )
+   */
+  handleCheck = (permissionArray, id, arrayName) => {
+    // en name guardamos el array "this.state.arrayName" <- (ej: this.state.registryPermissions)
+    var name = 'this.state.' + arrayName;
+    // usamos eval para pasar de un String a una variable
+    name = eval(name);
+    // obtenemos todos los datos del array.
+    var newData = [...name];
+    console.log(newData);
+    // buscamos el checkbox que tiene el id que queremos cambiar
+    var index = newData.findIndex(obj => obj.id === id);
+    // comparamos el valor de checked
+    if (newData[index].checked) {
+      newData[index].checked = false;
+    } else {
+      newData[index].checked = true;
+    }
+    // por ultimo actualizamos el checkbox con la nueva informacion de checked
+    this.setState({ newData });
+  };
 
   componentDidMount() {
     console.log(this.props.usersInfo);
@@ -196,9 +227,7 @@ class AddMember extends Component {
               </Modal.Header>
               <Modal.Body>
                 <p>
-                  <i className='required'>
-                    Todos los campos con asterisco (*) son obligatorios
-                  </i>
+                  <i className='required'>Todos los campos son obligatorios</i>
                 </p>
                 <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
                   <Form.Row>
@@ -281,6 +310,7 @@ class AddMember extends Component {
                         onChange={e => {
                           handleChange(e);
                           // se resetean todos los valores de los checkbox
+                          this.handleResetCheckbox();
                         }}
                         isInvalid={!!errors.RolInProject}
                         isValid={touched.RolInProject && !errors.RolInProject}>
@@ -295,11 +325,19 @@ class AddMember extends Component {
                     className={values.RolInProject != -1 ? '' : 'hidden'}>
                     <Form.Group as={Col} md='4'>
                       <Form.Label>Permisos de proyecto: </Form.Label>
+                      {/* recorre los permisos de proyecto. para cada permiso 
+                          lo compara con los permisos segun sea el rol seleccionado.
+                       */}
                       {this.state.projectPermissions.map(permission => {
                         var check = false;
                         switch (values.RolInProject) {
                           case '1': // Gestor
                             check = true;
+                            /**
+                             * Para este caso del gestor, busca en el array
+                             * si existe el permiso con el que está comparando.
+                             * Sí este existe, NO lo muestra. 'check = false'
+                             */
                             this.state.managerPermissions.filter(
                               mPermission => {
                                 if (mPermission == permission.name) {
@@ -309,6 +347,11 @@ class AddMember extends Component {
                             );
                             break;
                           case '2': // Investigator
+                            /**
+                             * Si el rol es investigador o tecnico, busca en el array
+                             * si exsite el permiso con el que está comparando.
+                             * Sí este exsite, lo muestra.
+                             */
                             this.state.investigatorPermissions.filter(
                               invPermission => {
                                 if (invPermission == permission.name) {
@@ -318,6 +361,11 @@ class AddMember extends Component {
                             );
                             break;
                           case '3': // Tecnico
+                            /**
+                             * Si el rol es investigador o tecnico, busca en el array
+                             * si exsite el permiso con el que está comparando.
+                             * Sí este exsite, lo muestra.
+                             */
                             this.state.technicianPermissions.filter(
                               techPermission => {
                                 if (techPermission == permission.name) {
@@ -328,6 +376,11 @@ class AddMember extends Component {
                             break;
                         }
                         if (check) {
+                          /**
+                           * Si check es verdadero, significa que va a renderizar el checkbox
+                           * asi que crear un numero checkbox con los datos del permiso. su id,
+                           * nombre, label y el valor del checked.
+                           */
                           return (
                             <Form.Check
                               id={permission.id}
@@ -389,7 +442,13 @@ class AddMember extends Component {
                               type='checkbox'
                               label={permission.label}
                               checked={permission.checked}
-                              onChange={handleChange}
+                              onChange={() => {
+                                this.handleCheck(
+                                  permission.name,
+                                  permission.id,
+                                  'registryPermissions'
+                                );
+                              }}
                             />
                           );
                         }
@@ -437,7 +496,13 @@ class AddMember extends Component {
                               type='checkbox'
                               label={permission.label}
                               checked={permission.checked}
-                              onChange={handleChange}
+                              onChange={() => {
+                                this.handleCheck(
+                                  permission.name,
+                                  permission.id,
+                                  'componentPermissions'
+                                );
+                              }}
                             />
                           );
                         }
