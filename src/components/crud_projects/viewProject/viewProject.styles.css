@@ -76,3 +76,42 @@
 .state {
   width: 100%;
 }
+
+.clearfix {
+  overflow: auto;
+  clear: both;
+}
+.viewContainer {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #dfe0e2;
+  border-radius: 2px;
+
+  min-width: 40em;
+}
+
+.viewContainer h5 {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  float: center;
+}
+.viewContainer h6 {
+  text-align: left;
+  margin-bottom: 10px;
+
+  font-weight: bold;
+  width: 100%;
+  float: left;
+}
+
+.wideContainer {
+  width: 100%;
+  padding: 0;
+}
+
+.halfWidthContainer {
+  width: 50%;
+  float: left;
+  padding: 10px 10px 10px 20px;
+}
