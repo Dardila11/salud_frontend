@@ -126,6 +126,10 @@ code {
   display: none !important;
 }
 
+.shown {
+  display: block !important;
+}
+
 .mh {
   min-width: 100%;
   min-height: 100% !important;
