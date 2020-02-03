@@ -7,7 +7,7 @@ import './css/fontello.css';
 import './navbarLateral.styles.css';
 import '../../../../vendor/fontawesome-free/css/all.min.css';
 
-class NavBarLateral extends Component {
+class NavBarLateralProject extends Component {
   render() {
     return (
       <ul
@@ -25,7 +25,7 @@ class NavBarLateral extends Component {
         <li className='nav-item active'>
           <a className='nav-link' href='index.html'>
             <i className='fas fa-fw fa-tachometer-alt'></i>
-            <span>Administrador</span>
+            <span>Proyecto</span>
           </a>
         </li>
         <hr className='sidebar-divider'></hr>
@@ -33,13 +33,13 @@ class NavBarLateral extends Component {
         <li className='nav-item'>
           <Link role='button' className='nav-link' to={'/admin/users/'}>
             <i className='fas fa-fw fa-users-cog'></i>
-            <span>Usuarios</span>
+            <span>Componentess</span>
           </Link>
         </li>
         <li className='nav-item'>
           <Link role='button' className='nav-link' to={'/admin/studies/'}>
             <i className='fas fa-fw fa-notes-medical'></i>
-            <span>Proyectos</span>
+            <span>Estado</span>
           </Link>
         </li>
         <hr className='sidebar-divider'></hr>
@@ -54,4 +54,4 @@ class NavBarLateral extends Component {
   }
 }
 
-export default NavBarLateral;
+export default NavBarLateralProject;

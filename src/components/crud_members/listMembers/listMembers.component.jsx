@@ -13,7 +13,7 @@ import Capitalize from 'react-capitalize';
 import AlertComponent from '../../layout/alert/alert.component';
 //import CreateMemberFormik from '../createMember/createMember.component';
 //import UpdateMemberFormik from '../updateMember/updateMember.component';
-//import DeleteMember from '../deleteMember/deleteMember.component';
+import DeleteMember from '../deleteMember/deleteMember.component';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -37,15 +37,16 @@ const NoDataConst = () => (
   class ListMembers extends Component {
     CancelToken = axios.CancelToken;
     source = this.CancelToken.source();
+    isUpdate = true;
     constructor(props) {
       super(props);
       this.state = {
         loading: false,
-        emailToRead: '',
+        idProjectMemberToEdit: '',
         membersinfo: [],
         infoCenters: [],
         infoDepartaments: [],
-        userInfo: [1],
+        memberInfo: [1],
         userPermissions: [],
         isVisibleCreate: false,
         isVisibleUpdate: false,
@@ -56,7 +57,7 @@ const NoDataConst = () => (
         columns: [
           {
             Header: 'Nombres',
-            accessor: 'user_id__email',
+            accessor: 'user_id__first_name',
             width: 150,
             maxWidth: 200,
             minWidth: 100,
@@ -67,7 +68,7 @@ const NoDataConst = () => (
           ,
           {
             Header: 'Apellidos',
-            accessor: 'user_id__email',
+            accessor: 'user_id__last_name',
             width: 150,
             maxWidth: 200,
             minWidth: 100,
@@ -105,7 +106,7 @@ const NoDataConst = () => (
             width: 150,
             maxWidth: 150,
             minWidth: 100
-          }/*,
+          },
           {
             Header: 'Activo',
             accessor: 'is_active',
@@ -121,7 +122,7 @@ const NoDataConst = () => (
                 <div className='remove'></div>
               );
             }
-          }*/,
+          },
           {
             Header: 'Acciones',
             sortable: false,
@@ -140,7 +141,7 @@ const NoDataConst = () => (
                       className='update'
                       variant='outline-primary'
                       onClick={() => {
-                        this.updateRow(props.original.email);
+                        this.updateRow(props.original.id);
                       }}></Button>
                   </OverlayTrigger>
                   <OverlayTrigger
@@ -162,7 +163,7 @@ const NoDataConst = () => (
                       className='ml-1 change'
                       variant='outline-danger'
                       onClick={() => {
-                        this.deleteRow(props.original.email);
+                        this.deleteRow(props.original.id);
                       }}></Button>
                   </OverlayTrigger>
                 </div>
@@ -175,6 +176,39 @@ const NoDataConst = () => (
     componentDidMount() {
       this.getMembers();
     }
+    handleClose = () => {
+      this.setState({
+        isVisibleCreate: false,
+        isVisibleUpdate: false,
+        isVisibleDelete: false,
+        isVisibleView: false
+      });
+    };
+    handleOpenUpdate = () => {
+      this.setState({ isVisibleUpdate: true });
+    };
+    handleOpenDelete = () => {
+      this.setState({ isVisibleDelete: true });
+      console.log(this.state.memberInfo)
+    };
+    handleCloseUpdate = () => {
+      this.getMembers();
+      this.setState({
+        alertVariant: 'success',
+        alertMessage: 'Integrante Actualizado.'
+      });
+      this.handleClose();
+      showAlert(this.state.alertId);
+    };
+    handleCloseDelete = () => {
+      this.getMembers();
+      this.setState({
+        alertVariant: 'success',
+        alertMessage: 'Estado del Integrante modificado.'
+      });
+      this.handleClose();
+      showAlert(this.state.alertId);
+    };
   
     getMembers = async () => {
       const headers = getHeader();
@@ -201,6 +235,39 @@ const NoDataConst = () => (
       
       
     };
+    getProjectMemberToEdit = async id => {
+      const headers = getHeader();
+      await axios
+        .get(
+          URL + '/studies/user/study/' + id+'/',
+          { headers: headers },
+          { cancelToken: this.source.token }
+        )
+        .then(response => {
+          this.setState({ memberInfo: response.data }, () => {
+            if (this.isUpdate) {
+              this.handleOpenUpdate();
+            } else {
+              this.handleOpenDelete();
+            }
+          });
+        });
+    };
+    updateRow = id => {
+      this.setState({ idProjectMemberToEdit: id }, () => {
+        this.getProjectMemberToEdit(this.state.idProjectToEdit);
+      });
+    };  
+    deleteRow = id => {
+      this.isUpdate = false;
+      this.setState({ idProjectMemberToEdit: id }, () => {
+        this.getProjectMemberToEdit(this.state.idProjectMemberToEdit);
+      }); 
+      
+    };
+
+
+ 
     render() {
       return (
         <section>
@@ -226,7 +293,20 @@ const NoDataConst = () => (
             noDataText={'No existen usuarios'}
             filterable></ReactTable>
         )}
-          
+        <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
+          {/* Eliminar Usuario */}
+          <DeleteMember
+            handleCloseDelete={this.handleCloseDelete}
+            handleClose={this.handleClose}
+            id={this.state.idProjectMemberToEdit}
+            is_active={this.state.memberInfo[0].is_active}
+          />
+        </Modal>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        />
         </section>
       );
     }
