@@ -22,6 +22,7 @@ export default class ViewProject extends Component {
     this.state = {
       loading: false,
       studyInfo: [],
+      membersInfo: [],
       isAdmin: true,
       idProjectToEdit: -1,
       projectInfo: [1],
@@ -32,6 +33,8 @@ export default class ViewProject extends Component {
       isVisibleUpdate: false,
       isVisibleDelete: false,
       showMessage: false,
+      numMembers: 0,
+      numCenters: 0,
       message: false,
       alertVariant: "",
       alertMessage: "",
@@ -60,6 +63,7 @@ export default class ViewProject extends Component {
 
   componentDidMount() {
     this.getStudyById(this.props.project);
+    this.getMembers();
   }
 
   handleOpenUpdate = () => {
@@ -78,6 +82,33 @@ export default class ViewProject extends Component {
     });
     this.handleClose();
     /*showAlert(this.state.alertId);*/
+  };
+
+  getMembers = async () => {
+    const headers = getHeader();
+    console.log("lllllllanando");
+    axios
+      .get(
+        URL + "/studies/user/" + this.props.project + "/",
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        console.log("funcion response");
+        this.setState({
+          membersInfo: response.data,
+          numMembers: response.data.length
+        });
+      })
+      .catch(error => {
+        console.log("oh no, hubo un error!");
+        console.log(error.status);
+      });
+  };
+
+  getMembersLength = () => {
+    //console.log(this.state.membersInfo.length);
+    console.log(this.state.studyInfo);
   };
 
   render() {
@@ -121,9 +152,7 @@ export default class ViewProject extends Component {
                   <Tab.Pane eventKey="#general">
                     <div className="clearfix"></div>
                     <div className="viewContainer">
-                      <h5 style={{ textTransform: "capitalize" }}>
-                        Información General del proyecto
-                      </h5>
+                      <h5> Información General del Proyecto</h5>
                       <div className="clearfix"></div>
                       <div className="wideContainer">
                         <div className="halfWidthContainer padding">
@@ -185,7 +214,7 @@ export default class ViewProject extends Component {
                           >
                             Integrantes
                             <br />
-                            <span>[2]</span>
+                            <span>[{this.state.numMembers}]</span>
                           </Link>
                           <div className="clearfix"></div>
                           <a action href="#" className="btCentros">
@@ -200,9 +229,15 @@ export default class ViewProject extends Component {
                         <h6>Estado:</h6>
                         <div className="clearfix"></div>
                         <ListGroup horizontal>
-                          <ListGroup.Item>Fase 1</ListGroup.Item>
-                          <ListGroup.Item>Fase 2</ListGroup.Item>
-                          <ListGroup.Item>Fase 3</ListGroup.Item>
+                          <ListGroup.Item variant="danger">
+                            Fase 1
+                          </ListGroup.Item>
+                          <ListGroup.Item variant="light">
+                            Fase 2
+                          </ListGroup.Item>
+                          <ListGroup.Item variant="light">
+                            Fase 3
+                          </ListGroup.Item>
                         </ListGroup>
                         <div className="clearfix"></div>
                       </div>
