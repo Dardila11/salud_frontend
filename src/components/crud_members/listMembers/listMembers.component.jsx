@@ -343,7 +343,7 @@ class ListMembers extends Component {
           <AddMember
             handleClose={this.handleClose}
             handleCloseAddMember={this.handleClose}
-            study_id={this.state.idProjectMemberToEdit}
+            study_id={this.props.project}
             usersInfo={this.state.usersInfo}
           />
         </Modal>

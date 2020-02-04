@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { ProgressBar, Modal, Form, Col, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
+import { URL } from '../../utils/URLSever';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
 import matchSorter from 'match-sorter';
 import { getDateFormat } from '../../utils/utils';
+var moment = require('moment');
 
 /**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
@@ -113,29 +115,51 @@ class AddMember extends Component {
 
   saveMemberPermissions = role => {
     // recorremos todos los permisos
+    var permissionToSave = [];
+    for (let i = 0; i < this.state.projectPermissions.length; i++) {
+      var permission = [...this.state.projectPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+    for (let i = 0; i < this.state.registryPermissions.length; i++) {
+      var permission = [...this.state.registryPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+    for (let i = 0; i < this.state.componentPermissions.length; i++) {
+      var permission = [...this.state.componentPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+
+    console.log(permissionToSave);
+
     // para cada permiso verificamos si es un permiso del rol.
     // está checked ? lo agregamos a la lista de permisos a agregar
     // esta función retorna la lista de permisos que se van a agregar a permissions[]
     console.log('rol en el proyecto ' + role);
+    return permissionToSave;
   };
 
   saveNewMemberInfo = values => {
-    this.saveMemberPermissions(values.RolInProject);
     const headers = Utils.getHeader();
     var json = {
       study: {
-        user_id: values.idMember,
+        user_id: values.idMember.userId,
         study_id: this.props.study_id,
         role: values.RolInProject,
-        date_maxAccess: values.date_maxAccess,
+        date_maxAccess: moment(values.date_maxAccess).format('YYYY-MM-DD'),
         is_manager: 0
       },
-      permissions: [{ name: 'change_control' }]
+      permissions: this.saveMemberPermissions(values.RolInProject)
     };
     console.log(JSON.stringify(json));
     this.setState({ progress: true }, () => {
       axios
-        .post(URL + '/studies/user', json, {
+        .post(URL + '/studies/user/', json, {
           headers: headers
         })
         .then(() => {
@@ -143,18 +167,38 @@ class AddMember extends Component {
           this.handleCloseAddMember();
         })
         .catch(error => {
-          this.setState({
+          /*this.setState({
             progress: false,
             alertVariant: 'danger',
             alertMessage: JSON.parse(error.request.response).detail
           });
-          Utils.showAlert(this.state.alertId);
+          Utils.showAlert(this.state.alertId);*/
         });
     });
   };
 
   handleResetCheckbox = () => {
-    // reseteamos registryPermissions
+    for (let i = 0; i < this.state.projectPermissions.length; i++) {
+      var updateCheck = [...this.state.projectPermissions];
+      if (updateCheck[i].checked) {
+        updateCheck[i].checked = false;
+      }
+      this.setState({ updateCheck });
+    }
+    for (let i = 0; i < this.state.registryPermissions.length; i++) {
+      var updateCheck = [...this.state.registryPermissions];
+      if (updateCheck[i].checked) {
+        updateCheck[i].checked = false;
+      }
+      this.setState({ updateCheck });
+    }
+    for (let i = 0; i < this.state.componentPermissions.length; i++) {
+      var updateCheck = [...this.state.componentPermissions];
+      if (updateCheck[i].checked) {
+        updateCheck[i].checked = false;
+      }
+      this.setState({ updateCheck });
+    }
   };
 
   /**
