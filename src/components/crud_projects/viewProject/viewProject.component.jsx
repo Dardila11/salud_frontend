@@ -98,10 +98,18 @@ export default class ViewProject extends Component {
             <Row>
               <Row sm={4}>
                 <ListGroup horizontal>
-                  <ListGroup.Item action href="#general">
+                  <ListGroup.Item
+                    action
+                    href="#general"
+                    className="no-border-bottom"
+                  >
                     General
                   </ListGroup.Item>
-                  <ListGroup.Item action href="#design">
+                  <ListGroup.Item
+                    action
+                    href="#design"
+                    className="no-border-bottom"
+                  >
                     Diseño
                   </ListGroup.Item>
                 </ListGroup>
@@ -127,11 +135,20 @@ export default class ViewProject extends Component {
                             Código: {studyInfo[0].fields.study_id}
                           </span>
                           <span className="wideContainer">
-                            Código: {studyInfo[0].fields.study_id}
+                            Investigador principal:{" "}
+                            {studyInfo[0].fields.principal_inv}
                           </span>
                           <span className="wideContainer">
                             Fecha de registro:{" "}
                             {getDateFormat(studyInfo[0].fields.date_reg)}
+                          </span>
+                          <span className="wideContainer">
+                            Fecha de inicio:{" "}
+                            {getDateFormat(studyInfo[0].fields.date_ini)}
+                          </span>
+                          <span className="wideContainer">
+                            Fecha de finalización:{" "}
+                            {getDateFormat(studyInfo[0].fields.date_fin)}
                           </span>
                           <Modal
                             size="lg"
