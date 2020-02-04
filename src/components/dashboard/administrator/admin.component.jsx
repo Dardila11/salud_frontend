@@ -10,10 +10,12 @@ import { URL } from '../../utils/URLSever';
 import { vertificationToken } from '../../utils/verificationToken';
 import NavBar from '../../layout/navbar/navbar.component';
 import NavBarLateral from './navAdmin/navbarLateral.component';
+import NavBarLateralProject from './navAdmin/navbarLateralProject.component';
 import ListProjects from '../../crud_projects/listProjects/listProjects.component';
 import ListUsers from '../../crud_users/listUsers/listUsers.component';
 import ViewUserFormik from '../../crud_users/viewUser/viewUser.component';
 import ViewProject from '../../crud_projects/viewProject/viewProject.component';
+import ListMembers from '../../crud_members/listMembers/listMembers.component';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
@@ -28,7 +30,8 @@ class AdminDashboard extends Component {
     super(props);
     this.state = {
       loading: true,
-      isAuthenticated: true
+      isAuthenticated: true,
+      projectBar:false
     };
   }
 
@@ -49,6 +52,7 @@ class AdminDashboard extends Component {
 
   vertificationAuthorization = reloaded => {
     const headers = getHeader();
+    
     reloaded
       ? this.setState({ loading: true }, () =>
           axios
@@ -95,6 +99,7 @@ class AdminDashboard extends Component {
    * @description Segun sea el path de la URL decide cual vista mostrar
    */
   contentAdmin = () => {
+    
     const path = this.props.match.path;
     if (path.endsWith('/users') || path.endsWith('/users/')) {
       return <ListUsers />;
@@ -102,9 +107,15 @@ class AdminDashboard extends Component {
       return <ListProjects />;
     } else if (path.startsWith('/admin/users/')) {
       return <ViewUserFormik email={this.props.match.params.user} />;
-    } else if (path.startsWith('/admin/studies/')) {
+    } else if (path.startsWith('/admin/studies/members/')) {
+      
+      return <ListMembers project={this.props.match.params.study} />;
+    } 
+    else if (path.startsWith('/admin/studies/')) {
       return <ViewProject project={this.props.match.params.study} />;
     }
+ 
+
   };
 
   componentDidMount() {
@@ -116,6 +127,13 @@ class AdminDashboard extends Component {
   }
 
   render() {
+    var bar
+    const path = this.props.match.path;
+    if (path.startsWith('/admin/studies/members/'))
+      bar=<NavBarLateralProject />
+    else      
+      bar= <NavBarLateral />
+    
     if (!this.state.isAuthenticated) {
       return <Redirect to='/' />;
     }
@@ -130,22 +148,23 @@ class AdminDashboard extends Component {
         />
       );
     }
-    return (
-      <section
-        id='wrapper'
-        className='h-100 container-fluid p-0'
-        onMouseDown={() => this.vertification(false)}>
-        <NavBarLateral />
-        <div id='content-wrapper' className='d-flex flex-column'>
-          <div id='content'>
-            <NavBar />
-            <div className='container pt-2 pr-5 pl-5 pb-2'>
-              <this.contentAdmin />
+    
+      return (
+        <section
+          id='wrapper'
+          className='h-100 container-fluid p-0'
+          onMouseDown={() => this.vertification(false)}>
+          {bar}
+          <div id='content-wrapper' className='d-flex flex-column'>
+            <div id='content'>
+              <NavBar />
+              <div className='container pt-2 pr-5 pl-5 pb-2'>
+                <this.contentAdmin />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    );
+        </section>
+      );
   }
 }
 

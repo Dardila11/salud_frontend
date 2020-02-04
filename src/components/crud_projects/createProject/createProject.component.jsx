@@ -119,7 +119,7 @@ class CreateProjectFormik extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.usersInfo)
+    console.log(this.props.usersInfo);
   }
 
   render() {
@@ -136,7 +136,7 @@ class CreateProjectFormik extends Component {
           <></>
         )}
         <Formik
-          noValidate          
+          noValidate
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
@@ -165,7 +165,7 @@ class CreateProjectFormik extends Component {
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Crear Proyecto
+                  Crear proyecto
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
@@ -192,7 +192,7 @@ class CreateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='7' controlId='inputId'>
-                      <Form.Label>Titulo del proyecto</Form.Label>
+                      <Form.Label>Título del proyecto</Form.Label>
                       <Form.Control
                         type='text'
                         name='title'
@@ -280,7 +280,7 @@ class CreateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable principal</Form.Label>
+                      <Form.Label>Investigador principal</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
                         options={this.props.usersInfo}
