@@ -44,7 +44,7 @@ class AddMember extends Component {
           name: 'change_parameterization',
           key: 'change_parameterization',
           label: 'Parametrización',
-          checked: false
+          checked: true
         },
         {
           num: 0,
@@ -167,12 +167,12 @@ class AddMember extends Component {
           this.handleCloseAddMember();
         })
         .catch(error => {
-          /*this.setState({
+          this.setState({
             progress: false,
             alertVariant: 'danger',
             alertMessage: JSON.parse(error.request.response).detail
           });
-          Utils.showAlert(this.state.alertId);*/
+          Utils.showAlert(this.state.alertId);
         });
     });
   };
@@ -212,7 +212,7 @@ class AddMember extends Component {
     name = eval(name);
     // obtenemos todos los datos del array.
     var newData = [...name];
-    console.log(newData);
+
     // buscamos el checkbox que tiene el id que queremos cambiar
     var index = newData.findIndex(obj => obj.id === id);
     // comparamos el valor de checked
@@ -247,6 +247,7 @@ class AddMember extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
+            renderTech: false,
             idMember: '',
             limitAccessDate: getDateFormat(new Date()),
             RolInProject: -1,
@@ -367,11 +368,15 @@ class AddMember extends Component {
                   </Form.Row>
                   <Form.Row
                     className={values.RolInProject != -1 ? '' : 'hidden'}>
-                    <Form.Group as={Col} md='4'>
+                    <Form.Group
+                      className={values.RolInProject != 3 ? '' : 'hidden'}
+                      as={Col}
+                      md='4'>
                       <Form.Label>Permisos de proyecto: </Form.Label>
                       {/* recorre los permisos de proyecto. para cada permiso 
                           lo compara con los permisos segun sea el rol seleccionado.
                        */}
+
                       {this.state.projectPermissions.map(permission => {
                         var check = false;
                         switch (values.RolInProject) {
@@ -406,9 +411,15 @@ class AddMember extends Component {
                             break;
                           case '3': // Tecnico
                             /**
+                             * Para el tecnico no se renderiza el label, por ahora
+                             * lo dejaré asi
+                             */
+
+                            /**
                              * Si el rol es investigador o tecnico, busca en el array
                              * si exsite el permiso con el que está comparando.
                              * Sí este exsite, lo muestra.
+                             * Se deja por si en un futuro cambian los permisos del tecnico.
                              */
                             this.state.technicianPermissions.filter(
                               techPermission => {
@@ -422,12 +433,13 @@ class AddMember extends Component {
                         if (check) {
                           /**
                            * Si check es verdadero, significa que va a renderizar el checkbox
-                           * asi que crear un numero checkbox con los datos del permiso. su id,
+                           * asi que crear un nuevo checkbox con los datos del permiso. su id,
                            * nombre, label y el valor del checked.
                            */
                           return (
                             <Form.Check
                               id={permission.id}
+                              key={permission.id}
                               name={permission.name}
                               type='checkbox'
                               label={permission.label}
@@ -482,6 +494,7 @@ class AddMember extends Component {
                           return (
                             <Form.Check
                               id={permission.id}
+                              key={permission.id}
                               name={permission.name}
                               type='checkbox'
                               label={permission.label}
@@ -498,7 +511,14 @@ class AddMember extends Component {
                         }
                       })}
                     </Form.Group>
-                    <Form.Group as={Col} md='4'>
+                    <Form.Group
+                      className={
+                        values.RolInProject == 3 || values.RolInProject == 2
+                          ? 'hidden'
+                          : ''
+                      }
+                      as={Col}
+                      md='4'>
                       <Form.Label>Permisos de componentes: </Form.Label>
                       {this.state.componentPermissions.map(permission => {
                         var check = false;
@@ -536,6 +556,7 @@ class AddMember extends Component {
                           return (
                             <Form.Check
                               id={permission.id}
+                              key={permission.id}
                               name={permission.name}
                               type='checkbox'
                               label={permission.label}
