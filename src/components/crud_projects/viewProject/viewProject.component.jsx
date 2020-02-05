@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React, { Component } from "react";
+import axios from "axios";
 
-import { Col, ListGroup, Row, Tab, Button, Modal } from 'react-bootstrap';
-import { getHeader } from '../../utils/utils';
-import { URL } from '../../utils/URLSever';
-import Loader from 'react-loader-spinner';
-import { Link } from 'react-router-dom';
-import UpdateProjectFormik from '../updateProject/updateProject.component';
-import './viewProject.styles.css';
-import AlertComponent from '../../layout/alert/alert.component';
+import { Col, ListGroup, Row, Tab, Button, Modal } from "react-bootstrap";
+import { getHeader } from "../../utils/utils";
+import { URL } from "../../utils/URLSever";
+import Loader from "react-loader-spinner";
+import { Link } from "react-router-dom";
+import UpdateProjectFormik from "../updateProject/updateProject.component";
+import "./viewProject.styles.css";
+import AlertComponent from "../../layout/alert/alert.component";
 
-import { getDateFormat } from '../../utils/utils';
+import { getDateFormat } from "../../utils/utils";
 
 export default class ViewProject extends Component {
   CancelToken = axios.CancelToken;
@@ -22,6 +22,7 @@ export default class ViewProject extends Component {
     this.state = {
       loading: false,
       studyInfo: [],
+      membersInfo: [],
       isAdmin: true,
       idProjectToEdit: -1,
       projectInfo: [1],
@@ -32,10 +33,12 @@ export default class ViewProject extends Component {
       isVisibleUpdate: false,
       isVisibleDelete: false,
       showMessage: false,
+      numMembers: 0,
+      numCenters: 0,
       message: false,
-      alertVariant: '',
-      alertMessage: '',
-      alertId: 'alert-listProjects'
+      alertVariant: "",
+      alertMessage: "",
+      alertId: "alert-listProjects"
     };
   }
 
@@ -44,7 +47,7 @@ export default class ViewProject extends Component {
     this.setState({ loading: true }, () =>
       axios
         .get(
-          URL + '/studies/' + id,
+          URL + "/studies/" + id,
           { headers: headers },
           { cancelToken: this.source.token }
         )
@@ -60,6 +63,7 @@ export default class ViewProject extends Component {
 
   componentDidMount() {
     this.getStudyById(this.props.project);
+    this.getMembers();
   }
 
   handleOpenUpdate = () => {
@@ -73,11 +77,38 @@ export default class ViewProject extends Component {
   handleCloseUpdate = () => {
     this.getProjects();
     this.setState({
-      alertVariant: 'success',
-      alertMessage: 'Proyecto Actualizado.'
+      alertVariant: "success",
+      alertMessage: "Proyecto Actualizado."
     });
     this.handleClose();
     /*showAlert(this.state.alertId);*/
+  };
+
+  getMembers = async () => {
+    const headers = getHeader();
+    console.log("lllllllanando");
+    axios
+      .get(
+        URL + "/studies/user/" + this.props.project + "/",
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        console.log("funcion response");
+        this.setState({
+          membersInfo: response.data,
+          numMembers: response.data.length
+        });
+      })
+      .catch(error => {
+        console.log("oh no, hubo un error!");
+        console.log(error.status);
+      });
+  };
+
+  getMembersLength = () => {
+    //console.log(this.state.membersInfo.length);
+    console.log(this.state.studyInfo);
   };
 
   render() {
@@ -86,22 +117,30 @@ export default class ViewProject extends Component {
       <>
         {this.state.loading ? (
           <Loader
-            type='ThreeDots'
+            type="ThreeDots"
             height={100}
             width={100}
-            color='#00BFFF'
+            color="#00BFFF"
             timeout={3000}
-            className='mh'
+            className="mh"
           />
         ) : studyInfo.length > 0 ? (
-          <Tab.Container defaultActiveKey='#general'>
+          <Tab.Container defaultActiveKey="#general">
             <Row>
               <Row sm={4}>
                 <ListGroup horizontal>
-                  <ListGroup.Item action href='#general'>
+                  <ListGroup.Item
+                    action
+                    href="#general"
+                    className="no-border-bottom"
+                  >
                     General
                   </ListGroup.Item>
-                  <ListGroup.Item action href='#design'>
+                  <ListGroup.Item
+                    action
+                    href="#design"
+                    className="no-border-bottom"
+                  >
                     Diseño
                   </ListGroup.Item>
                 </ListGroup>
@@ -110,33 +149,44 @@ export default class ViewProject extends Component {
             <Row>
               <Row sm={8}>
                 <Tab.Content>
-                  <Tab.Pane eventKey='#general'>
-                    <div className='clearfix'></div>
-                    <div className='viewContainer'>
-                      <h5 style={{ textTransform: 'capitalize' }}>
-                        Información General del proyecto
-                      </h5>
-                      <div className='clearfix'></div>
-                      <div className='wideContainer'>
-                        <div className='halfWidthContainer padding'>
+                  <Tab.Pane eventKey="#general">
+                    <div className="clearfix"></div>
+                    <div className="viewContainer">
+                      <h5> Información General del Proyecto</h5>
+                      <div className="clearfix"></div>
+                      <div className="wideContainer">
+                        <div className="halfWidthContainer padding">
                           <h6>Detalles:</h6>
-                          <span className='wideContainer'>
+                          <span className="wideContainer">
                             Nombre: {studyInfo[0].fields.title_little}
                           </span>
-                          <span className='wideContainer'>
+                          <span className="wideContainer">
                             Código: {studyInfo[0].fields.study_id}
                           </span>
-                          <span className='wideContainer'>
+                          <span className="wideContainer">
+                            Investigador principal:{" "}
+                            {studyInfo[0].fields.principal_inv}
+                          </span>
+                          <span className="wideContainer">
                             Código: {studyInfo[0].fields.study_id}
                           </span>
-                          <span className='wideContainer'>
-                            Fecha de registro:{' '}
+                          <span className="wideContainer">
+                            Fecha de registro:{" "}
                             {getDateFormat(studyInfo[0].fields.date_reg)}
                           </span>
+                          <span className="wideContainer">
+                            Fecha de inicio:{" "}
+                            {getDateFormat(studyInfo[0].fields.date_ini)}
+                          </span>
+                          <span className="wideContainer">
+                            Fecha de finalización:{" "}
+                            {getDateFormat(studyInfo[0].fields.date_fin)}
+                          </span>
                           <Modal
-                            size='lg'
+                            size="lg"
                             show={this.state.isVisibleUpdate}
-                            onHide={this.handleClose}>
+                            onHide={this.handleClose}
+                          >
                             {/* Actualizar Proyecto */}
                             <UpdateProjectFormik
                               handleCloseUpdate={this.handleCloseUpdate}
@@ -147,44 +197,56 @@ export default class ViewProject extends Component {
                           </Modal>
                           <Button
                             action
-                            href='#'
-                            className='update'
-                            variant='outline-primary'
+                            href="#"
+                            className="update"
+                            variant="outline-primary"
                             /*onClick={() => {
                               this.updateRow(props.original.id_pk);*/
                           />
                         </div>
-                        <div className='halfWidthContainer padding'>
+                        <div className="halfWidthContainer padding">
                           <h6>Componentes:</h6>
-                          <div className='clearfix'></div>
+                          <div className="clearfix"></div>
                           <Link
-                            className='btIntegrantes'
-                            to={'/admin/studies/members/' + this.props.project}
-                            style={{ textTransform: 'capitalize' }}>
+                            className="btIntegrantes"
+                            to={"/admin/studies/members/" + this.props.project}
+                            style={{ textTransform: "capitalize" }}
+                          >
                             Integrantes
                             <br />
-                            <span>[2]</span>
+                            <span>[{this.state.numMembers}]</span>
                           </Link>
-                          <div className='clearfix'></div>
-                          <a action href='#' className='btCentros'>
+                          <div className="clearfix"></div>
+                          <a action href="#" className="btCentros">
                             Centros
                             <br />
                             <span>[5]</span>
                           </a>
                         </div>
                       </div>
-                      <div className='clearfix'></div>
-                      <div className='wideContainer state padding'>
+                      <div className="clearfix"></div>
+                      <div className="wideContainer state padding">
                         <h6>Estado:</h6>
-                        <span>Registro</span>
-                        <span>Diseño</span>
+                        <div className="clearfix"></div>
+                        <ListGroup horizontal>
+                          <ListGroup.Item variant="danger">
+                            Fase 1
+                          </ListGroup.Item>
+                          <ListGroup.Item variant="light">
+                            Fase 2
+                          </ListGroup.Item>
+                          <ListGroup.Item variant="light">
+                            Fase 3
+                          </ListGroup.Item>
+                        </ListGroup>
+                        <div className="clearfix"></div>
                       </div>
-                      <div className='clearfix'></div>
+                      <div className="clearfix"></div>
                     </div>
-                    <div className='clearfix'></div>
+                    <div className="clearfix"></div>
                   </Tab.Pane>
-                  <Tab.Pane eventKey='#design'>
-                    <div className='viewContainer'>
+                  <Tab.Pane eventKey="#design">
+                    <div className="viewContainer">
                       Este contenido no se encuentra disponible
                     </div>
                   </Tab.Pane>

@@ -189,6 +189,11 @@ class ListMembers extends Component {
     });
   };
 
+  handleCloseAddMember = () => {
+    this.setState({ isVisibleCreate: false });
+    this.getMembers()
+  }
+
   handleOpenCreate = () => {
     this.setState({ isVisibleCreate: true });
   };
@@ -342,7 +347,7 @@ class ListMembers extends Component {
           {/* Agregar Miembro */}
           <AddMember
             handleClose={this.handleClose}
-            handleCloseAddMember={this.handleClose}
+            handleCloseAddMember={this.handleCloseAddMember}
             study_id={this.props.project}
             usersInfo={this.state.usersInfo}
           />
