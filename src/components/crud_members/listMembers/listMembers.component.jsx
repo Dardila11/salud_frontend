@@ -179,6 +179,9 @@ class ListMembers extends Component {
     console.log(this.props.project);
     this.getMembers();
     this.getUsers();
+    
+    
+    
   }
   handleClose = () => {
     this.setState({
@@ -191,7 +194,9 @@ class ListMembers extends Component {
 
   handleCloseAddMember = () => {
     this.setState({ isVisibleCreate: false });
+    this.getUsersInfo()
     this.getMembers()
+    
   }
 
   handleOpenCreate = () => {
@@ -233,7 +238,7 @@ class ListMembers extends Component {
       )
       .then(response => {
         this.setState({ membersInfo: response.data }, () => {
-          this.getMembersInfo();
+          this.getUsersInfo();
         });
       })
       .catch(error => {
@@ -289,7 +294,7 @@ class ListMembers extends Component {
       )
       .then(response => {
         this.setState({ info: response.data }, () => {
-          this.getUsersInfo();
+         
         });
       })
       .catch(error => {
@@ -299,19 +304,32 @@ class ListMembers extends Component {
   };
 
   getUsersInfo = () => {
+    var incluido =false
     var usersInfoArray = [];
     for (let i = 0; i < this.state.info.length; i++) {
       var email = this.state.info[i].email;
       var firstName = this.state.info[i].first_name;
       var lastName = this.state.info[i].last_name;
       var id = this.state.info[i].id;
-      usersInfoArray.push({
-        userEmail: email,
-        userName: firstName + ' ' + lastName,
-        userId: id
-      });
+
+      console.log(this.state.membersInfo.length)
+      for (let j = 0; j < this.state.membersInfo.length; j++){
+        
+          if(this.state.info[i].id===this.state.membersInfo[j].user_id)
+              incluido=true
+      }
+      
+      if(incluido==false)
+          usersInfoArray.push({
+            userEmail: email,
+            userName: firstName + ' ' + lastName,
+            userId: id
+          });
+      incluido=false
     }
     this.setState({ usersInfo: usersInfoArray });
+    console.log("_________________")
+    console.log(usersInfoArray)
   };
 
   render() {
