@@ -16,7 +16,13 @@ var moment = require('moment');
  * validaciones de los campos del formulario
  */
 const schema = Yup.object({
-  idMember: Yup.string().required('Campo Requerido')
+  idMember: Yup.string().required('Campo Requerido'),
+  limitAccessDate: Yup.date()
+    .required('Campo Requerido')
+    .min(new Date(), 'la fecha debe ser mayor al dia de hoy'),
+  RolInProject: Yup.number()
+    .required('Campo Requerido')
+    .min(0, 'Debe escoger al menos un rol')
 });
 
 class AddMember extends Component {
@@ -30,10 +36,9 @@ class AddMember extends Component {
         'change_observer',
         'change_registry'
       ],
-      managerPermissions: ['change_observer'], // dice que change_observer no es un permiso
+      managerPermissions: ['change_observer'],
       suggestions: [],
       progress: false,
-      empty: false,
       alertMessage: '',
       alertVariant: '',
       alertId: 'alert-add-member-to-project',
@@ -44,7 +49,7 @@ class AddMember extends Component {
           name: 'change_parameterization',
           key: 'change_parameterization',
           label: 'Parametrización',
-          checked: true
+          checked: false
         },
         {
           num: 0,
@@ -151,7 +156,7 @@ class AddMember extends Component {
         user_id: values.idMember.userId,
         study_id: this.props.study_id,
         role: values.RolInProject,
-        date_maxAccess: moment(values.date_maxAccess).format('YYYY-MM-DD'),
+        date_maxAccess: moment(values.limitAccessDate).format('YYYY-MM-DD'),
         is_manager: 0
       },
       permissions: this.saveMemberPermissions(values.RolInProject)
@@ -249,7 +254,7 @@ class AddMember extends Component {
           initialValues={{
             renderTech: false,
             idMember: '',
-            limitAccessDate: getDateFormat(new Date()),
+            limitAccessDate: new Date(),
             RolInProject: -1,
             permissions: []
           }}
@@ -364,6 +369,9 @@ class AddMember extends Component {
                         <option value={2}>Investigador</option>
                         <option value={3}>Técnico</option>
                       </Form.Control>
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.RolInProject}
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
                   <Form.Row
