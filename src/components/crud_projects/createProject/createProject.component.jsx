@@ -75,7 +75,67 @@ class CreateProjectFormik extends Component {
   handleCloseCreate = () => {
     this.props.handleCloseCreate();
   };
+  /*
+  saveMemberPermissions = role => {
+    // recorremos todos los permisos
+    var permissionToSave = [];
+    for (let i = 0; i < this.state.projectPermissions.length; i++) {
+      var permission = [...this.state.projectPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+    for (let i = 0; i < this.state.registryPermissions.length; i++) {
+      var permission = [...this.state.registryPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+    for (let i = 0; i < this.state.componentPermissions.length; i++) {
+      var permission = [...this.state.componentPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
 
+    //console.log(permissionToSave);
+
+    // para cada permiso verificamos si es un permiso del rol.
+    // está checked ? lo agregamos a la lista de permisos a agregar
+    // esta función retorna la lista de permisos que se van a agregar a permissions[]
+    console.log('rol en el proyecto ' + role);
+    return permissionToSave;
+  };
+  saveNewMemberInfo = values => {
+    const headers = Utils.getHeader();
+    var json = {
+      study: {
+        user_id: values.principalInvestigator.userId,
+        study_id: values.projectId,
+        role: 1,
+        date_maxAccess: moment(values.endDate).format('YYYY-MM-DD'),
+        is_manager: 1
+      },
+      permissions: this.saveMemberPermissions(1)
+    };
+    console.log(JSON.stringify(json));
+    this.setState({ progress: true }, () => {
+      axios
+        .post(URL + '/studies/user/', json, {
+          headers: headers
+        })
+        .then(() => {
+        })
+        .catch(error => {
+          this.setState({
+            progress: false,
+            alertVariant: 'danger',
+            alertMessage: JSON.parse(error.request.response).detail
+          });
+          Utils.showAlert(this.state.alertId);
+        });
+    });
+  };
   saveNewProjectInfo = async values => {
     const headers = Utils.getHeader();
     var json = {
@@ -117,7 +177,7 @@ class CreateProjectFormik extends Component {
         });
     });
   };
-
+*/
   componentDidMount() {
     console.log(this.props.usersInfo);
   }
@@ -280,7 +340,7 @@ class CreateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Investigador principal</Form.Label>
+                      <Form.Label>Director de Proyecto</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
                         options={this.props.usersInfo}

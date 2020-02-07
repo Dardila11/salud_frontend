@@ -171,16 +171,16 @@ export default class ViewProject extends Component {
                             Código: {studyInfo[0].fields.study_id}
                           </span>
                           <span className="wideContainer">
-                            Fecha de registro:{" "}
+                            Fecha de registro:
                             {getDateFormat(studyInfo[0].fields.date_reg)}
                           </span>
                           <span className="wideContainer">
-                            Fecha de inicio:{" "}
-                            {getDateFormat(studyInfo[0].fields.date_ini)}
+                            Fecha de inicio:
+                            {studyInfo[0].fields.date_ini}
                           </span>
                           <span className="wideContainer">
-                            Fecha de finalización:{" "}
-                            {getDateFormat(studyInfo[0].fields.date_fin)}
+                            Fecha de finalización:
+                            {studyInfo[0].fields.date_fin}
                           </span>
                           <Modal
                             size="lg"
@@ -230,13 +230,13 @@ export default class ViewProject extends Component {
                         <div className="clearfix"></div>
                         <ListGroup horizontal>
                           <ListGroup.Item variant="danger">
-                            Fase 1
+                            Diseño
                           </ListGroup.Item>
                           <ListGroup.Item variant="light">
-                            Fase 2
+                            Registro
                           </ListGroup.Item>
                           <ListGroup.Item variant="light">
-                            Fase 3
+                            Analisis
                           </ListGroup.Item>
                         </ListGroup>
                         <div className="clearfix"></div>

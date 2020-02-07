@@ -266,7 +266,7 @@ class UpdateProjectFormik extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='8' controlId='inputId'>
-                      <Form.Label>Responsable principal</Form.Label>
+                      <Form.Label>Director de Proyecto</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
                         options={this.props.usersInfo}
