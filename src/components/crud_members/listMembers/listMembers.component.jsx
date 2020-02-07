@@ -15,6 +15,7 @@ import AlertComponent from '../../layout/alert/alert.component';
 //import UpdateMemberFormik from '../updateMember/updateMember.component';
 import DeleteMember from '../deleteMember/deleteMember.component';
 import AddMember from '../add_member/addMember.component';
+import ViewMember from '../viewMember/viewMember.component';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -38,7 +39,7 @@ const NoDataConst = () => (
 class ListMembers extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
-  isUpdate = true;
+  typeModal = 0;
   constructor(props) {
     super(props);
     this.state = {
@@ -54,6 +55,7 @@ class ListMembers extends Component {
       isVisibleCreate: false,
       isVisibleUpdate: false,
       isVisibleDelete: false,
+      isVisibleView: false,
       alertVariant: '',
       alertMessage: '',
       alertId: 'alert-listUsers',
@@ -138,7 +140,7 @@ class ListMembers extends Component {
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Actualizar</Tooltip>}>
+                  overlay={<Tooltip>Detalles</Tooltip>}>
                   <Button
                     className='update'
                     variant='outline-primary'
@@ -149,14 +151,15 @@ class ListMembers extends Component {
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Detalles</Tooltip>}>
-                  <Link
-                    className='ml-1 view btn btn-outline-primary'
+                  overlay={<Tooltip>Actualizar</Tooltip>}>
+                  <Button
+                    className='view'
                     variant='outline-primary'
-                    role='button'
-                    to={'/admin/users/' + props.original.email}
-                  />
+                    onClick={() => {
+                      this.viewRow(props.original.id);
+                    }}></Button>
                 </OverlayTrigger>
+
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
@@ -202,12 +205,20 @@ class ListMembers extends Component {
   handleOpenCreate = () => {
     this.setState({ isVisibleCreate: true });
   };
+  handleOpenView = () => {
+    console.log(this.state.memberInfo)
+    this.setState({ isVisibleView: true });
+  };
   handleOpenUpdate = () => {
     this.setState({ isVisibleUpdate: true });
   };
   handleOpenDelete = () => {
     this.setState({ isVisibleDelete: true });
     console.log(this.state.memberInfo);
+  };
+  handleCloseView = () => {
+    this.getMembers();
+    this.handleClose();
   };
   handleCloseUpdate = () => {
     this.getMembers();
@@ -259,21 +270,32 @@ class ListMembers extends Component {
       )
       .then(response => {
         this.setState({ memberInfo: response.data }, () => {
-          if (this.isUpdate) {
+          console.log(this.typeModal)
+          if (this.typeModal==1) {
+            this.handleOpenView();
+          } else if (this.typeModal==2) {
             this.handleOpenUpdate();
-          } else {
+          }
+          else if (this.typeModal==3) {
             this.handleOpenDelete();
           }
         });
       });
   };
-  updateRow = id => {
+  viewRow = id => {
+    this.typeModal = 1;
     this.setState({ idProjectMemberToEdit: id }, () => {
-      this.getProjectMemberToEdit(this.state.idProjectToEdit);
+      this.getProjectMemberToEdit(this.state.idProjectMemberToEdit);
+    });
+  };
+  updateRow = id => {
+    this.typeModal = 2;
+    this.setState({ idProjectMemberToEdit: id }, () => {
+      this.getProjectMemberToEdit(this.state.idProjectMemberToEdit);
     });
   };
   deleteRow = id => {
-    this.isUpdate = false;
+    this.typeModal = 3;
     this.setState({ idProjectMemberToEdit: id }, () => {
       this.getProjectMemberToEdit(this.state.idProjectMemberToEdit);
     });
@@ -328,21 +350,19 @@ class ListMembers extends Component {
       incluido=false
     }
     this.setState({ usersInfo: usersInfoArray });
-    console.log("_________________")
-    console.log(usersInfoArray)
   };
 
   render() {
     return (
       <section>
-        <h1 className='h3 mb-2 text-gray-800'>Lista de Miembros</h1>
+        <h1 className='h3 mb-2 text-gray-800'>Lista de Integrantes</h1>
         <button
           className='btn btn-primary btn-icon-split p-0 mb-2'
           onClick={this.handleOpenCreate}>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
-          <span className='text text-white'>Agregar Miembro</span>
+          <span className='text text-white'>Agregar Integrante</span>
         </button>
         {this.state.loading ? (
           <ReactTable
@@ -377,6 +397,15 @@ class ListMembers extends Component {
             handleClose={this.handleClose}
             id={this.state.idProjectMemberToEdit}
             is_active={this.state.memberInfo[0].is_active}
+          />
+        </Modal>
+        <Modal show={this.state.isVisibleView} onHide={this.handleClose}>
+          {/* Eliminar Usuario */}
+          <ViewMember
+            handleCloseView={this.handleCloseView}
+            handleClose={this.handleClose}
+            id={this.state.idProjectMemberToEdit}
+            memberInfo={this.state.memberInfo[0]}
           />
         </Modal>
         <AlertComponent

@@ -135,7 +135,7 @@ class AddMember extends Component {
       }
     }
 
-    console.log(permissionToSave);
+    //console.log(permissionToSave);
 
     // para cada permiso verificamos si es un permiso del rol.
     // está checked ? lo agregamos a la lista de permisos a agregar

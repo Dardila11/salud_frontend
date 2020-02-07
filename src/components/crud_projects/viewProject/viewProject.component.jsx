@@ -114,7 +114,7 @@ export default class ViewProject extends Component {
   render() {
     const { studyInfo } = this.state;
     return (
-      <>
+      <>{console.log(this.state.studyInfo[0])}
         {this.state.loading ? (
           <Loader
             type="ThreeDots"
