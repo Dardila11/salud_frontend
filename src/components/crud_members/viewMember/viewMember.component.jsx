@@ -331,7 +331,7 @@ class viewMember extends Component {
           endDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
           limitAccessDate: getDateFormat(new Date()),
           RolInProject:this.state.memberInfo.role,
-          permissions: [4]
+          permissions: []
         }}
         validationSchema={schema}
         onSubmit={this.saveNewMemberInfo}>
@@ -345,69 +345,25 @@ class viewMember extends Component {
           setFieldValue
         }) => (
           <>
-              <Modal.Header closeButton>
-                <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Agregar integrante al proyecto
-                </Modal.Title>
-              </Modal.Header>
+            <Modal.Header closeButton>
+              <Modal.Title className='h3 text-gray-800 mb-0'>
+                Información de permisos de  Integrante
+              </Modal.Title>
+            </Modal.Header>
               <Modal.Body>
-                <p>
-                  <i className='required'>Todos los campos son obligatorios</i>
-                </p>
-                <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
+              <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
                 
+                  <Form.Group as={Col} md='4' controlId='inputId'>
+                    <h4>{values.nameMember}</h4>
+                    <Form.Control.Feedback type='invalid'>
+                      {errors.idMember}
+                    </Form.Control.Feedback>
+                  </Form.Group>
                   <Form.Row>
-                    <Form.Group as={Col} md='5' controlId='inputId'>
-                      <Form.Label> Nuevo integranteeeeeeeeee</Form.Label>
-                      <Autocomplete
-                        id='combo-box-demo'
-                        options={this.props.usersInfo}
-                        getOptionLabel={option =>
-                          typeof option === 'string'
-                            ? option
-                            : Utils.toCapitalizer(option.userName)
-                        }
-                        
-                        renderOption={option => (
-                          <React.Fragment>
-                            <div>
-                              <span>{option.userEmail}</span>
-                              <br />
-                              <span>
-                                {Utils.toCapitalizer(option.userName)}
-                              </span>
-                              <hr />
-                            </div>
-                          </React.Fragment>
-                        )}
-                        value={values.idMember}
-                        name='idMember'
-                        onChange={(e, value) => {
-                          setFieldValue('idMember', value);
-                        }}
-                        filterOptions={(options, { inputValue }) =>
-                          matchSorter(options, inputValue, {
-                            keys: ['userName']
-                          })
-                        }
-                        renderInput={params => (
-                          <TextField
-                            {...params}
-                            name='idMember'
-                            variant='outlined'
-                            fullWidth
-                            helperText={touched.idMember ? errors.idMember : ''}
-                            error={touched.idMember && Boolean(errors.idMember)}
-                          />
-                        )}
-                      />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.idMember}
-                      </Form.Control.Feedback>
-                    </Form.Group>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
                       <Form.Label>Fecha limite de acceso </Form.Label>
                       <Form.Control
+                        disabled='true'
                         type='Date'
                         value={values.limitAccessDate}
                         onChange={handleChange}
@@ -423,8 +379,6 @@ class viewMember extends Component {
                         {errors.limitAccessDate}
                       </Form.Control.Feedback>
                     </Form.Group>
-                  </Form.Row>
-                  <Form.Row>
                     <Form.Group as={Col} md='5' controlId='validationFormik01'>
                       <Form.Label>Rol en el proyecto</Form.Label>
                       <Form.Control
@@ -674,7 +628,7 @@ class viewMember extends Component {
             </>
           )}
         </Formik>
-    </>
+      </>
     );
   }
 }
