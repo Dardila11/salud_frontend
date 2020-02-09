@@ -48,7 +48,7 @@ class viewMember extends Component {
           name: 'change_parameterization',
           key: 'change_parameterization',
           label: 'Parametrización',
-          checked: true
+          checked: false
         },
         {
           num: 0,
@@ -232,18 +232,24 @@ class viewMember extends Component {
         {
           this.state.projectPermissions[j].checked=true
         }
-        for(let j = 0; j < this.state.componentPermissions.length; j++)
+      for(let j = 0; j < this.state.componentPermissions.length; j++)
         if(this.state.memberPermissions[i].permission_id__codename==this.state.componentPermissions[j].name)
         {
             this.state.componentPermissions[j].checked=true
         }
-        for(let j = 0; j < this.state.registryPermissions.length; j++)
+      for(let j = 0; j < this.state.registryPermissions.length; j++)
         if(this.state.memberPermissions[i].permission_id__codename==this.state.registryPermissions[j].name)
         {
           this.state.registryPermissions[j].checked=true
-        }       
+        }
+              
     }
-
+    console.log("_____________________________")
+    console.log(this.state.memberPermissions)
+    console.log("_____________________________")
+    //console.log(this.state.projectPermissions) 
+    //console.log(this.state.componentPermissions) 
+    //console.log(this.state.registryPermissions) 
     //console.log(this.state.projectPermissions['change_parameterization'])
     //console.log(this.state.projectPermissions)
     // para cada permiso verificamos si es un permiso del rol.
@@ -299,7 +305,7 @@ class viewMember extends Component {
   };
   getMemberInfo=()=>{
     console.log('*****************')
-    console.log(this.state.memberPermissions)
+    //console.log(this.state.memberPermissions)
   }
   handleCloseView = () => {
     
@@ -405,7 +411,7 @@ class viewMember extends Component {
                   <Form.Row>
                       <Form.Label> Permisos: </Form.Label> 
                   </Form.Row>
-                  <Form.Row
+                 <Form.Row
                     className={values.RolInProject != -1 ? '' : 'hidden'}>
                     <Form.Group
                       className={values.RolInProject != 3 ? '' : 'hidden'}
@@ -419,8 +425,9 @@ class viewMember extends Component {
                        */}
 
                       {this.state.projectPermissions.map(permission => {
+                        console.log(permission)
                         var check = false;
-                        switch (values.RolInProject) {
+                        switch (''+values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             /**
@@ -501,7 +508,7 @@ class viewMember extends Component {
                       <Form.Label>Registro: </Form.Label>
                       {this.state.registryPermissions.map(permission => {
                         var check = false;
-                        switch (values.RolInProject) {
+                        switch (''+values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             this.state.managerPermissions.filter(
@@ -563,7 +570,7 @@ class viewMember extends Component {
                       <Form.Label>Componentes: </Form.Label>
                       {this.state.componentPermissions.map(permission => {
                         var check = false;
-                        switch (values.RolInProject) {
+                        switch (''+values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             this.state.managerPermissions.filter(

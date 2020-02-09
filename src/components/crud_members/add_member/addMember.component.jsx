@@ -157,7 +157,7 @@ class AddMember extends Component {
         study_id: this.props.study_id,
         role: values.RolInProject,
         date_maxAccess: moment(values.limitAccessDate).format('YYYY-MM-DD'),
-        is_manager: 0
+        is_manager: 3
       },
       permissions: this.saveMemberPermissions(values.RolInProject)
     };
