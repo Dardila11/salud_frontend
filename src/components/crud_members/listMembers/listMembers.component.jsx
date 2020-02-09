@@ -7,6 +7,7 @@ import Loader from 'react-loader-spinner';
 import matchSorter from 'match-sorter';
 import ReactTable from 'react-table';
 import Capitalize from 'react-capitalize';
+import "./listMembers.styles.css";
 /**
  * hallar mejor forma para colocar en mayuscula la primera letra
  */
@@ -379,7 +380,7 @@ class ListMembers extends Component {
         )}
 
         <Modal
-          size='lg'
+          dialogClassName="modal-90w"
           show={this.state.isVisibleCreate}
           onHide={this.handleClose}>
           {/* Agregar Miembro */}
@@ -390,7 +391,8 @@ class ListMembers extends Component {
             usersInfo={this.state.usersInfo}
           />
         </Modal>
-        <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
+        <Modal 
+          show={this.state.isVisibleDelete} onHide={this.handleClose}>
           {/* Eliminar Usuario */}
           <DeleteMember
             handleCloseDelete={this.handleCloseDelete}
@@ -399,7 +401,9 @@ class ListMembers extends Component {
             is_active={this.state.memberInfo[0].is_active}
           />
         </Modal>
-        <Modal show={this.state.isVisibleView} onHide={this.handleClose}>
+        <Modal 
+          dialogClassName="modal-90w"
+          show={this.state.isVisibleView} onHide={this.handleClose}>
           {/* Eliminar Usuario */}
           <ViewMember
             handleCloseView={this.handleCloseView}

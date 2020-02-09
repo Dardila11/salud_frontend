@@ -331,7 +331,7 @@ class viewMember extends Component {
           endDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
           limitAccessDate: getDateFormat(new Date()),
           RolInProject:this.state.memberInfo.role,
-          permissions: []
+          permissions: [4]
         }}
         validationSchema={schema}
         onSubmit={this.saveNewMemberInfo}>
@@ -345,287 +345,335 @@ class viewMember extends Component {
           setFieldValue
         }) => (
           <>
-            <Modal.Header closeButton>
-              <Modal.Title className='h3 text-gray-800 mb-0'>
-                Información de permisos de  Integrante
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
-                <Form.Row>
-                  <Form.Group as={Col} md='4' controlId='inputId'>
-                    <h4>{values.nameMember}</h4>
-                    <Form.Control.Feedback type='invalid'>
-                      {errors.idMember}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                </Form.Row>
-                <Form.Row>
-                  <Form.Group as={Col} md='5' controlId='limitAccessDate'>
-                    <Form.Label>Fecha limite de acceso </Form.Label>
-                    <Form.Control
-                      type='Date'
-                      value={values.endDate}
-                      onChange={handleChange}
-                      disabled={true}
-                      locale='es'
-                      className='form-control'
-                      name='limitAccessDate'
-                      isValid={
-                        touched.limitAccessDate && !errors.limitAccessDate
-                      }
-                      isInvalid={!!errors.limitAccessDate}
-                    />
-                    <Form.Control.Feedback type='invalid'>
-                      {errors.limitAccessDate}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                </Form.Row>
-                <Form.Row>
-                  <Form.Group as={Col} md='5' controlId='validationFormik01'>
-                    <Form.Label>Rol en el proyecto</Form.Label>
-                    <Form.Control
-                      as='select'
-                      name='RolInProject'
-                      value={values.RolInProject}
-                      onChange={e => {
-                        handleChange(e);
-                        // se resetean todos los valores de los checkbox
-                        this.handleResetCheckbox();
-                      }}
-                      isInvalid={!!errors.RolInProject}
-                      isValid={touched.RolInProject && !errors.RolInProject}>
-                      <option value={-1}>---</option>
-                      <option value={1}>Gestor</option>
-                      <option value={2}>Investigador</option>
-                      <option value={3}>Técnico</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Form.Row>
-                <Form.Row
-                  className={values.RolInProject != -1 ? '' : 'hidden'}>
-                  <Form.Group
-                    className={values.RolInProject != 3 ? '' : 'hidden'}
-                    as={Col}
-                    md='4'>
-                    <Form.Label>Permisos de proyecto: </Form.Label>
-                    {/* recorre los permisos de proyecto. para cada permiso 
-                        lo compara con los permisos segun sea el rol seleccionado.
-                     */}
+              <Modal.Header closeButton>
+                <Modal.Title className='h3 text-gray-800 mb-0'>
+                  Agregar integrante al proyecto
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <p>
+                  <i className='required'>Todos los campos son obligatorios</i>
+                </p>
+                <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
+                
+                  <Form.Row>
+                    <Form.Group as={Col} md='5' controlId='inputId'>
+                      <Form.Label> Nuevo integranteeeeeeeeee</Form.Label>
+                      <Autocomplete
+                        id='combo-box-demo'
+                        options={this.props.usersInfo}
+                        getOptionLabel={option =>
+                          typeof option === 'string'
+                            ? option
+                            : Utils.toCapitalizer(option.userName)
+                        }
+                        
+                        renderOption={option => (
+                          <React.Fragment>
+                            <div>
+                              <span>{option.userEmail}</span>
+                              <br />
+                              <span>
+                                {Utils.toCapitalizer(option.userName)}
+                              </span>
+                              <hr />
+                            </div>
+                          </React.Fragment>
+                        )}
+                        value={values.idMember}
+                        name='idMember'
+                        onChange={(e, value) => {
+                          setFieldValue('idMember', value);
+                        }}
+                        filterOptions={(options, { inputValue }) =>
+                          matchSorter(options, inputValue, {
+                            keys: ['userName']
+                          })
+                        }
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            name='idMember'
+                            variant='outlined'
+                            fullWidth
+                            helperText={touched.idMember ? errors.idMember : ''}
+                            error={touched.idMember && Boolean(errors.idMember)}
+                          />
+                        )}
+                      />
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.idMember}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} md='5' controlId='limitAccessDate'>
+                      <Form.Label>Fecha limite de acceso </Form.Label>
+                      <Form.Control
+                        type='Date'
+                        value={values.limitAccessDate}
+                        onChange={handleChange}
+                        locale='es'
+                        className='form-control'
+                        name='limitAccessDate'
+                        isValid={
+                          touched.limitAccessDate && !errors.limitAccessDate
+                        }
+                        isInvalid={!!errors.limitAccessDate}
+                      />
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.limitAccessDate}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group as={Col} md='5' controlId='validationFormik01'>
+                      <Form.Label>Rol en el proyecto</Form.Label>
+                      <Form.Control
+                        as='select'
+                        name='RolInProject'
+                        value={values.RolInProject}
+                        onChange={e => {
+                          handleChange(e);
+                          // se resetean todos los valores de los checkbox
+                          this.handleResetCheckbox();
+                        }}
+                        isInvalid={!!errors.RolInProject}
+                        isValid={touched.RolInProject && !errors.RolInProject}>
+                        <option value={-1}>---</option>
+                        <option value={1}>Gestor</option>
+                        <option value={2}>Investigador</option>
+                        <option value={3}>Técnico</option>
+                      </Form.Control>
+                      <Form.Control.Feedback type='invalid'>
+                        {errors.RolInProject}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                      <Form.Label> Permisos: </Form.Label> 
+                  </Form.Row>
+                  <Form.Row
+                    className={values.RolInProject != -1 ? '' : 'hidden'}>
+                    <Form.Group
+                      className={values.RolInProject != 3 ? '' : 'hidden'}
+                      as={Col}
+                      md='3'>
 
-                    {this.state.projectPermissions.map(permission => {
-                      var check = false;
-                      switch (values.RolInProject) {
-                        case '1': // Gestor
-                          check = true;
-                          /**
-                           * Para este caso del gestor, busca en el array
-                           * si existe el permiso con el que está comparando.
-                           * Sí este existe, NO lo muestra. 'check = false'
-                           */
-                          this.state.managerPermissions.filter(
-                            mPermission => {
-                              if (mPermission == permission.name) {
-                                check = false;
-                              }
-                            }
-                          );
-                          break;
-                        case '2': // Investigator
-                          /**
-                           * Si el rol es investigador o tecnico, busca en el array
-                           * si exsite el permiso con el que está comparando.
-                           * Sí este exsite, lo muestra.
-                           */
-                          this.state.investigatorPermissions.filter(
-                            invPermission => {
-                              if (invPermission == permission.name) {
-                                check = true;
-                              }
-                            }
-                          );
-                          break;
-                        case '3': // Tecnico
-                          /**
-                           * Para el tecnico no se renderiza el label, por ahora
-                           * lo dejaré asi
-                           */
+                       
+                      <Form.Label>Proyecto: </Form.Label>
+                      {/* recorre los permisos de proyecto. para cada permiso 
+                          lo compara con los permisos segun sea el rol seleccionado.
+                       */}
 
+                      {this.state.projectPermissions.map(permission => {
+                        var check = false;
+                        switch (values.RolInProject) {
+                          case '1': // Gestor
+                            check = true;
+                            /**
+                             * Para este caso del gestor, busca en el array
+                             * si existe el permiso con el que está comparando.
+                             * Sí este existe, NO lo muestra. 'check = false'
+                             */
+                            this.state.managerPermissions.filter(
+                              mPermission => {
+                                if (mPermission == permission.name) {
+                                  check = false;
+                                }
+                              }
+                            );
+                            break;
+                          case '2': // Investigator
+                            /**
+                             * Si el rol es investigador o tecnico, busca en el array
+                             * si exsite el permiso con el que está comparando.
+                             * Sí este exsite, lo muestra.
+                             */
+                            this.state.investigatorPermissions.filter(
+                              invPermission => {
+                                if (invPermission == permission.name) {
+                                  check = true;
+                                }
+                              }
+                            );
+                            break;
+                          case '3': // Tecnico
+                            /**
+                             * Para el tecnico no se renderiza el label, por ahora
+                             * lo dejaré asi
+                             */
+
+                            /**
+                             * Si el rol es investigador o tecnico, busca en el array
+                             * si exsite el permiso con el que está comparando.
+                             * Sí este exsite, lo muestra.
+                             * Se deja por si en un futuro cambian los permisos del tecnico.
+                             */
+                            this.state.technicianPermissions.filter(
+                              techPermission => {
+                                if (techPermission == permission.name) {
+                                  check = true;
+                                }
+                              }
+                            );
+                            break;
+                        }
+                        if (check) {
                           /**
-                           * Si el rol es investigador o tecnico, busca en el array
-                           * si exsite el permiso con el que está comparando.
-                           * Sí este exsite, lo muestra.
-                           * Se deja por si en un futuro cambian los permisos del tecnico.
+                           * Si check es verdadero, significa que va a renderizar el checkbox
+                           * asi que crear un nuevo checkbox con los datos del permiso. su id,
+                           * nombre, label y el valor del checked.
                            */
-                          this.state.technicianPermissions.filter(
-                            techPermission => {
-                              if (techPermission == permission.name) {
-                                check = true;
-                              }
-                            }
+                          return (
+                            <Form.Check
+                              id={permission.id}
+                              key={permission.id}
+                              name={permission.name}
+                              type='checkbox'
+                              label={permission.label}
+                              checked={permission.checked}
+                              onChange={() => {
+                                this.handleCheck(
+                                  permission.name,
+                                  permission.id,
+                                  'projectPermissions'
+                                );
+                              }}
+                            />
                           );
-                          break;
+                        }
+                      })}
+                    </Form.Group>
+                    <Form.Group as={Col} md='3'>
+                      <Form.Label>Registro: </Form.Label>
+                      {this.state.registryPermissions.map(permission => {
+                        var check = false;
+                        switch (values.RolInProject) {
+                          case '1': // Gestor
+                            check = true;
+                            this.state.managerPermissions.filter(
+                              mPermission => {
+                                if (mPermission == permission.name) {
+                                  check = false;
+                                }
+                              }
+                            );
+                            break;
+                          case '2': // Investigator
+                            this.state.investigatorPermissions.filter(
+                              invPermission => {
+                                if (invPermission == permission.name) {
+                                  check = true;
+                                }
+                              }
+                            );
+                            break;
+                          case '3': // Tecnico
+                            this.state.technicianPermissions.filter(
+                              techPermission => {
+                                if (techPermission == permission.name) {
+                                  check = true;
+                                }
+                              }
+                            );
+                            break;
+                        }
+                        if (check) {
+                          return (
+                            <Form.Check
+                              id={permission.id}
+                              key={permission.id}
+                              name={permission.name}
+                              type='checkbox'
+                              label={permission.label}
+                              checked={permission.checked}
+                              onChange={() => {
+                                this.handleCheck(
+                                  permission.name,
+                                  permission.id,
+                                  'registryPermissions'
+                                );
+                              }}
+                            />
+                          );
+                        }
+                      })}
+                    </Form.Group>
+                    <Form.Group
+                      className={
+                        values.RolInProject == 3 || values.RolInProject == 2
+                          ? 'hidden'
+                          : ''
                       }
-                      if (check) {
-                        /**
-                         * Si check es verdadero, significa que va a renderizar el checkbox
-                         * asi que crear un nuevo checkbox con los datos del permiso. su id,
-                         * nombre, label y el valor del checked.
-                         */
-                        return (
-                          <Form.Check
-                            id={permission.id}
-                            key={permission.id}
-                            name={permission.name}
-                            type='checkbox'
-                            label={permission.label}
-                            checked={permission.checked}
-                            disabled={true}
-                            onChange={() => {
-                              this.handleCheck(
-                                permission.name,
-                                permission.id,
-                                'projectPermissions'
-                              );
-                            }}
-                          />
-                        );
-                      }
-                    })}
-                  </Form.Group>
-                  <Form.Group as={Col} md='4'>
-                    <Form.Label>Permisos de Registro: </Form.Label>
-                    {this.state.registryPermissions.map(permission => {
-                      var check = false;
-                      switch (values.RolInProject) {
-                        case '1': // Gestor
-                          check = true;
-                          this.state.managerPermissions.filter(
-                            mPermission => {
-                              if (mPermission == permission.name) {
-                                check = false;
+                      as={Col}
+                      md='3'>
+                      <Form.Label>Componentes: </Form.Label>
+                      {this.state.componentPermissions.map(permission => {
+                        var check = false;
+                        switch (values.RolInProject) {
+                          case '1': // Gestor
+                            check = true;
+                            this.state.managerPermissions.filter(
+                              mPermission => {
+                                if (mPermission == permission.name) {
+                                  check = false;
+                                }
                               }
-                            }
-                          );
-                          break;
-                        case '2': // Investigator
-                          this.state.investigatorPermissions.filter(
-                            invPermission => {
-                              if (invPermission == permission.name) {
-                                check = true;
+                            );
+                            break;
+                          case '2': // Investigator
+                            this.state.investigatorPermissions.filter(
+                              invPermission => {
+                                if (invPermission == permission.name) {
+                                  check = true;
+                                }
                               }
-                            }
-                          );
-                          break;
-                        case '3': // Tecnico
-                          this.state.technicianPermissions.filter(
-                            techPermission => {
-                              if (techPermission == permission.name) {
-                                check = true;
+                            );
+                            break;
+                          case '3': // Tecnico
+                            this.state.technicianPermissions.filter(
+                              techPermission => {
+                                if (techPermission == permission.name) {
+                                  check = true;
+                                }
                               }
-                            }
+                            );
+                            break;
+                        }
+                        if (check) {
+                          return (
+                            <Form.Check
+                              id={permission.id}
+                              key={permission.id}
+                              name={permission.name}
+                              type='checkbox'
+                              label={permission.label}
+                              checked={permission.checked}
+                              onChange={() => {
+                                this.handleCheck(
+                                  permission.name,
+                                  permission.id,
+                                  'componentPermissions'
+                                );
+                              }}
+                            />
                           );
-                          break;
-                      }
-                      if (check) {
-                        return (
-                          <Form.Check
-                            id={permission.id}
-                            key={permission.id}
-                            name={permission.name}
-                            type='checkbox'
-                            label={permission.label}
-                            checked={permission.checked}
-                            disabled={true}
-                            onChange={() => {
-                              this.handleCheck(
-                                permission.name,
-                                permission.id,
-                                'registryPermissions'
-                              );
-                            }}
-                          />
-                        );
-                      }
-                    })}
-                  </Form.Group>
-                  <Form.Group
-                    className={
-                      values.RolInProject == 3 || values.RolInProject == 2
-                        ? 'hidden'
-                        : ''
-                    }
-                    as={Col}
-                    md='4'>
-                    <Form.Label>Permisos de componentes: </Form.Label>
-                    {this.state.componentPermissions.map(permission => {
-                      var check = false;
-                      switch (values.RolInProject) {
-                        case '1': // Gestor
-                          check = true;
-                          this.state.managerPermissions.filter(
-                            mPermission => {
-                              if (mPermission == permission.name) {
-                                check = false;
-                              }
-                            }
-                          );
-                          break;
-                        case '2': // Investigator
-                          this.state.investigatorPermissions.filter(
-                            invPermission => {
-                              if (invPermission == permission.name) {
-                                check = true;
-                              }
-                            }
-                          );
-                          break;
-                        case '3': // Tecnico
-                          this.state.technicianPermissions.filter(
-                            techPermission => {
-                              if (techPermission == permission.name) {
-                                check = true;
-                              }
-                            }
-                          );
-                          break;
-                      }
-                      if (check) {
-                        return (
-                          <Form.Check
-                            id={permission.id}
-                            key={permission.id}
-                            name={permission.name}
-                            disabled={true}
-                            type='checkbox'
-                            label={permission.label}
-                            checked={permission.checked}
-                            onChange={() => {
-                              this.handleCheck(
-                                permission.name,
-                                permission.id,
-                                'componentPermissions'
-                              );
-                            }}
-                          />
-                        );
-                      }
-                    })}
-                  </Form.Group>
-                </Form.Row>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant='secondary' onClick={this.handleClose}>
-                Cancelar
-              </Button>
-              <Button form='formAddMemberToProject' type='submit'>
-                Agregar Integrante
-              </Button>
-            </Modal.Footer>
-          </>
-        )}
-      </Formik>
+                        }
+                      })}
+                    </Form.Group>
+                  </Form.Row>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant='secondary' onClick={this.handleClose}>
+                  Cancelar
+                </Button>
+                <Button form='formAddMemberToProject' type='submit'>
+                  Agregar Integrante
+                </Button>
+              </Modal.Footer>
+            </>
+          )}
+        </Formik>
     </>
     );
   }

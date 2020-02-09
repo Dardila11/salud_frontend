@@ -280,8 +280,9 @@ class AddMember extends Component {
                   <i className='required'>Todos los campos son obligatorios</i>
                 </p>
                 <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
+                
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
+                    <Form.Group as={Col} md='5' controlId='inputId'>
                       <Form.Label> Nuevo integrante</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
@@ -291,7 +292,7 @@ class AddMember extends Component {
                             ? option
                             : Utils.toCapitalizer(option.userName)
                         }
-                        style={{ width: 300 }}
+                        
                         renderOption={option => (
                           <React.Fragment>
                             <div>
@@ -329,9 +330,7 @@ class AddMember extends Component {
                         {errors.idMember}
                       </Form.Control.Feedback>
                     </Form.Group>
-                  </Form.Row>
-                  <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='limitAccessDate'>
+                    <Form.Group as={Col} md='5' controlId='limitAccessDate'>
                       <Form.Label>Fecha limite de acceso </Form.Label>
                       <Form.Control
                         type='Date'
@@ -374,13 +373,18 @@ class AddMember extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
+                  <Form.Row>
+                      <Form.Label> Permisos: </Form.Label> 
+                  </Form.Row>
                   <Form.Row
                     className={values.RolInProject != -1 ? '' : 'hidden'}>
                     <Form.Group
                       className={values.RolInProject != 3 ? '' : 'hidden'}
                       as={Col}
-                      md='4'>
-                      <Form.Label>Permisos de proyecto: </Form.Label>
+                      md='3'>
+
+                       
+                      <Form.Label>Proyecto: </Form.Label>
                       {/* recorre los permisos de proyecto. para cada permiso 
                           lo compara con los permisos segun sea el rol seleccionado.
                        */}
@@ -464,8 +468,8 @@ class AddMember extends Component {
                         }
                       })}
                     </Form.Group>
-                    <Form.Group as={Col} md='4'>
-                      <Form.Label>Permisos de registro: </Form.Label>
+                    <Form.Group as={Col} md='3'>
+                      <Form.Label>Registro: </Form.Label>
                       {this.state.registryPermissions.map(permission => {
                         var check = false;
                         switch (values.RolInProject) {
@@ -526,8 +530,8 @@ class AddMember extends Component {
                           : ''
                       }
                       as={Col}
-                      md='4'>
-                      <Form.Label>Permisos de componentes: </Form.Label>
+                      md='3'>
+                      <Form.Label>Componentes: </Form.Label>
                       {this.state.componentPermissions.map(permission => {
                         var check = false;
                         switch (values.RolInProject) {
