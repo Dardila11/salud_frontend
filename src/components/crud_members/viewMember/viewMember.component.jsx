@@ -25,6 +25,10 @@ class viewMember extends Component {
     super(props);
     this.state = {
       value: '',
+      cargar:true,
+      gestor:true,
+      invest:true,
+      tecnico:true,
       nombreCompleto:'',
       memberInfo:props.memberInfo,
       memberPermissions:[],
@@ -107,6 +111,8 @@ class viewMember extends Component {
         }
       ]
     }
+   
+    this.getPermissionsById(this.props.id)
   }
 
   handleClose = () => {
@@ -116,104 +122,17 @@ class viewMember extends Component {
   handleCloseviewMember = () => {
     this.props.handleCloseviewMember();
   };
-/*
-  saveMemberPermissions = role => {
-    // recorremos todos los permisos
-    var permissionToSave = [];
-    for (let i = 0; i < this.state.projectPermissions.length; i++) {
-      var permission = [...this.state.projectPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
-      }
-    }
-    for (let i = 0; i < this.state.registryPermissions.length; i++) {
-      var permission = [...this.state.registryPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
-      }
-    }
-    for (let i = 0; i < this.state.componentPermissions.length; i++) {
-      var permission = [...this.state.componentPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
-      }
-    }
 
-    console.log(permissionToSave);
-
-    // para cada permiso verificamos si es un permiso del rol.
-    // está checked ? lo agregamos a la lista de permisos a agregar
-    // esta función retorna la lista de permisos que se van a agregar a permissions[]
-    console.log('rol en el proyecto ' + role);
-    return permissionToSave;
-  };
-
-  saveNewMemberInfo = values => {
-    const headers = Utils.getHeader();
-    var json = {
-      study: {
-        user_id: values.idMember.userId,
-        study_id: this.props.study_id,
-        role: values.RolInProject,
-        date_maxAccess: moment(values.date_maxAccess).format('YYYY-MM-DD'),
-        is_manager: 0
-      },
-      permissions: this.saveMemberPermissions(values.RolInProject)
-    };
-    console.log(JSON.stringify(json));
-    this.setState({ progress: true }, () => {
-      axios
-        .post(URL + '/studies/user/', json, {
-          headers: headers
-        })
-        .then(() => {
-          this.setState({ progress: false });
-          this.handleCloseviewMember();
-        })
-        .catch(error => {
-          this.setState({
-            progress: false,
-            alertVariant: 'danger',
-            alertMessage: JSON.parse(error.request.response).detail
-          });
-          Utils.showAlert(this.state.alertId);
-        });
-    });
-  };
-*/
   handleResetCheckbox = () => {
   
   };
 
-  /**
-   * handleCheck se encarga de cambiar el estado del checkbox que se ha clickeado.
-   * para ello necesita el id y el nombre del array (ej: registryPermissions )
-   */
-  /*
-  handleCheck = (permissionArray, id, arrayName) => {
-    // en name guardamos el array "this.state.arrayName" <- (ej: this.state.registryPermissions)
-    var name = 'this.state.' + arrayName;
-    // usamos eval para pasar de un String a una variable
-    name = eval(name);
-    // obtenemos todos los datos del array.
-    var newData = [...name];
-
-    // buscamos el checkbox que tiene el id que queremos cambiar
-    var index = newData.findIndex(obj => obj.id === id);
-    // comparamos el valor de checked
-    if (newData[index].checked) {
-      newData[index].checked = false;
-    } else {
-      newData[index].checked = true;
-    }
-    // por ultimo actualizamos el checkbox con la nueva informacion de checked
-    this.setState({ newData });
-  };*/
+ 
 
   componentDidMount() {
     
     //this.getMemberById(this.props.id)
-    this.getPermissionsById(this.props.id)
+    
 
   }
 
@@ -225,7 +144,7 @@ class viewMember extends Component {
   
   saveMemberPermissions = () => {
     // recorremos todos los permisos
-    console.log(this.state.memberPermissions)
+    //console.log(this.state.memberPermissions)
     for (let i = 0; i < this.state.memberPermissions.length; i++) {
       for(let j = 0; j < this.state.projectPermissions.length; j++)
         if(this.state.memberPermissions[i].permission_id__codename==this.state.projectPermissions[j].name)
@@ -242,12 +161,14 @@ class viewMember extends Component {
         {
           this.state.registryPermissions[j].checked=true
         }
+        this.setState({
+          cargar: false
+        });
               
     }
     console.log("_____________________________")
-    console.log(this.state.memberPermissions)
-    console.log("_____________________________")
-    //console.log(this.state.projectPermissions) 
+    //console.log(this.state.memberPermissions)
+    console.log(this.state.projectPermissions) 
     //console.log(this.state.componentPermissions) 
     //console.log(this.state.registryPermissions) 
     //console.log(this.state.projectPermissions['change_parameterization'])
@@ -272,7 +193,7 @@ class viewMember extends Component {
           memberPermissions: response.data,
           loading: false
         },()=>{
-          this.saveMemberPermissions()
+            this.saveMemberPermissions()
             //console.log(this.state.memberPermissions)
         });
         
@@ -280,29 +201,7 @@ class viewMember extends Component {
       .catch(() => this.setState({ loading: false }))
   );
 };
-  getMemberById = async(id) => {
-    const headers = getHeader();
-    const { study_id } = id
-    this.setState({ loading: true }, () =>
-      axios
-        .get(
-          URL + "/studies/user/study/"+id+'/',
-          { headers: headers }
-        )
-        .then(response => {
-          this.setState({
-            memberInfo: response.data,
-            loading: false
-          },()=>{
-            //console.log(this.state.memberInfo)
-            this.getMemberInfo()
-            //this.saveMemberPermissions()
-          });
-          
-        })
-        .catch(() => this.setState({ loading: false }))
-    );
-  };
+
   getMemberInfo=()=>{
     console.log('*****************')
     //console.log(this.state.memberPermissions)
@@ -314,6 +213,33 @@ class viewMember extends Component {
   };
 
   render() {
+    if(this.state.cargar)
+      this.getPermissionsById(this.props.id)
+    console.log(this.state.projectPermissions)
+    var permisosVer
+    
+      permisosVer=this.state.projectPermissions.map(permission => {
+        
+          return (
+            <Form.Check
+                              id={permission.id}
+                              key={permission.id}
+                              name={permission.name}
+                              type='checkbox'
+                              label={permission.label}
+                              checked={permission.checked}
+                              onChange={() => {
+                                this.handleCheck(
+                                  permission.name,
+                                  permission.id,
+                                  'projectPermissions'
+                                );
+                              }}
+                            />
+          )
+        }
+      )
+    
     const { memberInfo } = this.state;
     return (
       <>
@@ -336,7 +262,7 @@ class viewMember extends Component {
           nameMember:this.state.memberInfo.user_id__first_name+' '+this.state.memberInfo.user_id__last_name,
           endDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
           limitAccessDate: getDateFormat(new Date()),
-          RolInProject:this.state.memberInfo.role,
+          RolInProject:1,
           permissions: []
         }}
         validationSchema={schema}
@@ -412,6 +338,7 @@ class viewMember extends Component {
                       <Form.Label> Permisos: </Form.Label> 
                   </Form.Row>
                  <Form.Row
+                    
                     className={values.RolInProject != -1 ? '' : 'hidden'}>
                     <Form.Group
                       className={values.RolInProject != 3 ? '' : 'hidden'}
@@ -423,203 +350,8 @@ class viewMember extends Component {
                       {/* recorre los permisos de proyecto. para cada permiso 
                           lo compara con los permisos segun sea el rol seleccionado.
                        */}
-
-                      {this.state.projectPermissions.map(permission => {
-                        console.log(permission)
-                        var check = false;
-                        switch (''+values.RolInProject) {
-                          case '1': // Gestor
-                            check = true;
-                            /**
-                             * Para este caso del gestor, busca en el array
-                             * si existe el permiso con el que está comparando.
-                             * Sí este existe, NO lo muestra. 'check = false'
-                             */
-                            this.state.managerPermissions.filter(
-                              mPermission => {
-                                if (mPermission == permission.name) {
-                                  check = false;
-                                }
-                              }
-                            );
-                            break;
-                          case '2': // Investigator
-                            /**
-                             * Si el rol es investigador o tecnico, busca en el array
-                             * si exsite el permiso con el que está comparando.
-                             * Sí este exsite, lo muestra.
-                             */
-                            this.state.investigatorPermissions.filter(
-                              invPermission => {
-                                if (invPermission == permission.name) {
-                                  check = true;
-                                }
-                              }
-                            );
-                            break;
-                          case '3': // Tecnico
-                            /**
-                             * Para el tecnico no se renderiza el label, por ahora
-                             * lo dejaré asi
-                             */
-
-                            /**
-                             * Si el rol es investigador o tecnico, busca en el array
-                             * si exsite el permiso con el que está comparando.
-                             * Sí este exsite, lo muestra.
-                             * Se deja por si en un futuro cambian los permisos del tecnico.
-                             */
-                            this.state.technicianPermissions.filter(
-                              techPermission => {
-                                if (techPermission == permission.name) {
-                                  check = true;
-                                }
-                              }
-                            );
-                            break;
-                        }
-                        if (check) {
-                          /**
-                           * Si check es verdadero, significa que va a renderizar el checkbox
-                           * asi que crear un nuevo checkbox con los datos del permiso. su id,
-                           * nombre, label y el valor del checked.
-                           */
-                          return (
-                            <Form.Check
-                              id={permission.id}
-                              key={permission.id}
-                              name={permission.name}
-                              type='checkbox'
-                              label={permission.label}
-                              checked={permission.checked}
-                              onChange={() => {
-                                this.handleCheck(
-                                  permission.name,
-                                  permission.id,
-                                  'projectPermissions'
-                                );
-                              }}
-                            />
-                          );
-                        }
-                      })}
-                    </Form.Group>
-                    <Form.Group as={Col} md='3'>
-                      <Form.Label>Registro: </Form.Label>
-                      {this.state.registryPermissions.map(permission => {
-                        var check = false;
-                        switch (''+values.RolInProject) {
-                          case '1': // Gestor
-                            check = true;
-                            this.state.managerPermissions.filter(
-                              mPermission => {
-                                if (mPermission == permission.name) {
-                                  check = false;
-                                }
-                              }
-                            );
-                            break;
-                          case '2': // Investigator
-                            this.state.investigatorPermissions.filter(
-                              invPermission => {
-                                if (invPermission == permission.name) {
-                                  check = true;
-                                }
-                              }
-                            );
-                            break;
-                          case '3': // Tecnico
-                            this.state.technicianPermissions.filter(
-                              techPermission => {
-                                if (techPermission == permission.name) {
-                                  check = true;
-                                }
-                              }
-                            );
-                            break;
-                        }
-                        if (check) {
-                          return (
-                            <Form.Check
-                              id={permission.id}
-                              key={permission.id}
-                              name={permission.name}
-                              type='checkbox'
-                              label={permission.label}
-                              checked={permission.checked}
-                              onChange={() => {
-                                this.handleCheck(
-                                  permission.name,
-                                  permission.id,
-                                  'registryPermissions'
-                                );
-                              }}
-                            />
-                          );
-                        }
-                      })}
-                    </Form.Group>
-                    <Form.Group
-                      className={
-                        values.RolInProject == 3 || values.RolInProject == 2
-                          ? 'hidden'
-                          : ''
-                      }
-                      as={Col}
-                      md='3'>
-                      <Form.Label>Componentes: </Form.Label>
-                      {this.state.componentPermissions.map(permission => {
-                        var check = false;
-                        switch (''+values.RolInProject) {
-                          case '1': // Gestor
-                            check = true;
-                            this.state.managerPermissions.filter(
-                              mPermission => {
-                                if (mPermission == permission.name) {
-                                  check = false;
-                                }
-                              }
-                            );
-                            break;
-                          case '2': // Investigator
-                            this.state.investigatorPermissions.filter(
-                              invPermission => {
-                                if (invPermission == permission.name) {
-                                  check = true;
-                                }
-                              }
-                            );
-                            break;
-                          case '3': // Tecnico
-                            this.state.technicianPermissions.filter(
-                              techPermission => {
-                                if (techPermission == permission.name) {
-                                  check = true;
-                                }
-                              }
-                            );
-                            break;
-                        }
-                        if (check) {
-                          return (
-                            <Form.Check
-                              id={permission.id}
-                              key={permission.id}
-                              name={permission.name}
-                              type='checkbox'
-                              label={permission.label}
-                              checked={permission.checked}
-                              onChange={() => {
-                                this.handleCheck(
-                                  permission.name,
-                                  permission.id,
-                                  'componentPermissions'
-                                );
-                              }}
-                            />
-                          );
-                        }
-                      })}
+                      {permisosVer}
+                      
                     </Form.Group>
                   </Form.Row>
                 </Form>

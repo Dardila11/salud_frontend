@@ -114,7 +114,8 @@ export default class ViewProject extends Component {
   render() {
     const { studyInfo } = this.state;
     return (
-      <>{console.log(this.state.studyInfo[0])}
+      <>
+        {console.log(this.state.studyInfo[0])}
         {this.state.loading ? (
           <Loader
             type="ThreeDots"
@@ -157,17 +158,26 @@ export default class ViewProject extends Component {
                       <div className="wideContainer">
                         <div className="halfWidthContainer padding">
                           <h6>Detalles:</h6>
-                          <span className="wideContainer">
+                          <span
+                            className="wideContainer"
+                            style={{ textTransform: "capitalize" }}
+                          >
                             Nombre: {studyInfo[0].fields.title_little}
                           </span>
                           <span className="wideContainer">
                             Código: {studyInfo[0].fields.study_id}
                           </span>
-                          <span className="wideContainer">
+                          <span
+                            className="wideContainer"
+                            style={{ textTransform: "capitalize" }}
+                          >
                             Investigador principal:{" "}
                             {studyInfo[0].fields.principal_inv}
                           </span>
-                          <span className="wideContainer">
+                          <span
+                            className="wideContainer"
+                            style={{ textTransform: "capitalize" }}
+                          >
                             Código: {studyInfo[0].fields.study_id}
                           </span>
                           <span className="wideContainer">
