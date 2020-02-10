@@ -31,7 +31,7 @@ class AdminDashboard extends Component {
     this.state = {
       loading: true,
       isAuthenticated: true,
-      projectBar:false
+      projectBar: false
     };
   }
 
@@ -52,7 +52,7 @@ class AdminDashboard extends Component {
 
   vertificationAuthorization = reloaded => {
     const headers = getHeader();
-    
+
     reloaded
       ? this.setState({ loading: true }, () =>
           axios
@@ -99,7 +99,6 @@ class AdminDashboard extends Component {
    * @description Segun sea el path de la URL decide cual vista mostrar
    */
   contentAdmin = () => {
-    
     const path = this.props.match.path;
     if (path.endsWith('/users') || path.endsWith('/users/')) {
       return <ListUsers />;
@@ -108,14 +107,10 @@ class AdminDashboard extends Component {
     } else if (path.startsWith('/admin/users/')) {
       return <ViewUserFormik email={this.props.match.params.user} />;
     } else if (path.startsWith('/admin/studies/members/')) {
-      
       return <ListMembers project={this.props.match.params.study} />;
-    } 
-    else if (path.startsWith('/admin/studies/')) {
+    } else if (path.startsWith('/admin/studies/')) {
       return <ViewProject project={this.props.match.params.study} />;
     }
- 
-
   };
 
   componentDidMount() {
@@ -127,13 +122,12 @@ class AdminDashboard extends Component {
   }
 
   render() {
-    var bar
+    var bar;
     const path = this.props.match.path;
     if (path.startsWith('/admin/studies/members/'))
-      bar=<NavBarLateralProject />
-    else      
-      bar= <NavBarLateral />
-    
+      bar = <NavBarLateralProject />;
+    else bar = <NavBarLateral />;
+
     if (!this.state.isAuthenticated) {
       return <Redirect to='/' />;
     }
@@ -148,23 +142,23 @@ class AdminDashboard extends Component {
         />
       );
     }
-    
-      return (
-        <section
-          id='wrapper'
-          className='h-100 container-fluid p-0'
-          onMouseDown={() => this.vertification(false)}>
-          {bar}
-          <div id='content-wrapper' className='d-flex flex-column'>
-            <div id='content'>
-              <NavBar />
-              <div className='container pt-2 pr-5 pl-5 pb-2'>
-                <this.contentAdmin />
-              </div>
+
+    return (
+      <section
+        id='wrapper'
+        className='h-100 container-fluid p-0'
+        onMouseDown={() => this.vertification(false)}>
+        {bar}
+        <div id='content-wrapper' className='d-flex flex-column'>
+          <div id='content'>
+            <NavBar />
+            <div className='container pt-2 pr-5 pl-5 pb-2'>
+              <this.contentAdmin />
             </div>
           </div>
-        </section>
-      );
+        </div>
+      </section>
+    );
   }
 }
 

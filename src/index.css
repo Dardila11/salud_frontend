@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.strong {
+  font-weight: bolder;
+}
+
 /* Clases generales */
 .antorcha {
   position: fixed;

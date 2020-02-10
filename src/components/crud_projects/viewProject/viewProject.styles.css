@@ -11,6 +11,13 @@
   min-width: 40em;
 }
 
+.border-container {
+  background-color: #ffffff;
+  border: 1px solid #dfe0e2;
+  border-radius: 2px;
+  min-width: min-content !important;
+}
+
 .viewContainer h5 {
   text-align: center;
   margin-top: 20px;
@@ -44,7 +51,6 @@
 .btCentros {
   margin-top: 15px;
   padding: 10px 80px 0 13px;
-  width: 8em;
   background-color: #007bff;
   border-radius: 4.5px;
   display: block;
@@ -53,11 +59,9 @@
   line-height: 1.3rem;
   color: #ffffff;
   height: 70px;
-  margin-left: 5px;
   text-align: center;
 
   text-decoration: none;
-  width: 150px;
 }
 
 .btIntegrantes:hover,
@@ -94,9 +98,9 @@
 }
 
 .no-border-bottom {
-  border-bottom: 0px;
-  border-bottom-left-radius: 0%;
-  border-bottom-right-radius: 0%;
+  border-bottom: 0px !important;
+  border-bottom-left-radius: 0% !important;
+  border-bottom-right-radius: 0% !important;
 }
 .viewContainer {
   padding: 10px;
