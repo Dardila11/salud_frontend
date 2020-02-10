@@ -191,14 +191,14 @@ class UpdateMember extends Component {
     var json = {
       study_instance: this.props.id,
       study: {
-        user_id: this.state.memberInfo.id,
+        user_id: this.props.memberInfo.user_id,
         study_id: this.props.study_id,
         role: values.RolInProject,
         date_maxAccess: moment(values.limitAccessDate).format('YYYY-MM-DD'),
-        is_manager: 3
+        is_manager: this.props.memberInfo.is_manager
       },
       permissions_add: this.saveMemberPermissions(values.RolInProject),
-      permission_remove:this.removeMemberPermissions()
+      permissions_remove:this.removeMemberPermissions()
     };
     console.log(JSON.stringify(json));
     this.setState({ progress: true }, () => {

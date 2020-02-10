@@ -9,6 +9,8 @@ import '../../../../vendor/fontawesome-free/css/all.min.css';
 
 class NavBarLateral extends Component {
   render() {
+    const path = window.location.pathname;
+    const isActive = path.endsWith('/users') || path.endsWith('/users/') ? 0 : 1;
     return (
       <ul
         className='navbar-nav bg-gradient-primary sidebar sidebar-dark accordion'
@@ -30,13 +32,13 @@ class NavBarLateral extends Component {
         </li>
         <hr className='sidebar-divider'></hr>
         <div className='sidebar-heading'>Funciones</div>
-        <li className='nav-item'>
+        <li className={isActive == 0 ? 'active nav-item' : 'nav-item'}>
           <Link role='button' className='nav-link' to={'/admin/users/'}>
             <i className='fas fa-fw fa-users-cog'></i>
             <span>Usuarios</span>
           </Link>
         </li>
-        <li className='nav-item'>
+        <li className={isActive == 1 ? 'active nav-item' : 'nav-item'}>
           <Link role='button' className='nav-link' to={'/admin/studies/'}>
             <i className='fas fa-fw fa-notes-medical'></i>
             <span>Proyectos</span>
