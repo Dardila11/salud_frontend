@@ -1,139 +1,295 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { ProgressBar, Modal, Form, Col, Button } from "react-bootstrap";
-import { Formik } from "formik";
-import { URL } from "../../utils/URLSever";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import * as Utils from "../../utils/utils";
-import * as Yup from "yup";
-import matchSorter from "match-sorter";
-import { getDateFormat } from "../../utils/utils";
+import React, { Component } from 'react';
+import axios from 'axios';
+import { ProgressBar, Modal, Form, Col, Button } from 'react-bootstrap';
+import { Formik } from 'formik';
+import { URL } from '../../utils/URLSever';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import * as Utils from '../../utils/utils';
+import * as Yup from 'yup';
+import matchSorter from 'match-sorter';
+import { getDateFormat } from '../../utils/utils';
 import { getHeader } from "../../utils/utils";
-var moment = require("moment");
+var moment = require('moment');
 
 /**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
  * validaciones de los campos del formulario
  */
 const schema = Yup.object({
-  idMember: Yup.string().required("Campo Requerido")
+  limitAccessDate: Yup.date()
+    .required('Campo Requerido')
+    .min(new Date(), 'la fecha debe ser mayor al dia de hoy'),
+  RolInProject: Yup.number()
+    .required('Campo Requerido')
+    .min(0, 'Debe escoger al menos un rol')
 });
-class viewMember extends Component {
+
+class UpdateMember extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: "",
-      RolInProject:props.memberInfo.role,
       cargar: true,
-      gestor: true,
-      invest: true,
-      tecnico: true,
       nombreCompleto: "",
       memberInfo: props.memberInfo,
       memberPermissions: [],
-      technicianPermissions: ["change_registry"],
+      technicianPermissions: ['change_registry'],
       investigatorPermissions: [
-        "change_analysis",
-        "change_observer",
-        "change_registry"
+        'change_analysis',
+        'change_observer',
+        'change_registry'
       ],
-      managerPermissions: ["change_observer"], // dice que change_observer no es un permiso
+      managerPermissions: ['change_observer'],
       suggestions: [],
       progress: false,
-      empty: false,
-      alertMessage: "",
-      alertVariant: "",
-      alertId: "alert-add-member-to-project",
+      alertMessage: '',
+      alertVariant: '',
+      alertId: 'alert-add-member-to-project',
       projectPermissions: [
         {
           num: 0,
-          id: "checkParametrizacion",
-          name: "change_parameterization",
-          key: "change_parameterization",
-          label: "Parametrización",
+          id: 'checkParametrizacion',
+          name: 'change_parameterization',
+          key: 'change_parameterization',
+          label: 'Parametrización',
           checked: false
         },
         {
           num: 0,
-          id: "checkCuestionarios",
-          name: "change_questionnaire",
-          key: "change_questionnaire",
-          label: "Cuestionarios",
+          id: 'checkCuestionarios',
+          name: 'change_questionnaire',
+          key: 'change_questionnaire',
+          label: 'Cuestionarios',
           checked: false
         },
         {
           num: 0,
-          id: "checkAnalisis",
-          name: "change_analysis",
-          key: "change_analysis",
-          label: "Analisis",
+          id: 'checkAnalisis',
+          name: 'change_analysis',
+          key: 'change_analysis',
+          label: 'Analisis',
           checked: false
         }
       ],
       registryPermissions: [
         {
-          id: "checkControl",
-          name: "change_control",
-          key: "change_control",
-          label: "Control General",
+          id: 'checkControl',
+          name: 'change_control',
+          key: 'change_control',
+          label: 'Control General',
           checked: false
         },
         {
-          id: "checkRegistro",
-          name: "change_registry",
-          key: "change_registry",
-          label: "Registro Individual",
+          id: 'checkRegistro',
+          name: 'change_registry',
+          key: 'change_registry',
+          label: 'Registro Individual',
           checked: false
         },
         {
-          id: "checkVisor",
-          name: "change_observer",
-          key: "change_observer",
-          label: "Visor General",
+          id: 'checkVisor',
+          name: 'change_observer',
+          key: 'change_observer',
+          label: 'Visor General',
           checked: false
         }
       ],
       componentPermissions: [
         {
-          id: "checkIntegrante",
-          name: "change_member",
-          key: "change_member",
-          label: "Integrante",
+          id: 'checkIntegrante',
+          name: 'change_member',
+          key: 'change_member',
+          label: 'Integrante',
           checked: false
         },
         {
-          id: "checkCentros",
-          name: "change_centerStudy",
-          key: "change_centerStudy",
-          label: "Centros",
+          id: 'checkCentros',
+          name: 'change_centerStudy',
+          key: 'change_centerStudy',
+          label: 'Centros',
           checked: false
         }
       ]
     };
-
-    this.getPermissionsById(this.props.id);
   }
 
   handleClose = () => {
     this.props.handleClose();
   };
 
-  handleCloseviewMember = () => {
-    this.props.handleCloseviewMember();
+  handleCloseUpdateMember = () => {
+    this.props.handleCloseUpdateMember();
+  };
+  removeMemberPermissions = () => {
+    // recorremos todos los permisos
+    var permissionToSave = [];
+
+
+   for (let i = 0; i < this.state.memberPermissions.length; i++) { /*
+      for (let j = 0; j < this.state.projectPermissions.length; j++)
+        if (this.state.memberPermissions[i].permission_id__codename ==this.state.projectPermissions[j].name) {
+          if(this.state.projectPermissions[j].checked ==true)
+          {
+
+          }
+        }
+        */
+      for (let j = 0; j < this.state.componentPermissions.length; j++)
+        if (
+          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.componentPermissions[j].name
+        ) {
+          this.state.componentPermissions[j].checked = true;
+        }
+      for (let j = 0; j < this.state.registryPermissions.length; j++)
+        if (
+          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.registryPermissions[j].name
+        ) {
+          this.state.registryPermissions[j].checked = true;
+        }
+
+    }
+
+    
+    return permissionToSave;
+  };
+  saveMemberPermissions = role => {
+    // recorremos todos los permisos
+    var permissionToSave = [];
+    for (let i = 0; i < this.state.projectPermissions.length; i++) {
+      var permission = [...this.state.projectPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+    for (let i = 0; i < this.state.registryPermissions.length; i++) {
+      var permission = [...this.state.registryPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+    for (let i = 0; i < this.state.componentPermissions.length; i++) {
+      var permission = [...this.state.componentPermissions];
+      if (permission[i].checked) {
+        permissionToSave.push({ name: permission[i].name });
+      }
+    }
+
+    console.log(permissionToSave);
+
+    // para cada permiso verificamos si es un permiso del rol.
+    // está checked ? lo agregamos a la lista de permisos a agregar
+    // esta función retorna la lista de permisos que se van a agregar a permissions[]
+    console.log('rol en el proyecto ' + role);
+    return permissionToSave;
   };
 
-  handleResetCheckbox = () => {};
-
-  componentDidMount() {
-    //this.getMemberById(this.props.id)
-  }
-
-  handleClose = () => {
-    this.props.handleClose();
+  saveNewMemberInfo = values => {
+    const headers = Utils.getHeader();
+    var json = {
+      study_instance: this.props.id,
+      study: {
+        user_id: this.state.memberInfo.id,
+        study_id: this.props.study_id,
+        role: values.RolInProject,
+        date_maxAccess: moment(values.limitAccessDate).format('YYYY-MM-DD'),
+        is_manager: 3
+      },
+      permissions_add: this.saveMemberPermissions(values.RolInProject),
+      permission_remove:this.removeMemberPermissions()
+    };
+    console.log(JSON.stringify(json));
+    this.setState({ progress: true }, () => {
+      axios
+        .put(URL + '/studies/user/', json, {
+          headers: headers
+        })
+        .then(() => {
+          this.setState({ progress: false });
+          this.handleCloseUpdateMember();
+        })
+        .catch(error => {
+          this.setState({
+            progress: false,
+            alertVariant: 'danger',
+            alertMessage: 'JSON.parse(error.request.response).detail'
+          });
+          Utils.showAlert(this.state.alertId);
+        });
+    });
   };
 
-  saveMemberPermissions = () => {
+  handleResetCheckbox = () => {
+    for (let i = 0; i < this.state.projectPermissions.length; i++) {
+      var updateCheck = [...this.state.projectPermissions];
+      if (updateCheck[i].checked) {
+        updateCheck[i].checked = false;
+      }
+      this.setState({ updateCheck });
+    }
+    for (let i = 0; i < this.state.registryPermissions.length; i++) {
+      var updateCheck = [...this.state.registryPermissions];
+      if (updateCheck[i].checked) {
+        updateCheck[i].checked = false;
+      }
+      this.setState({ updateCheck });
+    }
+    for (let i = 0; i < this.state.componentPermissions.length; i++) {
+      var updateCheck = [...this.state.componentPermissions];
+      if (updateCheck[i].checked) {
+        updateCheck[i].checked = false;
+      }
+      this.setState({ updateCheck });
+    }
+  };
+
+  /**
+   * handleCheck se encarga de cambiar el estado del checkbox que se ha clickeado.
+   * para ello necesita el id y el nombre del array (ej: registryPermissions )
+   */
+  handleCheck = (permissionArray, id, arrayName) => {
+    // en name guardamos el array "this.state.arrayName" <- (ej: this.state.registryPermissions)
+    var name = 'this.state.' + arrayName;
+    // usamos eval para pasar de un String a una variable
+    name = eval(name);
+    // obtenemos todos los datos del array.
+    var newData = [...name];
+
+    // buscamos el checkbox que tiene el id que queremos cambiar
+    var index = newData.findIndex(obj => obj.id === id);
+    // comparamos el valor de checked
+    if (newData[index].checked) {
+      newData[index].checked = false;
+    } else {
+      newData[index].checked = true;
+    }
+    // por ultimo actualizamos el checkbox con la nueva informacion de checked
+    this.setState({ newData });
+  };
+  getPermissionsById = async id => {
+    const headers = getHeader();
+    const { study_id } = id;
+    this.setState({ loading: true }, () =>
+      axios
+        .get(URL + "/studies/user/permissions/" + id, { headers: headers })
+        .then(response => {
+          this.setState(
+            {
+              memberPermissions: response.data,
+              loading: false
+            },
+            () => {
+              this.obtainMemberPermissions();
+              //console.log(this.state.memberPermissions)
+            }
+          );
+        })
+        .catch(() => this.setState({ loading: false }))
+    );
+  };
+  obtainMemberPermissions = () => {
     // recorremos todos los permisos
     //console.log(this.state.memberPermissions)
     for (let i = 0; i < this.state.memberPermissions.length; i++) {
@@ -158,51 +314,19 @@ class viewMember extends Component {
         ) {
           this.state.registryPermissions[j].checked = true;
         }
-      this.setState({
-        cargar: false
-      });
+
     }
-
+    this.setState({
+      cargar: false
+    });
   };
-  getPermissionsById = async id => {
-    const headers = getHeader();
-    const { study_id } = id;
-    this.setState({ loading: true }, () =>
-      axios
-        .get(URL + "/studies/user/permissions/" + id, { headers: headers })
-        .then(response => {
-          this.setState(
-            {
-              memberPermissions: response.data,
-              loading: false
-            },
-            () => {
-              this.saveMemberPermissions();
-              //console.log(this.state.memberPermissions)
-            }
-          );
-        })
-        .catch(() => this.setState({ loading: false }))
-    );
-  };
-
-  getMemberInfo = () => {
-    console.log("*****************");
-    //console.log(this.state.memberPermissions)
-  };
-  handleCloseView = () => {
-    //console.log()
-    //this.props.handleCloseView();
-  };
-
   UNSAFE_componentWillMount() {
     this.getPermissionsById(this.props.id);
   }
-
-
-
+componentDidMount(){
+  console.log(this.state.memberInfo)
+}
   render() {
-    const { memberInfo } = this.state;
     return (
       <>
         {this.state.progress ? (
@@ -227,7 +351,7 @@ class viewMember extends Component {
               this.state.memberInfo.user_id__last_name,
             endDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
             limitAccessDate: getDateFormat(new Date()),
-            RolInProject: this.state.RolInProject,
+            RolInProject: this.props.memberInfo.role,
             permissions: []
           }}
           validationSchema={schema}
@@ -244,22 +368,18 @@ class viewMember extends Component {
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Información de permisos de Integrante
+                  Actualizar integrante del proyecto
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
-                  <Form.Group as={Col} md='4' controlId='inputId'>
+                <Form id='formUpdateMemberToProject' onSubmit={handleSubmit}>
+                  <Form.Group as={Col} md='4'>
                     <h4>{values.nameMember}</h4>
-                    <Form.Control.Feedback type='invalid'>
-                      {errors.idMember}
-                    </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Row>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
                       <Form.Label>Fecha limite de acceso </Form.Label>
                       <Form.Control
-                        disabled={true}
                         type='Date'
                         value={values.limitAccessDate}
                         onChange={handleChange}
@@ -281,7 +401,6 @@ class viewMember extends Component {
                         as='select'
                         name='RolInProject'
                         value={values.RolInProject}
-                        disabled={true}
                         onChange={e => {
                           handleChange(e);
                           // se resetean todos los valores de los checkbox
@@ -376,7 +495,6 @@ class viewMember extends Component {
                            */
                           return (
                             <Form.Check
-                              disabled={true}
                               id={permission.id}
                               key={permission.id}
                               name={permission.name}
@@ -431,8 +549,7 @@ class viewMember extends Component {
                         }
                         if (check) {
                           return (
-                            <Form.Check
-                            disabled={true}                            
+                            <Form.Check                         
                               id={permission.id}
                               key={permission.id}
                               name={permission.name}
@@ -494,8 +611,7 @@ class viewMember extends Component {
                         }
                         if (check) {
                           return (
-                            <Form.Check
-                            disabled={true}                          
+                            <Form.Check                      
                               id={permission.id}
                               key={permission.id}
                               name={permission.name}
@@ -519,7 +635,10 @@ class viewMember extends Component {
               </Modal.Body>
               <Modal.Footer>
                 <Button variant='secondary' onClick={this.handleClose}>
-                  Volver
+                  Cancelar
+                </Button>
+                <Button form='formUpdateMemberToProject' type='submit'>
+                  Actualizar Integrante
                 </Button>
               </Modal.Footer>
             </>
@@ -529,4 +648,5 @@ class viewMember extends Component {
     );
   }
 }
-export default viewMember;
+
+export default UpdateMember;

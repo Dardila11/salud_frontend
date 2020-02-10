@@ -17,6 +17,7 @@ import AlertComponent from '../../layout/alert/alert.component';
 import DeleteMember from '../deleteMember/deleteMember.component';
 import AddMember from '../add_member/addMember.component';
 import ViewMember from '../viewMember/viewMember.component';
+import UpdateMember from '../updateMember/updateMember.component';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -141,7 +142,7 @@ class ListMembers extends Component {
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Detalles</Tooltip>}>
+                  overlay={<Tooltip>Actualizar</Tooltip>}>
                   <Button
                     className='update'
                     variant='outline-primary'
@@ -152,7 +153,7 @@ class ListMembers extends Component {
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Actualizar</Tooltip>}>
+                  overlay={<Tooltip>Detalles</Tooltip>}>
                   <Button
                     className='view'
                     variant='outline-primary'
@@ -200,6 +201,10 @@ class ListMembers extends Component {
     this.setState({ isVisibleCreate: false });
     this.getUsersInfo()
     this.getMembers()
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Integrante Agregado.'
+    });
     
   }
 
@@ -410,6 +415,18 @@ class ListMembers extends Component {
             handleClose={this.handleClose}
             id={this.state.idProjectMemberToEdit}
             memberInfo={this.state.memberInfo[0]}
+          />
+        </Modal>
+        <Modal 
+          dialogClassName="modal-90w"
+          show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+          {/* Eliminar Usuario */}
+          <UpdateMember
+            handleCloseView={this.handleCloseView}
+            handleClose={this.handleClose}
+            id={this.state.idProjectMemberToEdit}
+            memberInfo={this.state.memberInfo[0]}
+            study_id={this.props.project}
           />
         </Modal>
         <AlertComponent
