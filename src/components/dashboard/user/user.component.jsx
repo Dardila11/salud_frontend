@@ -29,7 +29,7 @@ class UserDashboard extends Component {
       isLogged: true,
       isNew: true,
       userInfo:[],
-      isVisibleConfirm: true
+      isVisibleConfirm: false
     };
   }
 
@@ -87,6 +87,10 @@ class UserDashboard extends Component {
     this.onLogout()
   };
   getUsersInfo(){
+    this.setState({
+      isVisibleConfirm: true
+      
+    });
 
   }
 
@@ -113,7 +117,7 @@ class UserDashboard extends Component {
             handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
             email={'this.state.emailToRead'}
-            userInfo={'this.state.userInfo'}
+            userInfo={this.state.userInfo[0]}
             userPermissions={'this.state.userPermissions'}
           />
         </Modal>
