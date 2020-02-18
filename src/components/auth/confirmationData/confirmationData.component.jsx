@@ -116,7 +116,7 @@ class Confirmation extends Component {
     */
     return false;
   };
-  componentWillMount() {
+  componentDidMount() {
     console.log('___________________')
   console.log(this.props)
   }

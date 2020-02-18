@@ -90,7 +90,7 @@ class UserDashboard extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.vertification();
     this.getUserToConfirm();
     //console.log(localStorage)
@@ -113,7 +113,7 @@ class UserDashboard extends Component {
             handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
             email={'this.state.emailToRead'}
-            userInfo={this.state.userInfo[0]}
+            userInfo={'this.state.userInfo'}
             userPermissions={'this.state.userPermissions'}
           />
         </Modal>
