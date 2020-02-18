@@ -116,7 +116,7 @@ class Confirmation extends Component {
     */
     return false;
   };
-  componentWillMount() {
+  componentDidMount() {
     console.log('___________________')
   console.log(this.props)
   }
@@ -138,11 +138,11 @@ class Confirmation extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            firstName:''/*toCapitalizer(this.props.userInfo[0].first_name)*/,
-            lastName:this.props.userInfo.last_name,
+            firstName:toCapitalizer(this.props.userInfo.first_name),
+            lastName:toCapitalizer(this.props.userInfo.last_name),
             email: this.props.email,
             confEmail: this.props.email,
-            userId:4/*this.props.userInfo[0].id*/,
+            userId:this.props.userInfo.user_id,
             myCenter: 'center '/*this.props.userInfo[0].my_center*/,
             myDepartment:'Departament' /*this.props.userInfo[0].my_department*/,
             createCenters: this.isPermissionsCenters(),

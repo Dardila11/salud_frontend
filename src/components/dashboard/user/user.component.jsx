@@ -83,9 +83,15 @@ class UserDashboard extends Component {
     });
     this.onLogout();
   };
-  getUsersInfo() {}
+  getUsersInfo(){
+    this.setState({
+      isVisibleConfirm: true
+      
+    });
 
-  componentWillMount() {
+  }
+
+  componentDidMount() {
     this.vertification();
     this.getUserToConfirm();
     //console.log(localStorage)
