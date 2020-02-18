@@ -79,12 +79,20 @@ class UserDashboard extends Component {
     });
   };
   handleClose = () => {
-    this.setState({
-      isVisibleConfirm: false
-    });
+
     this.onLogout();
   };
+  handleCloseConfirm = () => {
+    //this.getMembers();
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Datos Confirmados',
+      isVisibleConfirm:false
+    });
+    showAlert(this.state.alertId);
+  };
   getUsersInfo(){
+    if(!this.state.userInfo[0].is_confirm)
     this.setState({
       isVisibleConfirm: true
       
@@ -98,12 +106,13 @@ class UserDashboard extends Component {
     //console.log(localStorage)
   }
 
-  render() {
-    
+  render() { 
+
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
     }
     return (
+     
       <section onMouseDown={this.vertification}>
         <NavBar />
         <NavUser />
