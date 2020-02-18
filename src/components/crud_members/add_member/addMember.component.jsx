@@ -8,7 +8,6 @@ import TextField from '@material-ui/core/TextField';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
 import matchSorter from 'match-sorter';
-import { getDateFormat } from '../../utils/utils';
 var moment = require('moment');
 
 /**
@@ -122,19 +121,19 @@ class AddMember extends Component {
     // recorremos todos los permisos
     var permissionToSave = [];
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
-      var permission = [...this.state.projectPermissions];
+      const permission = [...this.state.projectPermissions];
       if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
-      var permission = [...this.state.registryPermissions];
+      const permission = [...this.state.registryPermissions];
       if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
-      var permission = [...this.state.componentPermissions];
+      const permission = [...this.state.componentPermissions];
       if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
@@ -184,21 +183,21 @@ class AddMember extends Component {
 
   handleResetCheckbox = () => {
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
-      var updateCheck = [...this.state.projectPermissions];
+      const updateCheck = [...this.state.projectPermissions];
       if (updateCheck[i].checked) {
         updateCheck[i].checked = false;
       }
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
-      var updateCheck = [...this.state.registryPermissions];
+      const updateCheck = [...this.state.registryPermissions];
       if (updateCheck[i].checked) {
         updateCheck[i].checked = false;
       }
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
-      var updateCheck = [...this.state.componentPermissions];
+      const updateCheck = [...this.state.componentPermissions];
       if (updateCheck[i].checked) {
         updateCheck[i].checked = false;
       }
@@ -280,7 +279,6 @@ class AddMember extends Component {
                   <i className='required'>Todos los campos son obligatorios</i>
                 </p>
                 <Form id='formAddMemberToProject' onSubmit={handleSubmit}>
-                
                   <Form.Row>
                     <Form.Group as={Col} md='5' controlId='inputId'>
                       <Form.Label> Nuevo integrante</Form.Label>
@@ -292,7 +290,6 @@ class AddMember extends Component {
                             ? option
                             : Utils.toCapitalizer(option.userName)
                         }
-                        
                         renderOption={option => (
                           <React.Fragment>
                             <div>
@@ -374,16 +371,14 @@ class AddMember extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                      <Form.Label> Permisos: </Form.Label> 
+                    <Form.Label> Permisos: </Form.Label>
                   </Form.Row>
                   <Form.Row
-                    className={values.RolInProject != -1 ? '' : 'hidden'}>
+                    className={values.RolInProject !== -1 ? '' : 'hidden'}>
                     <Form.Group
-                      className={values.RolInProject != 3 ? '' : 'hidden'}
+                      className={values.RolInProject !== 3 ? '' : 'hidden'}
                       as={Col}
                       md='3'>
-
-                       
                       <Form.Label>Proyecto: </Form.Label>
                       {/* recorre los permisos de proyecto. para cada permiso 
                           lo compara con los permisos segun sea el rol seleccionado.
@@ -415,7 +410,7 @@ class AddMember extends Component {
                              */
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -435,7 +430,7 @@ class AddMember extends Component {
                              */
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -477,7 +472,7 @@ class AddMember extends Component {
                             check = true;
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -486,7 +481,7 @@ class AddMember extends Component {
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -495,7 +490,7 @@ class AddMember extends Component {
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -525,7 +520,7 @@ class AddMember extends Component {
                     </Form.Group>
                     <Form.Group
                       className={
-                        values.RolInProject == 3 || values.RolInProject == 2
+                        values.RolInProject === 3 || values.RolInProject === 2
                           ? 'hidden'
                           : ''
                       }
@@ -548,7 +543,7 @@ class AddMember extends Component {
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -557,7 +552,7 @@ class AddMember extends Component {
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }

@@ -214,7 +214,7 @@ class UpdateMember extends Component {
         study_id: this.props.study_id,
         role: values.RolInProject,
         date_maxAccess: moment(values.limitAccessDate).format('YYYY-MM-DD'),
-        is_manager: values.RolInProject
+        is_manager: this.props.memberInfo.is_manager
       },
       permissions_add: this.saveMemberPermissions(values.RolInProject),
       permissions_remove:this.removeMemberPermissions()

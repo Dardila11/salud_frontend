@@ -1,5 +1,3 @@
-
-
 import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
@@ -9,27 +7,27 @@ import matchSorter from 'match-sorter';
 import { getHeader, showAlert } from '../../utils/utils';
 import AlertComponent from '../../layout/alert/alert.component';
 
-import React, { Component } from "react";
-import NavBar from "../../layout/navbar/navbar.component";
-import { URL } from "../../utils/URLSever";
-import { closeSession } from "../../utils/handleLocalStorage";
-import axios from "axios";
-import { Redirect } from "react-router-dom";
-import NavUser from "./navUser/navUser.component";
-import Confirmation from "../../auth/confirmationData/confirmationData.component";
+import React, { Component } from 'react';
+import NavBar from '../../layout/navbar/navbar.component';
+import { URL } from '../../utils/URLSever';
+import { closeSession } from '../../utils/handleLocalStorage';
+import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+import NavUser from './navUser/navUser.component';
+import Confirmation from '../../auth/confirmationData/confirmationData.component';
 // import { vertificationToken } from "../../utils/verificationToken";
 
 class UserDashboard extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
-  role = JSON.parse(localStorage.getItem("role"));
+  role = JSON.parse(localStorage.getItem('role'));
   constructor(props) {
     super(props);
     this.state = {
       isLogged: true,
       isNew: true,
-      userInfo:[],
-      isVisibleConfirm: false
+      userInfo: [],
+      isVisibleConfirm: true
     };
   }
 
@@ -39,13 +37,13 @@ class UserDashboard extends Component {
   };
 
   vertificationAuthorization = () => {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem('token'));
     const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT " + token
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + token
     };
     axios
-      .post(URL + "/users/verificate/simple/", {}, { headers: headers })
+      .post(URL + '/users/verificate/simple/', {}, { headers: headers })
       .then(() => {
         this.setState({ isLogged: true });
       })
@@ -58,7 +56,7 @@ class UserDashboard extends Component {
       });
   };
   getUserToConfirm = async () => {
-    var email=JSON.parse(localStorage.getItem("email"));
+    var email = JSON.parse(localStorage.getItem('email'));
     const headers = getHeader();
     await axios
       .get(
@@ -82,9 +80,8 @@ class UserDashboard extends Component {
   handleClose = () => {
     this.setState({
       isVisibleConfirm: false
-      
     });
-    this.onLogout()
+    this.onLogout();
   };
   getUsersInfo(){
     this.setState({
@@ -102,7 +99,7 @@ class UserDashboard extends Component {
 
   render() {
     if (!this.state.isLogged) {
-      return <Redirect to="/" />;
+      return <Redirect to='/' />;
     }
     return (
       <section onMouseDown={this.vertification}>
@@ -115,9 +112,9 @@ class UserDashboard extends Component {
             infoCenters={1}
             handleCloseConfirm={this.handleCloseConfirm}
             handleClose={this.handleClose}
-            email={'this.state.emailToRead'}
+            email={this.state.emailToRead}
             userInfo={this.state.userInfo[0]}
-            userPermissions={'this.state.userPermissions'}
+            userPermissions={this.state.userPermissions}
           />
         </Modal>
       </section>
