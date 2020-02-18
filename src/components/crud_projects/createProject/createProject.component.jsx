@@ -225,14 +225,16 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Inicio </Form.Label>
-                      <Form.Control
-                        type='Date'
-                        value={values.startDate}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
+                      <DatePicker
+                        placeholderText='dd-mm-aaaa'
+                        selected={values.startDate}
+                        dateFormat='dd-MM-yyyy'
+                        yearDropdownItemNumber={5}
+                        showYearDropdown
                         locale='es'
                         className='form-control'
-                        name='startDate'
+                        name='registerDate'
+                        onChange={date => setFieldValue('startDate', date)}
                         isValid={touched.startDate && !errors.startDate}
                         isInvalid={!!errors.startDate}
                       />
@@ -242,13 +244,16 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha Finalización </Form.Label>
-                      <Form.Control
-                        type='Date'
-                        value={values.endDate}
-                        onChange={handleChange}
+                      <DatePicker
+                        placeholderText='dd-mm-aaaa'
+                        selected={values.endDate}
+                        dateFormat='dd-MM-yyyy'
+                        yearDropdownItemNumber={5}
+                        showYearDropdown
                         locale='es'
                         className='form-control'
-                        name='endDate'
+                        name='registerDate'
+                        onChange={date => setFieldValue('endDate', date)}
                         isValid={touched.endDate && !errors.endDate}
                         isInvalid={!!errors.endDate}
                       />
