@@ -101,7 +101,6 @@ class UserDashboard extends Component {
   }
 
   render() {
-    console.log(this.state.userInfo)
     if (!this.state.isLogged) {
       return <Redirect to="/" />;
     }
@@ -114,7 +113,7 @@ class UserDashboard extends Component {
           <Confirmation
             infoDepartaments={1}
             infoCenters={1}
-            handleCloseUpdate={this.handleCloseUpdate}
+            handleCloseConfirm={this.handleCloseConfirm}
             handleClose={this.handleClose}
             email={'this.state.emailToRead'}
             userInfo={this.state.userInfo[0]}

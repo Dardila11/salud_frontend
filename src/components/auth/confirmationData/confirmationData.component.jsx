@@ -46,11 +46,19 @@ class Confirmation extends Component {
   }
 
   handleClose = () => {
-    this.props.handleClose();
+    this.setState({
+      is_confirm: false
+    });
   };
 
-  handleCloseUpdate = () => {
-    this.props.handleCloseUpdate();
+  handleCloseConfirm = () => {
+    //this.getMembers();
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Integrante Actualizado.'
+    });
+    this.handleClose();
+    showAlert(this.state.alertId);
   };
 
   /**
@@ -60,7 +68,8 @@ class Confirmation extends Component {
   updateUserInfo = async values => {
       
     const headers = getHeader();
-    /*const data = {
+    const data = {
+      email_instance: this.state.userInfo.email,
       user: {
         first_name: values.firstName,
         last_name: values.lastName,
@@ -73,10 +82,10 @@ class Confirmation extends Component {
 
     this.setState({ progress: true }, () =>
       axios
-        .put(URL + '/users/', data, { headers: headers })
+        .post(URL + '/users/confirm/', data, { headers: headers })
         .then(() => {
           this.setState({ progress: false });
-          this.handleCloseUpdate();
+          this.handleCloseConfirm();
         })
         .catch(error => {
           this.setState({
@@ -87,7 +96,7 @@ class Confirmation extends Component {
           showAlert(this.state.alertId);
         })
     );
-    */
+    
   };
 
   isPermissionsCenters = () => {
