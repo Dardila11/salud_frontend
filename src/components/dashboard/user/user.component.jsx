@@ -15,6 +15,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import NavUser from './navUser/navUser.component';
 import Confirmation from '../../auth/confirmationData/confirmationData.component';
+import ListProjectsUser from '../../crud_user/listProjectsUser/listProjectsUser.component'
 // import { vertificationToken } from "../../utils/verificationToken";
 
 class UserDashboard extends Component {
@@ -109,15 +110,29 @@ class UserDashboard extends Component {
   }
 
   render() { 
-    console.log(this.state.userInfo[0])
+    //console.log(this.state.userInfo[0])
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
     }
     return (
      
-      <section onMouseDown={this.vertification}>
-        <NavBar />
-        <NavUser />
+      <section
+        id='wrapper'
+        className='h-100 container-fluid p-0'
+        onMouseDown={() => this.vertification(false)}>
+                    <NavUser />
+        <div id='content-wrapper' className='d-flex flex-column'>
+          <div id='content'>
+          <NavBar /> 
+
+            <div className='container pt-2 pr-5 pl-5 pb-2'>
+              
+              <ListProjectsUser
+                  email={JSON.parse(localStorage.getItem('email'))}
+              />
+            </div>
+          </div>
+        </div>
         <Modal show={this.state.isVisibleConfirm} onHide={this.handleClose}>
           {/* Actualizar Usuario */}
           <Confirmation
@@ -130,6 +145,7 @@ class UserDashboard extends Component {
             userPermissions={this.state.userPermissions}
           />
         </Modal>
+
         <AlertComponent
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}

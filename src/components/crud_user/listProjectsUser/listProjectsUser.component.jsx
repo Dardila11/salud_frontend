@@ -10,9 +10,6 @@ import matchSorter from 'match-sorter';
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
-import CreateUserFormik from '../createUser/createUser.component';
-import DeleteUser from '../deleteUser/deleteUser.component';
-import UpdateUserFormik from '../updateUser/updateUser.component';
 
 import 'react-table/react-table.css';
 import './listUsers.styles.css';
@@ -43,6 +40,8 @@ class ListProjectsUser extends Component {
       loading: true,
       emailToRead: '',
       info: [],
+      projects:[],
+      projectsInfo:[],
       infoCenters: [],
       infoDepartaments: [],
       userInfo: [1],
@@ -55,89 +54,73 @@ class ListProjectsUser extends Component {
       alertId: 'alert-listUsers',
       columns: [
         {
-          Header: 'Nombres',
-          accessor: 'first_name',
+          Header: 'Título',
+          accessor: 'title',
           width: 150,
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['first_name'] }),
-          filterAll: true,
-          Cell: props => <span className='cap'>{props.value}</span>
-        },
-        {
-          Header: 'Apellidos',
-          accessor: 'last_name',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100,
-          filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['last_name'] }),
-          filterAll: true,
-          Cell: props => <span className='cap'>{props.value}</span>
-        },
-        {
-          Header: 'Correo',
-          accessor: 'email',
-          width: 200,
-          maxWidth: 200,
-          minWidth: 100,
-          filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['email'] }),
+            matchSorter(rows, filter.value, { keys: ['title'] }),
           filterAll: true,
           Cell: props => (
-            <Link to={'/admin/users/' + props.value}>{props.value}</Link>
+            <Link
+              to={''}
+              style={{ textTransform: 'capitalize' }}>
+              {props.value}
+            </Link>
           )
         },
-        {
-          id: 'is_simple',
-          Header: 'Rol',
-          accessor: d => {
-            return d.is_simple ? 'Usuario' : 'Administrador';
-          },
-          sortable: false,
-          filterable: false,
+        /* {
+          Header: 'Fecha de Registro',
+          accessor: 'reg_date',
           width: 150,
-          maxWidth: 150,
+          maxWidth: 200,
+          minWidth: 100
+        }, */
+        {
+          Header: 'Fecha de Inicio',
+          accessor: 'start_date',
+          width: 150,
+          maxWidth: 200,
           minWidth: 100
         },
         {
-          Header: 'Activo',
-          accessor: 'is_active',
-          sortable: true,
+          Header: 'Fecha de Finalización',
+          accessor: 'end_date',
+          width: 150,
+          maxWidth: 200,
+          minWidth: 100
+        },
+        {
+          id: 'status',
+          Header: 'Estado',
+          accessor: d => {
+            switch (d.status) {
+              case 1:
+                return 'Registro';
+              case 2:
+                return 'Diseño';
+              case 3:
+                return 'Finalizado';
+            }
+          },
+          sortable: false,
           filterable: false,
-          width: 50,
-          maxWidth: 50,
-          minWidth: 50,
-          Cell: props => {
-            return props.value ? (
-              <div className='success'></div>
-            ) : (
-              <div className='remove'></div>
-            );
-          }
+          width: 100,
+          maxWidth: 100,
+          minWidth: 100
         },
         {
           Header: 'Acciones',
           sortable: false,
           filterable: false,
-          width: 250,
-          maxWidth: 250,
-          minWidth: 200,
+          width: 150,
+          maxWidth: 150,
+          minWidth: 150,
           Cell: props => {
             return (
-              <div>
-                <OverlayTrigger
-                  placement='right'
-                  delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Actualizar</Tooltip>}>
-                  <Button
-                    className='update'
-                    variant='outline-primary'
-                    onClick={() => {
-                      this.updateRow(props.original.email);
-                    }}></Button>
-                </OverlayTrigger>
+              <>
+                
                 <OverlayTrigger
                   placement='right'
                   delay={{ show: 250, hide: 100 }}
@@ -146,21 +129,10 @@ class ListProjectsUser extends Component {
                     className='ml-1 view btn btn-outline-primary'
                     variant='outline-primary'
                     role='button'
-                    to={'/admin/users/' + props.original.email}
+                    to={'/admin/studies/' + props.original.id_pk}
                   />
                 </OverlayTrigger>
-                <OverlayTrigger
-                  placement='right'
-                  delay={{ show: 250, hide: 100 }}
-                  overlay={<Tooltip>Estado</Tooltip>}>
-                  <Button
-                    className='ml-1 change'
-                    variant='outline-danger'
-                    onClick={() => {
-                      this.deleteRow(props.original.email);
-                    }}></Button>
-                </OverlayTrigger>
-              </div>
+              </>
             );
           }
         }
@@ -226,27 +198,20 @@ class ListProjectsUser extends Component {
 
   getProjectsInfo = () => {
     var projectsInfoArray = [];
-    for (let i = 0; i < this.state.projectsInfo.length; i++) {
-      var id = this.state.projectsInfo[i].id;
-      var title = this.state.projectsInfo[i].title_little;
-      var reg_date = this.state.projectsInfo[i].date_reg.substring(0, 10);
-      var start_date = this.state.projectsInfo[i].date_in_study;
-      var end_date = this.state.projectsInfo[i].date_trueaout_end;
-      var status = this.state.projectsInfo[i].status;
-      var reg_responsible = this.state.projectsInfo[i].manager_reg__first_name;
-      var principal_investigator = this.state.projectsInfo[i]
-        .principal_inv__first_name;
-      var is_active = this.state.projectsInfo[i].is_active;
+    for (let i = 0; i < this.state.projects.length; i++) {
+      var id = this.state.projects[i].study_id;
+      var title = this.state.projects[i].study_id__title_little;
+      var reg_date = this.state.projects[i].study_id__date_reg.substring(0, 10);
+      var start_date = this.state.projects[i].study_id__date_reg;
+      var end_date = this.state.projects[i].date_maxAccess;
+      var status = this.state.projects[i].study_id__status;
       projectsInfoArray.push({
         id_pk: id,
         title: title,
         reg_date: reg_date,
         start_date: start_date,
         end_date: end_date,
-        status: status,
-        reg_responsible: reg_responsible,
-        principal_investigator: principal_investigator,
-        is_active: is_active
+        status: status
       });
     }
     this.setState({ projectsInfo: projectsInfoArray });
@@ -372,7 +337,25 @@ class ListProjectsUser extends Component {
    * @function getUsers
    * @description Obtiene todos los `User`
    */
-
+  getProjects = async () => {
+    const headers = getHeader();
+    axios
+      .get(
+        URL + '/studies/user/my/' + this.props.email,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ projects: response.data, loading: false  }, () => {
+          this.getProjectsInfo();
+          //this.getUserProjects()
+        });
+      })
+      .catch(error => {
+        console.log('oh no, hubo un error!');
+        console.log(error.status);
+      });
+  };
   getUsers = async () => {
 /*
     const headers = getHeader();
@@ -416,10 +399,13 @@ class ListProjectsUser extends Component {
    * @function componentDidMount
    * @description Carga los datos después que el componente carga
    */
+  getUserProjects(){
+    console.log(this.state.projects)
+  }
   componentDidMount() {
-    this.getUsers();
-    this.loadCenters();
-    this.loadDepartaments();
+    this.getProjects();
+    //this.loadCenters();
+    //this.loadDepartaments();
   }
 
   componentWillUnmount() {
@@ -429,15 +415,8 @@ class ListProjectsUser extends Component {
   render() {
     return (
       <section>
-        <h1 className='h3 mb-2 text-gray-800'>Lista de usuarios</h1>
-        <button
-          className='btn btn-primary btn-icon-split p-0 mb-2'
-          onClick={this.handleOpenCreate}>
-          <span className='icon text-white-50'>
-            <i className='fas fa-plus-square'></i>
-          </span>
-          <span className='text text-white'>Crear usuario</span>
-        </button>
+        <h1 className='h3 mb-2 text-gray-800'>Lista de Proyectos</h1>
+
         {this.state.loading ? (
           <ReactTable
             columns={this.state.columns}
@@ -446,41 +425,12 @@ class ListProjectsUser extends Component {
         ) : (
           <ReactTable
             columns={this.state.columns}
-            data={this.state.info}
+            data={this.state.projectsInfo}
             defaultPageSize={5}
-            noDataText={'No existen usuarios'}
+            noDataText={'No existen Proyectos'}
             filterable></ReactTable>
         )}
-        <Modal show={this.state.isVisibleCreate} onHide={this.handleClose}>
-          {/* Crear Usuario */}
-          <CreateUserFormik
-            infoDepartaments={this.state.infoDepartaments}
-            infoCenters={this.state.infoCenters}
-            handleCloseCreate={this.handleCloseCreate}
-            handleClose={this.handleClose}
-          />
-        </Modal>
-        <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
-          {/* Eliminar Usuario */}
-          <DeleteUser
-            handleCloseDelete={this.handleCloseDelete}
-            handleClose={this.handleClose}
-            email={this.state.emailToRead}
-            is_active={this.state.userInfo[0].is_active}
-          />
-        </Modal>
-        <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
-          {/* Actualizar Usuario */}
-          <UpdateUserFormik
-            infoDepartaments={this.state.infoDepartaments}
-            infoCenters={this.state.infoCenters}
-            handleCloseUpdate={this.handleCloseUpdate}
-            handleClose={this.handleClose}
-            email={this.state.emailToRead}
-            userInfo={this.state.userInfo}
-            userPermissions={this.state.userPermissions}
-          />
-        </Modal>
+        
         <AlertComponent
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}

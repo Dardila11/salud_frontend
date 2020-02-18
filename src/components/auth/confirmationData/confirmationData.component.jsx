@@ -71,7 +71,7 @@ class Confirmation extends Component {
         
       }
     };
-    console.log(JSON.stringify(data));
+    //console.log(JSON.stringify(data));
     this.setState({ progress: true }, () =>
       axios
         .post(URL + '/users/confirm/', data, { headers: headers })
@@ -118,8 +118,8 @@ class Confirmation extends Component {
     return false;
   };
   componentDidMount() {
-    console.log('___________________')
-  console.log(this.props)
+  //console.log('___________________')
+  //console.log(this.props)
   }
   render() {
     return (
