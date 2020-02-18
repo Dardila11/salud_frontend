@@ -46,19 +46,12 @@ class Confirmation extends Component {
   }
 
   handleClose = () => {
-    this.setState({
-      is_confirm: false
-    });
+    this.props.handleClose();
   };
 
   handleCloseConfirm = () => {
     //this.getMembers();
-    this.setState({
-      alertVariant: 'success',
-      alertMessage: 'Integrante Actualizado.'
-    });
-    this.handleClose();
-    showAlert(this.state.alertId);
+    this.props.handleCloseConfirm();
   };
 
   /**
@@ -69,17 +62,16 @@ class Confirmation extends Component {
       
     const headers = getHeader();
     const data = {
-      email_instance: this.state.userInfo.email,
+      email_instance: values.email,
       user: {
         first_name: values.firstName,
         last_name: values.lastName,
         user_id: values.userId,
         password: values.pass1,
         
-      },
-      is_confirm: this.state.is_confirm
+      }
     };
-
+    console.log(JSON.stringify(data));
     this.setState({ progress: true }, () =>
       axios
         .post(URL + '/users/confirm/', data, { headers: headers })
@@ -149,7 +141,7 @@ class Confirmation extends Component {
           initialValues={{
             firstName:toCapitalizer(this.props.userInfo.first_name),
             lastName:toCapitalizer(this.props.userInfo.last_name),
-            email: this.props.email,
+            email: this.props.userInfo.email,
             confEmail: this.props.email,
             userId:this.props.userInfo.user_id,
             myCenter: 'center '/*this.props.userInfo[0].my_center*/,
