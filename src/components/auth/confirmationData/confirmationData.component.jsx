@@ -58,46 +58,19 @@ class Confirmation extends Component {
    * @description Se encarga de guardar los datos modificados del usuario
    */
   updateUserInfo = async values => {
-    /*  
+      
     const headers = getHeader();
-    const data = {
-      email_instance: this.props.email,
+    /*const data = {
       user: {
         first_name: values.firstName,
         last_name: values.lastName,
-        email: values.email,
-        my_center: values.myCenter,
-        my_department: values.myDepartment
+        user_id: values.userId,
+        password: values.pass1,
+        
       },
-      permissions_add: [],
-      permissions_remove: []
+      is_confirm: this.state.is_confirm
     };
-    if (values.createCenters === true) {
-      data.permissions_add.push(
-        { name: 'add_center' },
-        { name: 'change_center' },
-        { name: 'view_center' }
-      );
-    } else {
-      data.permissions_remove.push(
-        { name: 'add_center' },
-        { name: 'change_center' },
-        { name: 'view_center' }
-      );
-    }
-    if (values.createUsers === true) {
-      data.permissions_add.push(
-        { name: 'add_user' },
-        { name: 'change_user' },
-        { name: 'view_user' }
-      );
-    } else {
-      data.permissions_remove.push(
-        { name: 'add_user' },
-        { name: 'change_user' },
-        { name: 'view_user' }
-      );
-    }
+
     this.setState({ progress: true }, () =>
       axios
         .put(URL + '/users/', data, { headers: headers })
@@ -143,7 +116,10 @@ class Confirmation extends Component {
     */
     return false;
   };
-
+  componentWillMount() {
+    console.log('___________________')
+  console.log(this.props)
+  }
   render() {
     return (
       <section>
@@ -162,10 +138,11 @@ class Confirmation extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            firstName:'JOgre' /*toCapitalizer(this.props.userInfo[0].first_name)*/,
-            lastName:'Rios' /* toCapitalizer(this.props.userInfo[0].last_name)*/,
+            firstName:''/*toCapitalizer(this.props.userInfo[0].first_name)*/,
+            lastName:this.props.userInfo.last_name,
             email: this.props.email,
             confEmail: this.props.email,
+            userId:4/*this.props.userInfo[0].id*/,
             myCenter: 'center '/*this.props.userInfo[0].my_center*/,
             myDepartment:'Departament' /*this.props.userInfo[0].my_department*/,
             createCenters: this.isPermissionsCenters(),

@@ -28,6 +28,7 @@ class UserDashboard extends Component {
     this.state = {
       isLogged: true,
       isNew: true,
+      userInfo:[],
       isVisibleConfirm: true
     };
   }
@@ -56,7 +57,21 @@ class UserDashboard extends Component {
         }
       });
   };
-
+  getUserToConfirm = async () => {
+    var email=JSON.parse(localStorage.getItem("email"));
+    const headers = getHeader();
+    await axios
+      .get(
+        URL + '/users/user/' + email + '/',
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ userInfo: response.data }, () => {
+          this.getUsersInfo();
+        });
+      });
+  };
   onLogout = () => {
     const headers = getHeader();
     axios.delete(URL + '/users/logout/', { headers: headers }).then(() => {
@@ -71,13 +86,18 @@ class UserDashboard extends Component {
     });
     this.onLogout()
   };
+  getUsersInfo(){
+
+  }
 
   componentWillMount() {
     this.vertification();
-    console.log(localStorage)
+    this.getUserToConfirm();
+    //console.log(localStorage)
   }
 
   render() {
+    console.log(this.state.userInfo)
     if (!this.state.isLogged) {
       return <Redirect to="/" />;
     }
@@ -93,7 +113,7 @@ class UserDashboard extends Component {
             handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
             email={'this.state.emailToRead'}
-            userInfo={'this.state.userInfo'}
+            userInfo={this.state.userInfo[0]}
             userPermissions={'this.state.userPermissions'}
           />
         </Modal>
