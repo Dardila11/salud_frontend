@@ -27,6 +27,9 @@ class UserDashboard extends Component {
       isLogged: true,
       isNew: true,
       userInfo: [],
+      alertVariant: '',
+      alertMessage: '',
+      alertId: 'alert-listUsers',
       isVisibleConfirm: false
     };
   }
@@ -127,6 +130,11 @@ class UserDashboard extends Component {
             userPermissions={this.state.userPermissions}
           />
         </Modal>
+        <AlertComponent
+          alertId={this.state.alertId}
+          alertVariant={this.state.alertVariant}
+          alertMessage={this.state.alertMessage}
+        />
       </section>
     );
   }
