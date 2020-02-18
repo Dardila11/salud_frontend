@@ -422,7 +422,7 @@ class ListMembers extends Component {
           show={this.state.isVisibleUpdate} onHide={this.handleClose}>
           {/* Eliminar Usuario */}
           <UpdateMember
-            handleCloseView={this.handleCloseView}
+            handleCloseUpdate={this.handleCloseUpdate}
             handleClose={this.handleClose}
             id={this.state.idProjectMemberToEdit}
             memberInfo={this.state.memberInfo[0]}

@@ -1,3 +1,14 @@
+
+
+import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import Loader from 'react-loader-spinner';
+import ReactTable from 'react-table';
+import matchSorter from 'match-sorter';
+
+import { getHeader, showAlert } from '../../utils/utils';
+import AlertComponent from '../../layout/alert/alert.component';
+
 import React, { Component } from "react";
 import NavBar from "../../layout/navbar/navbar.component";
 import { URL } from "../../utils/URLSever";
@@ -5,6 +16,7 @@ import { closeSession } from "../../utils/handleLocalStorage";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import NavUser from "./navUser/navUser.component";
+import Confirmation from "../../auth/confirmationData/confirmationData.component";
 // import { vertificationToken } from "../../utils/verificationToken";
 
 class UserDashboard extends Component {
@@ -15,7 +27,8 @@ class UserDashboard extends Component {
     super(props);
     this.state = {
       isLogged: true,
-      isNew: true
+      isNew: true,
+      isVisibleConfirm: true
     };
   }
 
@@ -44,8 +57,24 @@ class UserDashboard extends Component {
       });
   };
 
+  onLogout = () => {
+    const headers = getHeader();
+    axios.delete(URL + '/users/logout/', { headers: headers }).then(() => {
+      closeSession();
+      this.setState({ isLogged: false });
+    });
+  };
+  handleClose = () => {
+    this.setState({
+      isVisibleConfirm: false
+      
+    });
+    this.onLogout()
+  };
+
   componentWillMount() {
     this.vertification();
+    console.log(localStorage)
   }
 
   render() {
@@ -56,6 +85,18 @@ class UserDashboard extends Component {
       <section onMouseDown={this.vertification}>
         <NavBar />
         <NavUser />
+        <Modal show={this.state.isVisibleConfirm} onHide={this.handleClose}>
+          {/* Actualizar Usuario */}
+          <Confirmation
+            infoDepartaments={1}
+            infoCenters={1}
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            email={'this.state.emailToRead'}
+            userInfo={'this.state.userInfo'}
+            userPermissions={'this.state.userPermissions'}
+          />
+        </Modal>
       </section>
     );
   }

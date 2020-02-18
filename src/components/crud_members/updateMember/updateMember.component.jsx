@@ -48,6 +48,7 @@ class UpdateMember extends Component {
       alertId: 'alert-add-member-to-project',
       projectPermissions: [
         {
+          old:false,
           num: 0,
           id: 'checkParametrizacion',
           name: 'change_parameterization',
@@ -56,6 +57,7 @@ class UpdateMember extends Component {
           checked: false
         },
         {
+          old:false,
           num: 0,
           id: 'checkCuestionarios',
           name: 'change_questionnaire',
@@ -64,6 +66,7 @@ class UpdateMember extends Component {
           checked: false
         },
         {
+          old:false,
           num: 0,
           id: 'checkAnalisis',
           name: 'change_analysis',
@@ -74,6 +77,7 @@ class UpdateMember extends Component {
       ],
       registryPermissions: [
         {
+          old:false,
           id: 'checkControl',
           name: 'change_control',
           key: 'change_control',
@@ -81,6 +85,7 @@ class UpdateMember extends Component {
           checked: false
         },
         {
+          old:false,
           id: 'checkRegistro',
           name: 'change_registry',
           key: 'change_registry',
@@ -88,6 +93,7 @@ class UpdateMember extends Component {
           checked: false
         },
         {
+          old:false,
           id: 'checkVisor',
           name: 'change_observer',
           key: 'change_observer',
@@ -97,6 +103,7 @@ class UpdateMember extends Component {
       ],
       componentPermissions: [
         {
+          old:false,
           id: 'checkIntegrante',
           name: 'change_member',
           key: 'change_member',
@@ -104,6 +111,7 @@ class UpdateMember extends Component {
           checked: false
         },
         {
+          old:false,
           id: 'checkCentros',
           name: 'change_centerStudy',
           key: 'change_centerStudy',
@@ -119,50 +127,45 @@ class UpdateMember extends Component {
   };
 
   handleCloseUpdateMember = () => {
-    this.props.handleCloseUpdateMember();
+    this.props.handleCloseUpdate();
   };
   removeMemberPermissions = () => {
     // recorremos todos los permisos
     //console.log(this.state.memberPermissions)
     var permissionToRemove = [];
     var exist=false
-    for (let i = 0; i < this.state.memberPermissions.length; i++) {
-      for (let j = 0; j < this.state.projectPermissions.length; j++)
-        if (
-          this.state.memberPermissions[i].permission_id__codename ==
-          this.state.projectPermissions[j].name
-        ) {
-              if(this.state.projectPermissions[j].checked)
-              {
-                exist=true;
-              }
-        }
-      for (let j = 0; j < this.state.componentPermissions.length; j++)
-        if (
-          this.state.memberPermissions[i].permission_id__codename ==
-          this.state.componentPermissions[j].name
-        ) {
-              if(this.state.componentPermissions[j].checked)
-              {
-                exist=true;
-              }
-        }
-      for (let j = 0; j < this.state.registryPermissions.length; j++)
-        if (
-          this.state.memberPermissions[i].permission_id__codename ==
-          this.state.registryPermissions[j].name
-        ) {
-          if(this.state.registryPermissions[j].checked)
-          {
-            exist=true;
-          }
-        }
-        if(!exist)
+
+    for (let i = 0; i < this.state.projectPermissions.length; i++) {
+      if(this.state.projectPermissions[i].old)
+      {
+        if(!this.state.projectPermissions[i].checked)
         {
-          permissionToRemove.push({ name: this.state.memberPermissions[i].permission_id__codename});
-          exist=false
+          permissionToRemove.push({ name: this.state.projectPermissions[i].name });
         }
       }
+
+    }
+    for (let i = 0; i < this.state.registryPermissions.length; i++) {
+      if(this.state.registryPermissions[i].old)
+      {
+        if(!this.state.registryPermissions[i].checked)
+        {
+          permissionToRemove.push({ name: this.state.registryPermissions[i].name });
+        }
+      }
+
+    }
+    for (let i = 0; i < this.state.componentPermissions.length; i++) {
+      if(this.state.componentPermissions[i].old)
+      {
+        if(!this.state.componentPermissions[i].checked)
+        {
+          permissionToRemove.push({ name: this.state.componentPermissions[i].name });
+        }
+      }
+
+    }
+
 
       console.log('______________')        
     console.log(permissionToRemove)
@@ -171,24 +174,27 @@ class UpdateMember extends Component {
   saveMemberPermissions = role => {
     // recorremos todos los permisos
     var permissionToSave = [];
+
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
-      var permission = [...this.state.projectPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
+      if (this.state.projectPermissions[i].checked) {
+        if(!this.state.projectPermissions[i].old)
+          permissionToSave.push({ name: this.state.projectPermissions[i].name });
       }
     }
+
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
-      var permission = [...this.state.registryPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
+      if (this.state.registryPermissions[i].checked) {
+        if(!this.state.registryPermissions[i].old)
+          permissionToSave.push({ name: this.state.registryPermissions[i].name });
       }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
-      var permission = [...this.state.componentPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
+      if (this.state.componentPermissions[i].checked) {
+        if(!this.state.componentPermissions[i].old)
+          permissionToSave.push({ name: this.state.componentPermissions[i].name });
       }
     }
+
 
     console.log(permissionToSave);
 
@@ -208,7 +214,11 @@ class UpdateMember extends Component {
         study_id: this.props.study_id,
         role: values.RolInProject,
         date_maxAccess: moment(values.limitAccessDate).format('YYYY-MM-DD'),
+<<<<<<< HEAD
         is_manager: this.props.memberInfo.is_manager
+=======
+        is_manager: values.RolInProject
+>>>>>>> ebcce6520bab0c298c5d9057c6da2552e16bb86b
       },
       permissions_add: this.saveMemberPermissions(values.RolInProject),
       permissions_remove:this.removeMemberPermissions()
@@ -312,6 +322,7 @@ class UpdateMember extends Component {
           this.state.projectPermissions[j].name
         ) {
           this.state.projectPermissions[j].checked = true;
+          this.state.projectPermissions[j].old = true;
         }
       for (let j = 0; j < this.state.componentPermissions.length; j++)
         if (
@@ -319,6 +330,7 @@ class UpdateMember extends Component {
           this.state.componentPermissions[j].name
         ) {
           this.state.componentPermissions[j].checked = true;
+          this.state.componentPermissions[j].old = true;
         }
       for (let j = 0; j < this.state.registryPermissions.length; j++)
         if (
@@ -326,6 +338,7 @@ class UpdateMember extends Component {
           this.state.registryPermissions[j].name
         ) {
           this.state.registryPermissions[j].checked = true;
+          this.state.registryPermissions[j].old = true;
         }
 
     }
@@ -363,7 +376,7 @@ componentDidMount(){
               " " +
               this.state.memberInfo.user_id__last_name,
               limitAccessDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
-            endDate: getDateFormat(new Date()),
+            endDate:getDateFormat(this.state.memberInfo.date_maxAccess),
             RolInProject: this.props.memberInfo.role,
             permissions: []
           }}
