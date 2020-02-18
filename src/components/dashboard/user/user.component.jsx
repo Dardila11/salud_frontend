@@ -27,7 +27,7 @@ class UserDashboard extends Component {
       isLogged: true,
       isNew: true,
       userInfo: [],
-      isVisibleConfirm: true
+      isVisibleConfirm: false
     };
   }
 
@@ -55,16 +55,17 @@ class UserDashboard extends Component {
         }
       });
   };
-  getUserToConfirm = async () => {
+  getUserToConfirm = () => {
     var email = JSON.parse(localStorage.getItem('email'));
     const headers = getHeader();
-    await axios
+    axios
       .get(
         URL + '/users/user/' + email + '/',
         { headers: headers },
         { cancelToken: this.source.token }
       )
       .then(response => {
+        console.log(response)
         this.setState({ userInfo: response.data }, () => {
           this.getUsersInfo();
         });
@@ -98,6 +99,7 @@ class UserDashboard extends Component {
   }
 
   render() {
+    
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
     }
