@@ -238,6 +238,18 @@ class CreateProjectFormik extends Component {
                         isValid={touched.startDate && !errors.startDate}
                         isInvalid={!!errors.startDate}
                       />
+                      <Form.Control
+                        type='text'
+                        name='startDate'
+                        hidden
+                        value={values.startDate}
+                        onChange={handleChange}
+                        isValid={
+                          touched.startDate &&
+                          !errors.startDate
+                        }
+                        isInvalid={!!errors.endDate}
+                      />
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
                       </Form.Control.Feedback>
@@ -249,12 +261,25 @@ class CreateProjectFormik extends Component {
                         selected={values.endDate}
                         dateFormat='dd-MM-yyyy'
                         yearDropdownItemNumber={5}
+                        minDate={values.startDate}
                         showYearDropdown
                         locale='es'
                         className='form-control'
                         name='registerDate'
                         onChange={date => setFieldValue('endDate', date)}
                         isValid={touched.endDate && !errors.endDate}
+                        isInvalid={!!errors.endDate}
+                      />
+                      <Form.Control
+                        type='text'
+                        name='endDate'
+                        hidden
+                        value={values.endDate}
+                        onChange={handleChange}
+                        isValid={
+                          touched.endDate &&
+                          !errors.endDate
+                        }
                         isInvalid={!!errors.endDate}
                       />
                       <Form.Control.Feedback type='invalid'>

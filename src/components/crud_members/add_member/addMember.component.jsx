@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import { URL } from '../../utils/URLSever';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
 import matchSorter from 'match-sorter';
@@ -29,6 +30,11 @@ class AddMember extends Component {
     super(props);
     this.state = {
       value: '',
+      permissionAllow:[                       
+                       [1,1,1,1,1,0,1,1],
+                       [0,0,1,0,1,1,0,0],
+                       [0,0,0,0,1,0,0,0]
+                      ],
       technicianPermissions: ['change_registry'],
       investigatorPermissions: [
         'change_analysis',
@@ -122,18 +128,21 @@ class AddMember extends Component {
     var permissionToSave = [];
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       const permission = [...this.state.projectPermissions];
-      if (permission[i].checked) {
+      if(this.state.permissionAllow[role-1][i]==1)
+           if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       const permission = [...this.state.registryPermissions];
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
-      }
+      if(this.state.permissionAllow[role-1][i+3]==1)
+        if (permission[i].checked) {
+          permissionToSave.push({ name: permission[i].name });
+        }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       const permission = [...this.state.componentPermissions];
+      if(this.state.permissionAllow[role-1][i+6]==1)
       if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
@@ -184,23 +193,26 @@ class AddMember extends Component {
   handleResetCheckbox = () => {
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       const updateCheck = [...this.state.projectPermissions];
-      if (updateCheck[i].checked) {
-        updateCheck[i].checked = false;
+      if (!updateCheck[i].checked) {
+        updateCheck[i].checked = true;
       }
+
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       const updateCheck = [...this.state.registryPermissions];
-      if (updateCheck[i].checked) {
-        updateCheck[i].checked = false;
+      if (!updateCheck[i].checked) {
+        updateCheck[i].checked = true;
       }
+
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       const updateCheck = [...this.state.componentPermissions];
-      if (updateCheck[i].checked) {
-        updateCheck[i].checked = false;
+      if (!updateCheck[i].checked) {
+        updateCheck[i].checked = true;
       }
+
       this.setState({ updateCheck });
     }
   };
@@ -253,7 +265,8 @@ class AddMember extends Component {
           initialValues={{
             renderTech: false,
             idMember: '',
-            limitAccessDate: new Date(),
+            limitAccessDate:'',
+            selectAccesDate: new Date(),
             RolInProject: -1,
             permissions: []
           }}
@@ -329,12 +342,24 @@ class AddMember extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
                       <Form.Label>Fecha limite de acceso </Form.Label>
-                      <Form.Control
-                        type='Date'
-                        value={values.limitAccessDate}
-                        onChange={handleChange}
+                      <DatePicker
+                        placeholderText='dd-mm-aaaa'
+                        selected={values.limitAccessDate}
+                        dateFormat='dd-MM-yyyy'
+                        yearDropdownItemNumber={5}
+                        showYearDropdown
                         locale='es'
                         className='form-control'
+                        name='limitAccessDate'
+                        onChange={date => setFieldValue('limitAccessDate', date)}
+                        isValid={touched.limitAccessDate && !errors.limitAccessDate}
+                        isInvalid={!!errors.limitAccessDate}
+                      />
+                      <Form.Control
+                        type='text'
+                        hidden
+                        value={values.limitAccessDate}
+                        onChange={handleChange}
                         name='limitAccessDate'
                         isValid={
                           touched.limitAccessDate && !errors.limitAccessDate
@@ -374,9 +399,9 @@ class AddMember extends Component {
                     <Form.Label> Permisos: </Form.Label>
                   </Form.Row>
                   <Form.Row
-                    className={values.RolInProject !== -1 ? '' : 'hidden'}>
+                    className={values.RolInProject != -1 ? '' : 'hidden'}>
                     <Form.Group
-                      className={values.RolInProject !== 3 ? '' : 'hidden'}
+                      className={values.RolInProject != 3 ? '' : 'hidden'}
                       as={Col}
                       md='3'>
                       <Form.Label>Proyecto: </Form.Label>
@@ -386,7 +411,7 @@ class AddMember extends Component {
 
                       {this.state.projectPermissions.map(permission => {
                         var check = false;
-                        switch (values.RolInProject) {
+                        switch (''+values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             /**
@@ -467,7 +492,7 @@ class AddMember extends Component {
                       <Form.Label>Registro: </Form.Label>
                       {this.state.registryPermissions.map(permission => {
                         var check = false;
-                        switch (values.RolInProject) {
+                        switch (''+values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             this.state.managerPermissions.filter(
@@ -520,7 +545,7 @@ class AddMember extends Component {
                     </Form.Group>
                     <Form.Group
                       className={
-                        values.RolInProject === 3 || values.RolInProject === 2
+                        values.RolInProject == 3 || values.RolInProject == 2
                           ? 'hidden'
                           : ''
                       }
@@ -529,7 +554,7 @@ class AddMember extends Component {
                       <Form.Label>Componentes: </Form.Label>
                       {this.state.componentPermissions.map(permission => {
                         var check = false;
-                        switch (values.RolInProject) {
+                        switch (''+values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             this.state.managerPermissions.filter(
@@ -543,7 +568,7 @@ class AddMember extends Component {
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission === permission.name) {
+                                if (invPermission == permission.name) {
                                   check = true;
                                 }
                               }
@@ -552,7 +577,7 @@ class AddMember extends Component {
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission === permission.name) {
+                                if (techPermission == permission.name) {
                                   check = true;
                                 }
                               }
