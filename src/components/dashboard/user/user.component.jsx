@@ -111,11 +111,6 @@ class UserDashboard extends Component {
   }
 
   render() { 
-<<<<<<< HEAD
-
-=======
-    //console.log(this.state.userInfo[0])
->>>>>>> 08006006911d82a825803958bda890b9f9d87d48
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
     }

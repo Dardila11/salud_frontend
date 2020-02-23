@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
 import matchSorter from 'match-sorter';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import { getDateFormat } from '../../utils/utils';
 import { getHeader } from "../../utils/utils";
 var moment = require('moment');
@@ -34,6 +35,11 @@ class UpdateMember extends Component {
       nombreCompleto: "",
       memberInfo: props.memberInfo,
       memberPermissions: [],
+      permissionAllow:[                       
+        [1,1,1,1,1,0,1,1],
+        [0,0,1,0,1,1,0,0],
+        [0,0,0,0,1,0,0,0]
+       ],
       technicianPermissions: ['change_registry'],
       investigatorPermissions: [
         'change_analysis',
@@ -129,7 +135,7 @@ class UpdateMember extends Component {
   handleCloseUpdateMember = () => {
     this.props.handleCloseUpdate();
   };
-  removeMemberPermissions = () => {
+  removeMemberPermissions = role => {
     // recorremos todos los permisos
     //console.log(this.state.memberPermissions)
     var permissionToRemove = [];
@@ -138,7 +144,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       if(this.state.projectPermissions[i].old)
       {
-        if(!this.state.projectPermissions[i].checked)
+        if(!this.state.projectPermissions[i].checked ||  this.state.permissionAllow[role-1][i]==0)
         {
           permissionToRemove.push({ name: this.state.projectPermissions[i].name });
         }
@@ -148,7 +154,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       if(this.state.registryPermissions[i].old)
       {
-        if(!this.state.registryPermissions[i].checked)
+        if(!this.state.registryPermissions[i].checked ||  this.state.permissionAllow[role-1][i+3]==0)
         {
           permissionToRemove.push({ name: this.state.registryPermissions[i].name });
         }
@@ -158,7 +164,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       if(this.state.componentPermissions[i].old)
       {
-        if(!this.state.componentPermissions[i].checked)
+        if(!this.state.componentPermissions[i].checked ||  this.state.permissionAllow[role-1][i+6]==0)
         {
           permissionToRemove.push({ name: this.state.componentPermissions[i].name });
         }
@@ -178,6 +184,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       if (this.state.projectPermissions[i].checked) {
         if(!this.state.projectPermissions[i].old)
+        if(this.state.permissionAllow[role-1][i]==1)
           permissionToSave.push({ name: this.state.projectPermissions[i].name });
       }
     }
@@ -185,12 +192,14 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       if (this.state.registryPermissions[i].checked) {
         if(!this.state.registryPermissions[i].old)
+        if(this.state.permissionAllow[role-1][i+3]==1)
           permissionToSave.push({ name: this.state.registryPermissions[i].name });
       }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       if (this.state.componentPermissions[i].checked) {
         if(!this.state.componentPermissions[i].old)
+        if(this.state.permissionAllow[role-1][i+6]==1)
           permissionToSave.push({ name: this.state.componentPermissions[i].name });
       }
     }
@@ -217,7 +226,7 @@ class UpdateMember extends Component {
         is_manager: this.props.memberInfo.is_manager
       },
       permissions_add: this.saveMemberPermissions(values.RolInProject),
-      permissions_remove:this.removeMemberPermissions()
+      permissions_remove:this.removeMemberPermissions(values.RolInProject)
     };
     console.log(JSON.stringify(json));
     this.setState({ progress: true }, () => {
@@ -243,22 +252,22 @@ class UpdateMember extends Component {
   handleResetCheckbox = () => {
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       var updateCheck = [...this.state.projectPermissions];
-      if (updateCheck[i].checked) {
-        updateCheck[i].checked = false;
+      if (!updateCheck[i].checked) {
+        updateCheck[i].checked = true;
       }
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       var updateCheck = [...this.state.registryPermissions];
-      if (updateCheck[i].checked) {
-        updateCheck[i].checked = false;
+      if (!updateCheck[i].checked) {
+        updateCheck[i].checked = true;
       }
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       var updateCheck = [...this.state.componentPermissions];
-      if (updateCheck[i].checked) {
-        updateCheck[i].checked = false;
+      if (!updateCheck[i].checked) {
+        updateCheck[i].checked = true;
       }
       this.setState({ updateCheck });
     }
@@ -371,7 +380,7 @@ componentDidMount(){
               this.state.memberInfo.user_id__first_name +
               " " +
               this.state.memberInfo.user_id__last_name,
-              limitAccessDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
+              limitAccessDate: new Date(this.state.memberInfo.date_maxAccess),
             endDate:getDateFormat(this.state.memberInfo.date_maxAccess),
             RolInProject: this.props.memberInfo.role,
             permissions: []
@@ -401,12 +410,24 @@ componentDidMount(){
                   <Form.Row>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
                       <Form.Label>Fecha limite de acceso </Form.Label>
-                      <Form.Control
-                        type='Date'
-                        value={values.limitAccessDate}
-                        onChange={handleChange}
+                      <DatePicker
+                        placeholderText='dd-mm-aaaa'
+                        selected={values.limitAccessDate}
+                        dateFormat='dd-MM-yyyy'
+                        yearDropdownItemNumber={5}
+                        showYearDropdown
                         locale='es'
                         className='form-control'
+                        name='limitAccessDate'
+                        onChange={date => setFieldValue('limitAccessDate', date)}
+                        isValid={touched.limitAccessDate && !errors.limitAccessDate}
+                        isInvalid={!!errors.limitAccessDate}
+                      />
+                      <Form.Control
+                        type='text'
+                        hidden
+                        value={values.limitAccessDate}
+                        onChange={handleChange}
                         name='limitAccessDate'
                         isValid={
                           touched.limitAccessDate && !errors.limitAccessDate

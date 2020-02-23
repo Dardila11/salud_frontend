@@ -3,6 +3,7 @@ import axios from "axios";
 import { ProgressBar, Modal, Form, Col, Button } from "react-bootstrap";
 import { Formik } from "formik";
 import { URL } from "../../utils/URLSever";
+import DatePicker, { registerLocale } from 'react-datepicker';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import * as Utils from "../../utils/utils";
@@ -225,8 +226,8 @@ class viewMember extends Component {
               this.state.memberInfo.user_id__first_name +
               " " +
               this.state.memberInfo.user_id__last_name,
-            endDate: Utils.getDateFormat(this.state.memberInfo.date_maxAccess),
-            limitAccessDate: getDateFormat(new Date()),
+            endDate: this.state.memberInfo.date_maxAccess,
+            limitAccessDate:new Date(this.state.memberInfo.date_maxAccess),
             RolInProject: this.state.RolInProject,
             permissions: []
           }}
@@ -258,8 +259,16 @@ class viewMember extends Component {
                   <Form.Row>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
                       <Form.Label>Fecha limite de acceso </Form.Label>
+                      <DatePicker
+                        selected={values.limitAccessDate}
+                        dateFormat='dd-MM-yyyy'
+                        disabled
+                        locale='es'
+                        className='form-control'
+                        name='limitAccessDate'
+                      />
                       <Form.Control
-                        disabled={true}
+                        hidden={true}
                         type='Date'
                         value={values.limitAccessDate}
                         onChange={handleChange}

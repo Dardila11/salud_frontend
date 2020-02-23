@@ -112,7 +112,7 @@ class UpdateProjectFormik extends Component {
         console.log(error);
         this.setState({
           alertVariant: 'danger',
-          alertMessage: JSON.parse(error.request.response).detail
+          alertMessage: 'JSON.parse(error.request.response).detail'
         });
         Utils.showAlert(this.state.alertId);
       });
@@ -133,8 +133,10 @@ class UpdateProjectFormik extends Component {
             registerDate: new Date(
               this.props.projectInfo[0].fields.date_reg.substring(0, 10)
             ),
-            startDate: Utils.getDateFormat(this.props.projectInfo[0].fields.date_in_study),
-            endDate: Utils.getDateFormat(this.props.projectInfo[0].fields.date_trueaout_end),
+            startDate: new Date(
+              this.props.projectInfo[0].fields.date_in_study.substring(0, 10)
+            ),
+            endDate: new Date(this.props.projectInfo[0].fields.date_trueaout_end.substring(0, 10)),
             principalInvestigator: this.props.usersInfo.filter(
               value =>
                 value.userId === this.props.projectInfo[0].fields.principal_inv
@@ -215,14 +217,29 @@ class UpdateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha inicio </Form.Label>
-                      <Form.Control
-                        type='date'
-                        value={values.startDate}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        name='startDate'
+                      <DatePicker
+                        selected={values.startDate}
+                        dateFormat='dd-MM-yyyy'
+                        yearDropdownItemNumber={5}
+                        showYearDropdown
+                        locale='es'
+                        className='form-control'
+                        name='registerDate'
+                        onChange={date => setFieldValue('startDate', date)}
                         isValid={touched.startDate && !errors.startDate}
                         isInvalid={!!errors.startDate}
+                      />
+                      <Form.Control
+                        type='text'
+                        name='startDate'
+                        hidden
+                        value={values.startDate}
+                        onChange={handleChange}
+                        isValid={
+                          touched.startDate &&
+                          !errors.startDate
+                        }
+                        isInvalid={!!errors.endDate}
                       />
                       <Form.Control.Feedback type='invalid'>
                         {errors.startDate}
@@ -230,14 +247,30 @@ class UpdateProjectFormik extends Component {
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId'>
                       <Form.Label>Fecha finalización </Form.Label>
-                      <Form.Control
-                        type='Date'
-                        value={values.endDate}
-                        onChange={handleChange}
+                      <DatePicker
+                        placeholderText='dd-mm-aaaa'
+                        selected={values.endDate}
+                        dateFormat='dd-MM-yyyy'
+                        yearDropdownItemNumber={5}
+                        minDate={values.startDate}
+                        showYearDropdown
                         locale='es'
                         className='form-control'
-                        name='endDate'
+                        name='registerDate'
+                        onChange={date => setFieldValue('endDate', date)}
                         isValid={touched.endDate && !errors.endDate}
+                        isInvalid={!!errors.endDate}
+                      />
+                      <Form.Control
+                        type='text'
+                        name='endDate'
+                        hidden
+                        value={values.endDate}
+                        onChange={handleChange}
+                        isValid={
+                          touched.endDate &&
+                          !errors.endDate
+                        }
                         isInvalid={!!errors.endDate}
                       />
                       <Form.Control.Feedback type='invalid'>
