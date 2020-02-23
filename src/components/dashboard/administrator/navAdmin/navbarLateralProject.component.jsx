@@ -9,6 +9,10 @@ import '../../../../vendor/fontawesome-free/css/all.min.css';
 
 class NavBarLateralProject extends Component {
   render() {
+    const r = /members+/
+    const path = window.location.pathname;
+    console.log(path)
+    const isActive = r.test(path) ? 0 : 1;
     return (
       <ul
         className='navbar-nav bg-gradient-primary sidebar sidebar-dark accordion'
@@ -30,18 +34,18 @@ class NavBarLateralProject extends Component {
         </li>
         <hr className='sidebar-divider'></hr>
         <div className='sidebar-heading'>Funciones</div>
-        <li className='nav-item'>
-          <Link role='button' className='nav-link' to={'/admin/users/'}>
+        <li className={isActive == 0 ? 'active nav-item' : 'nav-item'}>
+          <Link role='button' className='nav-link' to={'/admin/studies/' + path.split('/')[4]}>
             <i className='fas fa-fw fa-users-cog'></i>
-            <span>Componentess</span>
+            <span>Componentes</span>
           </Link>
         </li>
-        <li className='nav-item'>
-          <Link role='button' className='nav-link' to={'/admin/studies/'}>
+        {/* <li className={isActive == 1 ? 'active nav-item' : 'nav-item'}>
+          <Link role='button' className='nav-link' to={path}>
             <i className='fas fa-fw fa-notes-medical'></i>
             <span>Estado</span>
           </Link>
-        </li>
+        </li> */}
         <hr className='sidebar-divider'></hr>
         <div className='text-center d-none d-md-inline'>
           <button
