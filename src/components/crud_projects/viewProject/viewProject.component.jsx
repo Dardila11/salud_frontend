@@ -114,10 +114,10 @@ export default class ViewProject extends Component {
       study_id: this.props.project,
       study: {
         is_studyTest: values.is_test,
-        type_study: values.type_study,
+        type_study: values.typeStudy,
         num_participants: values.numParticipants,
         trazability: values.is_traceability,
-        double_in: values.double_in,
+        double_in: values.is_doubleIn,
         control_double: values.is_duplicity,
         autonum: values.autoNum,
         is_random: values.is_random,
@@ -165,7 +165,7 @@ export default class ViewProject extends Component {
             className='mh'
           />
         ) : studyInfo.length > 0 ? (
-          <Tab.Container defaultActiveKey='#general'>
+          <Tab.Container defaultActiveKey='#general' unmountOnExit={true}>
             <Row>
               <ListGroup horizontal>
                 <ListGroup.Item
