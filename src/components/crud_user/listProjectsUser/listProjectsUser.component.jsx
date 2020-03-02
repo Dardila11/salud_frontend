@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
@@ -102,6 +102,8 @@ class ListProjectsUser extends Component {
                 return 'Diseño';
               case 3:
                 return 'Finalizado';
+              default:
+                return ''
             }
           },
           sortable: false,

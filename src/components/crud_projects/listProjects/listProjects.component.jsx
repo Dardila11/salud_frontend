@@ -106,6 +106,8 @@ class ListProjects extends Component {
                 return 'Diseño';
               case 3:
                 return 'Finalizado';
+              default:
+                return '';
             }
           },
           sortable: false,

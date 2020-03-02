@@ -3,15 +3,9 @@ import axios from "axios";
 import { ProgressBar, Modal, Form, Col, Button } from "react-bootstrap";
 import { Formik } from "formik";
 import { URL } from "../../utils/URLSever";
-import DatePicker, { registerLocale } from 'react-datepicker';
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import * as Utils from "../../utils/utils";
+import DatePicker from 'react-datepicker';
 import * as Yup from "yup";
-import matchSorter from "match-sorter";
-import { getDateFormat } from "../../utils/utils";
 import { getHeader } from "../../utils/utils";
-var moment = require("moment");
 
 /**
  * @var schema Crear un objecto Yup el cual se encarga de todas las
@@ -135,26 +129,24 @@ class viewMember extends Component {
   };
 
   saveMemberPermissions = () => {
-    // recorremos todos los permisos
-    //console.log(this.state.memberPermissions)
     for (let i = 0; i < this.state.memberPermissions.length; i++) {
       for (let j = 0; j < this.state.projectPermissions.length; j++)
         if (
-          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.memberPermissions[i].permission_id__codename ===
           this.state.projectPermissions[j].name
         ) {
           this.state.projectPermissions[j].checked = true;
         }
       for (let j = 0; j < this.state.componentPermissions.length; j++)
         if (
-          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.memberPermissions[i].permission_id__codename ===
           this.state.componentPermissions[j].name
         ) {
           this.state.componentPermissions[j].checked = true;
         }
       for (let j = 0; j < this.state.registryPermissions.length; j++)
         if (
-          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.memberPermissions[i].permission_id__codename ===
           this.state.registryPermissions[j].name
         ) {
           this.state.registryPermissions[j].checked = true;
@@ -312,9 +304,9 @@ class viewMember extends Component {
                       <Form.Label> Permisos: </Form.Label> 
                   </Form.Row>
                   <Form.Row
-                    className={values.RolInProject != -1 ? '' : 'hidden'}>
+                    className={values.RolInProject !== -1 ? '' : 'hidden'}>
                     <Form.Group
-                      className={values.RolInProject != 3 ? '' : 'hidden'}
+                      className={values.RolInProject !== 3 ? '' : 'hidden'}
                       as={Col}
                       md='3'>
 
@@ -336,7 +328,7 @@ class viewMember extends Component {
                              */
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -350,7 +342,7 @@ class viewMember extends Component {
                              */
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -370,7 +362,7 @@ class viewMember extends Component {
                              */
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -413,7 +405,7 @@ class viewMember extends Component {
                             check = true;
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -422,7 +414,7 @@ class viewMember extends Component {
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -431,7 +423,7 @@ class viewMember extends Component {
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -462,7 +454,7 @@ class viewMember extends Component {
                     </Form.Group>
                     <Form.Group
                       className={
-                        values.RolInProject == 3 || values.RolInProject == 2
+                        values.RolInProject === 3 || values.RolInProject === 2
                           ? 'hidden'
                           : ''
                       }
@@ -476,7 +468,7 @@ class viewMember extends Component {
                             check = true;
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -485,7 +477,7 @@ class viewMember extends Component {
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -494,7 +486,7 @@ class viewMember extends Component {
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }

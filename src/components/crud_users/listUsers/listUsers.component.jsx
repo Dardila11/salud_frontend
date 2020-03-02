@@ -321,7 +321,7 @@ class ListUsers extends Component {
   viewCentersInfo = () => {
     var optionsCentersArray = [];
     for (let index = 0; index < this.state.infoCenters.length; index++) {
-      var name = this.state.infoCenters[index].fields.name;
+      var name = this.state.infoCenters[index].name;
       var pk = this.state.infoCenters[index].pk;
       optionsCentersArray.push({ myPk: pk, myName: name });
     }

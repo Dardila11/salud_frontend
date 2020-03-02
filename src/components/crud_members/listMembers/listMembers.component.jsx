@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Link } from 'react-router-dom';
+
 import { Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Loader from 'react-loader-spinner';
 import matchSorter from 'match-sorter';
@@ -105,6 +105,8 @@ class ListMembers extends Component {
                 return 'Investigador';
               case 3:
                 return 'Tecnico';
+              default:
+                return ''
             }
           },
           sortable: false,
@@ -155,7 +157,7 @@ class ListMembers extends Component {
                   delay={{ show: 250, hide: 100 }}
                   overlay={<Tooltip>Detalles</Tooltip>}>
                   <Button
-                    className='view'
+                    className='view ml-1'
                     variant='outline-primary'
                     onClick={() => {
                       this.viewRow(props.original.id);
@@ -277,12 +279,12 @@ class ListMembers extends Component {
       .then(response => {
         this.setState({ memberInfo: response.data }, () => {
           console.log(this.typeModal)
-          if (this.typeModal==1) {
+          if (this.typeModal===1) {
             this.handleOpenView();
-          } else if (this.typeModal==2) {
+          } else if (this.typeModal===2) {
             this.handleOpenUpdate();
           }
-          else if (this.typeModal==3) {
+          else if (this.typeModal===3) {
             this.handleOpenDelete();
           }
         });
@@ -347,7 +349,7 @@ class ListMembers extends Component {
               incluido=true
       }
       
-      if(incluido==false)
+      if(!incluido)
           usersInfoArray.push({
             userEmail: email,
             userName: firstName + ' ' + lastName,
@@ -361,14 +363,14 @@ class ListMembers extends Component {
   render() {
     return (
       <section>
-        <h1 className='h3 mb-2 text-gray-800'>Lista de Integrantes</h1>
+        <h1 className='h3 mb-2 text-gray-800'>Lista de integrantes</h1>
         <button
           className='btn btn-primary btn-icon-split p-0 mb-2'
           onClick={this.handleOpenCreate}>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
-          <span className='text text-white'>Agregar Integrante</span>
+          <span className='text text-white'>Agregar integrante</span>
         </button>
         {this.state.loading ? (
           <ReactTable

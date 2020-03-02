@@ -1,21 +1,15 @@
-import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import Loader from 'react-loader-spinner';
-import ReactTable from 'react-table';
-import matchSorter from 'match-sorter';
+import { Modal } from 'react-bootstrap';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import AlertComponent from '../../layout/alert/alert.component';
 
 import React, { Component } from 'react';
-import NavBar from '../../layout/navbar/navbar.component';
 import { URL } from '../../utils/URLSever';
 import { closeSession } from '../../utils/handleLocalStorage';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
-import NavUser from './navUser/navUser.component';
 import Confirmation from '../../auth/confirmationData/confirmationData.component';
-import ListProjectsUser from '../../crud_user/listProjectsUser/listProjectsUser.component'
+import ListProjectsUser from '../../crud_user/listProjectsUser/listProjectsUser.component';
 // import { vertificationToken } from "../../utils/verificationToken";
 
 class UserDashboard extends Component {
@@ -69,7 +63,7 @@ class UserDashboard extends Component {
         { cancelToken: this.source.token }
       )
       .then(response => {
-        console.log(response)
+        console.log(response);
         this.setState({ userInfo: response.data }, () => {
           this.getUsersInfo();
         });
@@ -83,7 +77,6 @@ class UserDashboard extends Component {
     });
   };
   handleClose = () => {
-
     this.onLogout();
   };
   handleCloseConfirm = () => {
@@ -91,17 +84,15 @@ class UserDashboard extends Component {
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Datos Confirmados',
-      isVisibleConfirm:false
+      isVisibleConfirm: false
     });
     showAlert(this.state.alertId);
   };
-  getUsersInfo(){
-    if(!this.state.userInfo[0].is_confirm)
-    this.setState({
-      isVisibleConfirm: true
-      
-    });
-
+  getUsersInfo() {
+    if (!this.state.userInfo[0].is_confirm)
+      this.setState({
+        isVisibleConfirm: true
+      });
   }
 
   componentDidMount() {
@@ -110,25 +101,23 @@ class UserDashboard extends Component {
     //console.log(localStorage)
   }
 
-  render() { 
+  render() {
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
     }
     return (
-     
       <section
         id='wrapper'
         className='h-100 container-fluid p-0'
         onMouseDown={() => this.vertification(false)}>
-                    <NavUser />
+        <navbarLateral />
         <div id='content-wrapper' className='d-flex flex-column'>
           <div id='content'>
-          <NavBar /> 
+            {/* <NavBar /> */}
 
             <div className='container pt-2 pr-5 pl-5 pb-2'>
-              
               <ListProjectsUser
-                  email={JSON.parse(localStorage.getItem('email'))}
+                email={JSON.parse(localStorage.getItem('email'))}
               />
             </div>
           </div>

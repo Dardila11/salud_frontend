@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { URL } from '../../utils/URLSever';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
 import matchSorter from 'match-sorter';
@@ -128,21 +128,21 @@ class AddMember extends Component {
     var permissionToSave = [];
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       const permission = [...this.state.projectPermissions];
-      if(this.state.permissionAllow[role-1][i]==1)
+      if(this.state.permissionAllow[role-1][i]===1)
            if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       const permission = [...this.state.registryPermissions];
-      if(this.state.permissionAllow[role-1][i+3]==1)
+      if(this.state.permissionAllow[role-1][i+3]===1)
         if (permission[i].checked) {
           permissionToSave.push({ name: permission[i].name });
         }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       const permission = [...this.state.componentPermissions];
-      if(this.state.permissionAllow[role-1][i+6]==1)
+      if(this.state.permissionAllow[role-1][i+6]===1)
       if (permission[i].checked) {
         permissionToSave.push({ name: permission[i].name });
       }
@@ -399,9 +399,9 @@ class AddMember extends Component {
                     <Form.Label> Permisos: </Form.Label>
                   </Form.Row>
                   <Form.Row
-                    className={values.RolInProject != -1 ? '' : 'hidden'}>
+                    className={values.RolInProject !== -1 ? '' : 'hidden'}>
                     <Form.Group
-                      className={values.RolInProject != 3 ? '' : 'hidden'}
+                      className={values.RolInProject !== 3 ? '' : 'hidden'}
                       as={Col}
                       md='3'>
                       <Form.Label>Proyecto: </Form.Label>
@@ -421,7 +421,7 @@ class AddMember extends Component {
                              */
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -545,7 +545,7 @@ class AddMember extends Component {
                     </Form.Group>
                     <Form.Group
                       className={
-                        values.RolInProject == 3 || values.RolInProject == 2
+                        values.RolInProject === 3 || values.RolInProject === 2
                           ? 'hidden'
                           : ''
                       }
@@ -559,7 +559,7 @@ class AddMember extends Component {
                             check = true;
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -568,7 +568,7 @@ class AddMember extends Component {
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -577,7 +577,7 @@ class AddMember extends Component {
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }

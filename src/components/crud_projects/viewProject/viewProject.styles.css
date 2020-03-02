@@ -1,100 +1,49 @@
-.clearfix {
-  overflow: auto;
-  clear: both;
-}
-.viewContainer {
-  padding: 10px;
-  background-color: #ffffff;
-  border: 1px solid #dfe0e2;
-  border-radius: 2px;
 
-  min-width: 40em;
-}
 
-.border-container {
-  background-color: #ffffff;
-  border: 1px solid #dfe0e2;
-  border-radius: 2px;
-  min-width: min-content !important;
-}
-
-.viewContainer h5 {
-  text-align: center;
-  margin-top: 20px;
-  font-weight: bold;
-  float: center;
-}
-.viewContainer h6 {
-  text-align: left;
-  margin-bottom: 10px;
-
-  font-weight: bold;
-  width: 100%;
-  float: left;
-}
-
-.wideContainer {
-  width: 100%;
-  display: block;
-}
-
-.halfWidthContainer {
-  width: 50%;
-  float: left;
-}
-
-.padding {
-  padding: 10px 10px 10px 20px;
-}
-
-.btIntegrantes,
+.btIntegrantes,.btn-questionaries,
 .btCentros {
   margin-top: 15px;
-  padding: 10px 80px 0 13px;
   background-color: #007bff;
   border-radius: 4.5px;
   display: block;
-  font-family: "Jaldi", sans-serif;
-  font-size: 1rem;
-  line-height: 1.3rem;
   color: #ffffff;
-  height: 70px;
+  height: auto;
+  padding: 3%;
   text-align: center;
 
   text-decoration: none;
 }
 
-.btIntegrantes:hover,
+.btIntegrantes:hover,.btn-questionaries:hover,
 .btCentros:hover {
   background-color: #395fcf;
   text-decoration: none;
   color: #ffffff;
 }
 
-.btIntegrantes > span,
-.btCentros > span {
-  font-size: 0.7rem;
+
+.btIntegrantes::before {
+  font-family: "Font Awesome 5 Free"; font-weight: 1000;
+  content: '\f500';
+  padding-right: 10px;
+  float: left;
+  padding-left: 5px;
 }
 
-.btIntegrantes {
-  background-image: url("../../../img/ico-integrantes.png");
-  background-repeat: no-repeat;
-  background-position: 85% center;
+.btn-questionaries::before {
+  font-family: "Font Awesome 5 Free"; font-weight: 1000;
+  content: '\f481';
+  padding-right: 10px;
+  float: left;
+  padding-left: 5px;
 }
 
-.btCentros {
-  background-image: url("../../../img/ico-centros.png");
-  background-repeat: no-repeat;
-  background-position: 85% center;
-}
-
-.state {
-  width: 100%;
-}
-
-.clearfix {
-  overflow: auto;
-  clear: both;
+.btCentros::before {
+  font-family: "Font Awesome 5 Free"; font-weight: 900;
+  content: '\f1ad';
+  padding-right: 10px;
+  float: left;
+  padding-left: 5px;
 }
 
 .no-border-bottom {
@@ -102,36 +51,12 @@
   border-bottom-left-radius: 0% !important;
   border-bottom-right-radius: 0% !important;
 }
-.viewContainer {
-  padding: 10px;
-  background-color: #ffffff;
-  border: 1px solid #dfe0e2;
-  border-radius: 2px;
 
-  min-width: 40em;
+.tab-content {
+  background-color: white;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
 }
 
-.viewContainer h5 {
-  text-align: center;
-  margin-top: 20px;
-  font-weight: bold;
-  float: center;
-}
-.viewContainer h6 {
-  text-align: left;
-  margin-bottom: 10px;
-
-  font-weight: bold;
-  width: 100%;
-  float: left;
-}
-
-.wideContainer {
-  width: 100%;
-}
-
-.halfWidthContainer {
-  width: 50%;
-  float: left;
-  padding: 10px 10px 10px 20px;
+.custom-detail {
+  min-width: max-content;
 }

@@ -1,0 +1,18 @@
+.custom-col {
+    border: 1px solid black;
+    word-wrap: break-word;
+    height: 100px;
+}
+
+.card {
+    position: inherit !important;
+}
+
+.custom-section {
+    overflow-y: auto;
+    height: 200px;
+}
+
+.custom-subsection {
+    height: 300px;
+}

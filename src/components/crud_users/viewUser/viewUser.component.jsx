@@ -10,7 +10,7 @@ import Loader from 'react-loader-spinner';
  * @author Dardila
  * @description Este se componente se encarga de mostrar los datos del usuario.
  */
-class ViewUserFormik extends Component {
+class ViewUser extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
 
@@ -169,4 +169,4 @@ class ViewUserFormik extends Component {
   }
 }
 
-export default ViewUserFormik;
+export default ViewUser;

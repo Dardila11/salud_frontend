@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
-import { buttonToogle } from '../../../js/sb-admin-2.min';
 import { closeSession } from '../../utils/handleLocalStorage';
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -38,7 +37,7 @@ class NavBar extends Component {
         <button
           id='sidebarToggleTop'
           className='btn btn-link d-md-none rounded-circle mr-3'
-          onClick={buttonToogle}
+          onClick={this.props.handleToogle}
         >
           <i className='fa fa-bars'></i>
         </button>

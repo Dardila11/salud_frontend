@@ -3,12 +3,9 @@ import axios from 'axios';
 import { ProgressBar, Modal, Form, Col, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { URL } from '../../utils/URLSever';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
 import * as Utils from '../../utils/utils';
 import * as Yup from 'yup';
-import matchSorter from 'match-sorter';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import { getDateFormat } from '../../utils/utils';
 import { getHeader } from "../../utils/utils";
 var moment = require('moment');
@@ -136,15 +133,12 @@ class UpdateMember extends Component {
     this.props.handleCloseUpdate();
   };
   removeMemberPermissions = role => {
-    // recorremos todos los permisos
-    //console.log(this.state.memberPermissions)
     var permissionToRemove = [];
-    var exist=false
 
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       if(this.state.projectPermissions[i].old)
       {
-        if(!this.state.projectPermissions[i].checked ||  this.state.permissionAllow[role-1][i]==0)
+        if(!this.state.projectPermissions[i].checked ||  this.state.permissionAllow[role-1][i]===0)
         {
           permissionToRemove.push({ name: this.state.projectPermissions[i].name });
         }
@@ -154,7 +148,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       if(this.state.registryPermissions[i].old)
       {
-        if(!this.state.registryPermissions[i].checked ||  this.state.permissionAllow[role-1][i+3]==0)
+        if(!this.state.registryPermissions[i].checked ||  this.state.permissionAllow[role-1][i+3]===0)
         {
           permissionToRemove.push({ name: this.state.registryPermissions[i].name });
         }
@@ -164,7 +158,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       if(this.state.componentPermissions[i].old)
       {
-        if(!this.state.componentPermissions[i].checked ||  this.state.permissionAllow[role-1][i+6]==0)
+        if(!this.state.componentPermissions[i].checked ||  this.state.permissionAllow[role-1][i+6]===0)
         {
           permissionToRemove.push({ name: this.state.componentPermissions[i].name });
         }
@@ -184,7 +178,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       if (this.state.projectPermissions[i].checked) {
         if(!this.state.projectPermissions[i].old)
-        if(this.state.permissionAllow[role-1][i]==1)
+        if(this.state.permissionAllow[role-1][i]===1)
           permissionToSave.push({ name: this.state.projectPermissions[i].name });
       }
     }
@@ -192,14 +186,14 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       if (this.state.registryPermissions[i].checked) {
         if(!this.state.registryPermissions[i].old)
-        if(this.state.permissionAllow[role-1][i+3]==1)
+        if(this.state.permissionAllow[role-1][i+3]===1)
           permissionToSave.push({ name: this.state.registryPermissions[i].name });
       }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       if (this.state.componentPermissions[i].checked) {
         if(!this.state.componentPermissions[i].old)
-        if(this.state.permissionAllow[role-1][i+6]==1)
+        if(this.state.permissionAllow[role-1][i+6]===1)
           permissionToSave.push({ name: this.state.componentPermissions[i].name });
       }
     }
@@ -250,22 +244,23 @@ class UpdateMember extends Component {
   };
 
   handleResetCheckbox = () => {
+    var updateCheck;
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
-      var updateCheck = [...this.state.projectPermissions];
+      updateCheck = [...this.state.projectPermissions];
       if (!updateCheck[i].checked) {
         updateCheck[i].checked = true;
       }
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
-      var updateCheck = [...this.state.registryPermissions];
+      updateCheck = [...this.state.registryPermissions];
       if (!updateCheck[i].checked) {
         updateCheck[i].checked = true;
       }
       this.setState({ updateCheck });
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
-      var updateCheck = [...this.state.componentPermissions];
+      updateCheck = [...this.state.componentPermissions];
       if (!updateCheck[i].checked) {
         updateCheck[i].checked = true;
       }
@@ -323,7 +318,7 @@ class UpdateMember extends Component {
     for (let i = 0; i < this.state.memberPermissions.length; i++) {
       for (let j = 0; j < this.state.projectPermissions.length; j++)
         if (
-          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.memberPermissions[i].permission_id__codename ===
           this.state.projectPermissions[j].name
         ) {
           this.state.projectPermissions[j].checked = true;
@@ -331,7 +326,7 @@ class UpdateMember extends Component {
         }
       for (let j = 0; j < this.state.componentPermissions.length; j++)
         if (
-          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.memberPermissions[i].permission_id__codename ===
           this.state.componentPermissions[j].name
         ) {
           this.state.componentPermissions[j].checked = true;
@@ -339,7 +334,7 @@ class UpdateMember extends Component {
         }
       for (let j = 0; j < this.state.registryPermissions.length; j++)
         if (
-          this.state.memberPermissions[i].permission_id__codename ==
+          this.state.memberPermissions[i].permission_id__codename ===
           this.state.registryPermissions[j].name
         ) {
           this.state.registryPermissions[j].checked = true;
@@ -465,9 +460,9 @@ componentDidMount(){
                       <Form.Label> Permisos: </Form.Label> 
                   </Form.Row>
                   <Form.Row
-                    className={values.RolInProject != -1 ? '' : 'hidden'}>
+                    className={values.RolInProject !== -1 ? '' : 'hidden'}>
                     <Form.Group
-                      className={values.RolInProject != 3 ? '' : 'hidden'}
+                      className={values.RolInProject !== 3 ? '' : 'hidden'}
                       as={Col}
                       md='3'>
 
@@ -489,7 +484,7 @@ componentDidMount(){
                              */
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -503,7 +498,7 @@ componentDidMount(){
                              */
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -523,7 +518,7 @@ componentDidMount(){
                              */
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -565,7 +560,7 @@ componentDidMount(){
                             check = true;
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -574,7 +569,7 @@ componentDidMount(){
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -583,7 +578,7 @@ componentDidMount(){
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -613,7 +608,7 @@ componentDidMount(){
                     </Form.Group>
                     <Form.Group
                       className={
-                        values.RolInProject == 3 || values.RolInProject == 2
+                        values.RolInProject === 3 || values.RolInProject === 2
                           ? 'hidden'
                           : ''
                       }
@@ -627,7 +622,7 @@ componentDidMount(){
                             check = true;
                             this.state.managerPermissions.filter(
                               mPermission => {
-                                if (mPermission == permission.name) {
+                                if (mPermission === permission.name) {
                                   check = false;
                                 }
                               }
@@ -636,7 +631,7 @@ componentDidMount(){
                           case '2': // Investigator
                             this.state.investigatorPermissions.filter(
                               invPermission => {
-                                if (invPermission == permission.name) {
+                                if (invPermission === permission.name) {
                                   check = true;
                                 }
                               }
@@ -645,7 +640,7 @@ componentDidMount(){
                           case '3': // Tecnico
                             this.state.technicianPermissions.filter(
                               techPermission => {
-                                if (techPermission == permission.name) {
+                                if (techPermission === permission.name) {
                                   check = true;
                                 }
                               }

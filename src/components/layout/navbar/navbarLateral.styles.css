@@ -1,0 +1,68 @@
+.my-text {
+  font-family: 'Jaldi', sans-serif;
+  text-transform: none;
+  margin-left: 0 !important;
+  font-weight: normal;
+}
+
+.collapse-header {
+  margin: 0;
+  white-space: nowrap;
+  padding: 0.5rem 1.5rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.65rem;
+  color: #b7b9cc;
+}
+
+.collapse-item {
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  display: block;
+  color: #3a3b45;
+  text-decoration: none;
+  border-radius: 0.35rem;
+  white-space: nowrap;
+}
+
+.collapse-item.item {
+  color: #4e73df;
+  font-weight: 700;
+}
+
+.collapse-item:hover {
+  cursor: pointer;
+  background: rgb(0, 0, 0, 0.2);
+}
+
+.collapse-inner {
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.toggled .collapse-inner {
+  max-height: 200px;
+  overflow-y: auto;
+  min-height: min-content;
+}
+
+.sidebar {
+  min-width: min-content;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.toggled {
+  position: relative;
+  overflow-y: inherit;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    overflow-y: inherit;
+    height: auto;
+  }
+}
