@@ -65,7 +65,7 @@ class CreateQuestionary extends Component {
         study_id: this.props.study
       }
     };
-    console.log(json)
+    console.log(json);
     this.setState({ progress: true }, () => {
       axios
         .post(URL + '/questionaries/', json, {
@@ -133,14 +133,14 @@ class CreateQuestionary extends Component {
               </Modal.Header>
               <Modal.Body>
                 <p>
-                  <i className='required'>
-                    * Todos los campos son obligatorios
-                  </i>
+                  <i className='required'>* Campos obligatorios</i>
                 </p>
                 <Form id='formCreateProject' onSubmit={handleSubmit}>
                   <Form.Row>
                     <Form.Group as={Col} md='3' controlId='inputId'>
-                      <Form.Label>Código</Form.Label>
+                      <Form.Label>
+                        Código <span className='required'>*</span>
+                      </Form.Label>
                       <Form.Control
                         type='text'
                         name='code'
@@ -155,7 +155,9 @@ class CreateQuestionary extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='5' controlId='inputId'>
-                      <Form.Label>Título</Form.Label>
+                      <Form.Label>
+                        Título <span className='required'>*</span>
+                      </Form.Label>
                       <Form.Control
                         type='text'
                         name='title'
@@ -191,7 +193,10 @@ class CreateQuestionary extends Component {
                       />
                     </Form.Group>
                     <Form.Group as={Col} md='5' controlId='inputId'>
-                      <Form.Label>No. mínimo de registros</Form.Label>
+                      <Form.Label>
+                        No. mínimo de registros{' '}
+                        <span className='required'>*</span>
+                      </Form.Label>
                       <Form.Control
                         type='number'
                         name='num_minRegistry'
@@ -207,7 +212,10 @@ class CreateQuestionary extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='5' controlId='inputId'>
-                      <Form.Label>No. máximo de registros</Form.Label>
+                      <Form.Label>
+                        No. máximo de registros{' '}
+                        <span className='required'>*</span>
+                      </Form.Label>
                       <Form.Control
                         type='number'
                         name='num_maxRegistry'

@@ -11,19 +11,19 @@ import * as Yup from 'yup';
 const schema = Yup.object({
   type: Yup.number().positive('Campo requerido'),
   userId: Yup.string()
-    .min(4, 'Id debe tener minimo 4 caracteres')
+    .min(4, 'Mínimo 4 caracteres')
     .required('Campo requerido'),
   firstName: Yup.string()
-    .min(3, 'Nombre debe tener minimo 3 caracteres')
+    .min(2, 'Mínimo 2 caracteres')
     .required('Campo requerido'),
   lastName: Yup.string()
-    .min(3, 'Apellido debe tener minimo 3 caracteres')
+    .min(4, 'Mínimo 4 caracteres')
     .required('Campo requerido'),
   email: Yup.string()
-    .email('Correo invalido')
+    .email('Correo inválido')
     .required('Campo requerido'),
   confEmail: Yup.string()
-    .email('Correo invalido')
+    .email('Correo inválido')
     .oneOf([Yup.ref('email'), null], 'Correo no coincide')
     .required('Campo requerido'),
   myCenter: Yup.number().positive('Campo requerido'),
@@ -187,7 +187,7 @@ class CreateUserFormik extends Component {
                       <Form.Control
                         type='text'
                         name='userId'
-                        placeholder='Identificación'
+                        placeholder='C.C, NIT'
                         value={values.userId}
                         onChange={handleChange}
                         isValid={touched.userId && !errors.userId}
@@ -204,7 +204,6 @@ class CreateUserFormik extends Component {
                       <Form.Control
                         type='text'
                         name='firstName'
-                        placeholder='Nombres'
                         value={values.firstName}
                         onChange={handleChange}
                         isValid={touched.firstName && !errors.firstName}
@@ -219,7 +218,6 @@ class CreateUserFormik extends Component {
                       <Form.Control
                         type='text'
                         name='lastName'
-                        placeholder='Apellidos'
                         value={values.lastName}
                         onChange={handleChange}
                         isValid={touched.lastName && !errors.lastName}
@@ -239,7 +237,7 @@ class CreateUserFormik extends Component {
                       <Form.Control
                         name='email'
                         type='email'
-                        placeholder='Correo'
+                        placeholder='Ej. micorreo@gmail.com'
                         value={values.email}
                         onChange={handleChange}
                         isValid={touched.email && !errors.email}
@@ -257,7 +255,7 @@ class CreateUserFormik extends Component {
                       <Form.Control
                         name='confEmail'
                         type='email'
-                        placeholder='Confirmar correo'
+                        placeholder='Repita el correo'
                         value={values.confEmail}
                         onChange={handleChange}
                         isValid={touched.confEmail && !errors.confEmail}

@@ -136,7 +136,12 @@ class UpdateProjectFormik extends Component {
             startDate: new Date(
               this.props.projectInfo[0].fields.date_in_study.substring(0, 10)
             ),
-            endDate: new Date(this.props.projectInfo[0].fields.date_trueaout_end.substring(0, 10)),
+            endDate: new Date(
+              this.props.projectInfo[0].fields.date_trueaout_end.substring(
+                0,
+                10
+              )
+            ),
             principalInvestigator: this.props.usersInfo.filter(
               value =>
                 value.userId === this.props.projectInfo[0].fields.principal_inv
@@ -171,8 +176,8 @@ class UpdateProjectFormik extends Component {
                 </p>
                 <Form id='formUpdateProject' onSubmit={handleSubmit}>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Id del proyecto</Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId8'>
+                      <Form.Label>ID del proyecto</Form.Label>
                       <Form.Control
                         type='text'
                         name='projectId'
@@ -186,8 +191,8 @@ class UpdateProjectFormik extends Component {
                         {errors.projectId}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='7' controlId='inputId'>
-                      <Form.Label>Titulo del proyecto</Form.Label>
+                    <Form.Group as={Col} md='7' controlId='inputId7'>
+                      <Form.Label>Título del proyecto</Form.Label>
                       <Form.Control
                         type='text'
                         name='title'
@@ -204,7 +209,7 @@ class UpdateProjectFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
+                    <Form.Group as={Col} md='4' controlId='inputId6'>
                       <Form.Label>Fecha registro</Form.Label>
                       <DatePicker
                         selected={values.registerDate}
@@ -215,38 +220,39 @@ class UpdateProjectFormik extends Component {
                         name='registerDate'
                       />
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha inicio </Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId5'>
+                      <Form.Label>Fecha inicio</Form.Label>
                       <DatePicker
+                        placeholderText='dd-mm-aaaa'
                         selected={values.startDate}
                         dateFormat='dd-MM-yyyy'
                         yearDropdownItemNumber={5}
                         showYearDropdown
                         locale='es'
-                        className='form-control'
                         name='registerDate'
-                        onChange={date => setFieldValue('startDate', date)}
-                        isValid={touched.startDate && !errors.startDate}
-                        isInvalid={!!errors.startDate}
-                      />
-                      <Form.Control
-                        type='text'
-                        name='startDate'
-                        hidden
-                        value={values.startDate}
-                        onChange={handleChange}
-                        isValid={
-                          touched.startDate &&
-                          !errors.startDate
+                        onChange={date =>
+                          setFieldValue('startDate', date === null ? '' : date)
                         }
-                        isInvalid={!!errors.endDate}
+                        className={
+                          'form-control ' +
+                          (touched.startDate && !errors.startDate
+                            ? 'is-valid'
+                            : '') +
+                          (!!errors.startDate ? 'is-invalid' : '')
+                        }
                       />
-                      <Form.Control.Feedback type='invalid'>
+                      <Form.Control.Feedback
+                        type='invalid'
+                        className={
+                          (touched.startDate && !errors.startDate
+                            ? 'd-none'
+                            : '') + (!!errors.startDate ? 'd-block' : '')
+                        }>
                         {errors.startDate}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha finalización </Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId4'>
+                      <Form.Label>Fecha finalización</Form.Label>
                       <DatePicker
                         placeholderText='dd-mm-aaaa'
                         selected={values.endDate}
@@ -255,32 +261,31 @@ class UpdateProjectFormik extends Component {
                         minDate={values.startDate}
                         showYearDropdown
                         locale='es'
-                        className='form-control'
                         name='registerDate'
-                        onChange={date => setFieldValue('endDate', date)}
-                        isValid={touched.endDate && !errors.endDate}
-                        isInvalid={!!errors.endDate}
-                      />
-                      <Form.Control
-                        type='text'
-                        name='endDate'
-                        hidden
-                        value={values.endDate}
-                        onChange={handleChange}
-                        isValid={
-                          touched.endDate &&
-                          !errors.endDate
+                        onChange={date =>
+                          setFieldValue('endDate', date === null ? '' : date)
                         }
-                        isInvalid={!!errors.endDate}
+                        className={
+                          'form-control ' +
+                          (touched.endDate && !errors.endDate
+                            ? 'is-valid'
+                            : '') +
+                          (!!errors.endDate ? 'is-invalid' : '')
+                        }
                       />
-                      <Form.Control.Feedback type='invalid'>
+                      <Form.Control.Feedback
+                        type='invalid'
+                        className={
+                          (touched.endDate && !errors.endDate ? 'd-none' : '') +
+                          (!!errors.endDate ? 'd-block' : '')
+                        }>
                         {errors.endDate}
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable del registro </Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId3'>
+                      <Form.Label>Responsable del registro</Form.Label>
                       <Form.Control
                         type='text'
                         disabled
@@ -298,8 +303,8 @@ class UpdateProjectFormik extends Component {
                         {errors.responsibleInvestigator}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='8' controlId='inputId'>
-                      <Form.Label>Director de Proyecto</Form.Label>
+                    <Form.Group as={Col} md='8' controlId='inputId2'>
+                      <Form.Label>Director de proyecto</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
                         options={this.props.usersInfo}
@@ -353,7 +358,7 @@ class UpdateProjectFormik extends Component {
                         {errors.principalInvestigator}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
+                    <Form.Group as={Col} md='4' controlId='inputId1'>
                       <Form.Label>Estado</Form.Label>
                       <Form.Control
                         as='select'

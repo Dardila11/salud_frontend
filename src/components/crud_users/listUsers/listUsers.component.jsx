@@ -399,16 +399,27 @@ class ListUsers extends Component {
           <ReactTable
             columns={this.state.columns}
             defaultPageSize={5}
-            NoDataComponent={NoDataConst}></ReactTable>
+            NoDataComponent={NoDataConst}            
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'/>
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.info}
             defaultPageSize={5}
-            noDataText={'No existen usuarios'}
-            filterable></ReactTable>
+            noDataText='No existen usuarios'
+            filterable
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'
+            />
         )}
-        <Modal show={this.state.isVisibleCreate} onHide={this.handleClose}>
+        <Modal show={this.state.isVisibleCreate} onHide={this.handleClose} size='lg'>
           {/* Crear Usuario */}
           <CreateUserFormik
             infoDepartaments={this.state.infoDepartaments}
@@ -426,7 +437,7 @@ class ListUsers extends Component {
             is_active={this.state.userInfo[0].is_active}
           />
         </Modal>
-        <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+        <Modal show={this.state.isVisibleUpdate} onHide={this.handleClose} size='lg'>
           {/* Actualizar Usuario */}
           <UpdateUserFormik
             infoDepartaments={this.state.infoDepartaments}

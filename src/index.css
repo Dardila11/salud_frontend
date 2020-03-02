@@ -123,7 +123,7 @@ code {
 
 .required {
   color: #dc3545;
-  font-size: 15px;
+  font-size: 90%;
 }
 
 .hidden {
@@ -254,18 +254,14 @@ code {
   font-size: 1rem !important;
 }
 
-.MuiFormHelperText-root {
+.MuiFormHelperText-contained {
   width: 100% !important;
   margin-top: 0.25rem !important;
   font-size: 80% !important;
   color: #dc3545 !important;
-  font-size: 1rem !important;
-}
-
-.MuiFormHelperText-contained {
-  margin: 8px 0 !important;
-  letter-spacing: 0 !important;
-  font-size: 1rem !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  font-family: 'Jaldi', sans-serif !important;
 }
 
 .MuiInputBase-root {

@@ -66,14 +66,14 @@ class DeleteMember extends Component {
         )}
         <Modal.Header closeButton>
           <Modal.Title className='h3 text-gray-800 mb-0'>
-            {this.state.is_active ? 'Desactivar' : 'Activar'} Integrante
+            {this.state.is_active ? 'Desactivar' : 'Activar'} integrante
           </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <p>
             ¿Esta seguro que desea{' '}
-            {this.state.is_active ? 'desactivar' : 'activar'} el Integrante?
+            {this.state.is_active ? 'desactivar' : 'activar'} el integrante?
           </p>
         </Modal.Body>
 
@@ -84,7 +84,7 @@ class DeleteMember extends Component {
           <Button
             onClick={this.handleDelete}
             variant={this.state.is_active ? 'danger' : 'primary'}>
-            {this.state.is_active ? 'Desactivar' : 'Activar'} Integrante
+            {this.state.is_active ? 'Desactivar' : 'Activar'} integrante
           </Button>
         </Modal.Footer>
         <AlertComponent

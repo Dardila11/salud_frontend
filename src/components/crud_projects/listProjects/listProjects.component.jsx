@@ -82,14 +82,14 @@ class ListProjects extends Component {
           minWidth: 100
         }, */
         {
-          Header: 'Fecha de Inicio',
+          Header: 'Fecha de inicio',
           accessor: 'start_date',
           width: 150,
           maxWidth: 200,
           minWidth: 100
         },
         {
-          Header: 'Fecha de Finalización',
+          Header: 'Fecha de finalización',
           accessor: 'end_date',
           width: 150,
           maxWidth: 200,
@@ -414,6 +414,11 @@ class ListProjects extends Component {
             columns={this.state.columns}
             defaultPageSize={5}
             NoDataComponent={NoDataConst}
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'
           />
         ) : (
           <ReactTable
@@ -422,6 +427,11 @@ class ListProjects extends Component {
             defaultPageSize={5}
             noDataText={'No existen proyectos'}
             filterable
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'
           />
         )}
 

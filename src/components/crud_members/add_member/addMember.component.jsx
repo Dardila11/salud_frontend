@@ -30,11 +30,11 @@ class AddMember extends Component {
     super(props);
     this.state = {
       value: '',
-      permissionAllow:[                       
-                       [1,1,1,1,1,0,1,1],
-                       [0,0,1,0,1,1,0,0],
-                       [0,0,0,0,1,0,0,0]
-                      ],
+      permissionAllow: [
+        [1, 1, 1, 1, 1, 0, 1, 1],
+        [0, 0, 1, 0, 1, 1, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0]
+      ],
       technicianPermissions: ['change_registry'],
       investigatorPermissions: [
         'change_analysis',
@@ -128,24 +128,24 @@ class AddMember extends Component {
     var permissionToSave = [];
     for (let i = 0; i < this.state.projectPermissions.length; i++) {
       const permission = [...this.state.projectPermissions];
-      if(this.state.permissionAllow[role-1][i]===1)
-           if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
-      }
+      if (this.state.permissionAllow[role - 1][i] === 1)
+        if (permission[i].checked) {
+          permissionToSave.push({ name: permission[i].name });
+        }
     }
     for (let i = 0; i < this.state.registryPermissions.length; i++) {
       const permission = [...this.state.registryPermissions];
-      if(this.state.permissionAllow[role-1][i+3]===1)
+      if (this.state.permissionAllow[role - 1][i + 3] === 1)
         if (permission[i].checked) {
           permissionToSave.push({ name: permission[i].name });
         }
     }
     for (let i = 0; i < this.state.componentPermissions.length; i++) {
       const permission = [...this.state.componentPermissions];
-      if(this.state.permissionAllow[role-1][i+6]===1)
-      if (permission[i].checked) {
-        permissionToSave.push({ name: permission[i].name });
-      }
+      if (this.state.permissionAllow[role - 1][i + 6] === 1)
+        if (permission[i].checked) {
+          permissionToSave.push({ name: permission[i].name });
+        }
     }
 
     //console.log(permissionToSave);
@@ -265,7 +265,7 @@ class AddMember extends Component {
           initialValues={{
             renderTech: false,
             idMember: '',
-            limitAccessDate:'',
+            limitAccessDate: '',
             selectAccesDate: new Date(),
             RolInProject: -1,
             permissions: []
@@ -275,7 +275,6 @@ class AddMember extends Component {
           {({
             handleSubmit,
             handleChange,
-            handleBlur,
             values,
             touched,
             errors,
@@ -341,7 +340,7 @@ class AddMember extends Component {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
-                      <Form.Label>Fecha limite de acceso </Form.Label>
+                      <Form.Label>Fecha límite de acceso </Form.Label>
                       <DatePicker
                         placeholderText='dd-mm-aaaa'
                         selected={values.limitAccessDate}
@@ -351,22 +350,27 @@ class AddMember extends Component {
                         locale='es'
                         className='form-control'
                         name='limitAccessDate'
-                        onChange={date => setFieldValue('limitAccessDate', date)}
-                        isValid={touched.limitAccessDate && !errors.limitAccessDate}
-                        isInvalid={!!errors.limitAccessDate}
-                      />
-                      <Form.Control
-                        type='text'
-                        hidden
-                        value={values.limitAccessDate}
-                        onChange={handleChange}
-                        name='limitAccessDate'
-                        isValid={
-                          touched.limitAccessDate && !errors.limitAccessDate
+                        onChange={date =>
+                          setFieldValue(
+                            'limitAccessDate',
+                            date === null ? '' : date
+                          )
                         }
-                        isInvalid={!!errors.limitAccessDate}
+                        className={
+                          'form-control ' +
+                          (touched.limitAccessDate && !errors.limitAccessDate
+                            ? 'is-valid'
+                            : '') +
+                          (!!errors.limitAccessDate ? 'is-invalid' : '')
+                        }
                       />
-                      <Form.Control.Feedback type='invalid'>
+                      <Form.Control.Feedback
+                        type='invalid'
+                        className={
+                          (touched.limitAccessDate && !errors.limitAccessDate
+                            ? 'd-none'
+                            : '') + (!!errors.limitAccessDate ? 'd-block' : '')
+                        }>
                         {errors.limitAccessDate}
                       </Form.Control.Feedback>
                     </Form.Group>
@@ -411,7 +415,7 @@ class AddMember extends Component {
 
                       {this.state.projectPermissions.map(permission => {
                         var check = false;
-                        switch (''+values.RolInProject) {
+                        switch ('' + values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             /**
@@ -492,7 +496,7 @@ class AddMember extends Component {
                       <Form.Label>Registro: </Form.Label>
                       {this.state.registryPermissions.map(permission => {
                         var check = false;
-                        switch (''+values.RolInProject) {
+                        switch ('' + values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             this.state.managerPermissions.filter(
@@ -554,7 +558,7 @@ class AddMember extends Component {
                       <Form.Label>Componentes: </Form.Label>
                       {this.state.componentPermissions.map(permission => {
                         var check = false;
-                        switch (''+values.RolInProject) {
+                        switch ('' + values.RolInProject) {
                           case '1': // Gestor
                             check = true;
                             this.state.managerPermissions.filter(
@@ -613,7 +617,7 @@ class AddMember extends Component {
                   Cancelar
                 </Button>
                 <Button form='formAddMemberToProject' type='submit'>
-                  Agregar Integrante
+                  Agregar integrante
                 </Button>
               </Modal.Footer>
             </>

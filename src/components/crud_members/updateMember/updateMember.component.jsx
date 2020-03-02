@@ -385,7 +385,6 @@ componentDidMount(){
           {({
             handleSubmit,
             handleChange,
-            handleBlur,
             values,
             touched,
             errors,
@@ -404,7 +403,7 @@ componentDidMount(){
                   </Form.Group>
                   <Form.Row>
                     <Form.Group as={Col} md='5' controlId='limitAccessDate'>
-                      <Form.Label>Fecha limite de acceso </Form.Label>
+                      <Form.Label>Fecha límite de acceso </Form.Label>
                       <DatePicker
                         placeholderText='dd-mm-aaaa'
                         selected={values.limitAccessDate}
@@ -676,7 +675,7 @@ componentDidMount(){
                   Cancelar
                 </Button>
                 <Button form='formUpdateMemberToProject' type='submit'>
-                  Actualizar Integrante
+                  Actualizar integrante
                 </Button>
               </Modal.Footer>
             </>

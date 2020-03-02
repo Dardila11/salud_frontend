@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { Button, Col, Form, Modal, ProgressBar } from 'react-bootstrap';
-import { Formik } from 'formik';
+import { Formik, Field, ErrorMessage } from 'formik';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -25,15 +25,11 @@ var moment = require('moment');
  */
 const schema = Yup.object({
   projectId: Yup.string()
-    .test(
-      'len',
-      'Id debe tener exactamente 10 caracteres',
-      val => val.length === 10
-    )
+    .min(10, 'Mínimo 10 caracteres')
     .required('Campo Requerido'),
   title: Yup.string()
-    .min(5, 'Titulo debe tener minimo 5 caracteres')
-    .max(150, 'Titulo debe tener maximo 150 caracteres')
+    .min(5, 'Mínimo 5 caracteres')
+    .max(150, 'Máximo 150 caracteres')
     .required('Campo Requerido'),
   registerDate: Yup.date().required('Campo Requerido'),
   startDate: Yup.date().required('Campo Requerido'),
@@ -43,8 +39,7 @@ const schema = Yup.object({
     .when(
       'startDate',
       (startDate, schema) =>
-        startDate &&
-        schema.min(startDate, 'La fecha final debe ser posterior a la inicial')
+        startDate && schema.min(startDate, 'Debe ser mayor a la fecha inicial')
     ),
   principalInvestigator: Yup.string().required('Campo Requerido'),
   responsibleInvestigator: Yup.string().required('Campo Requerido')
@@ -154,7 +149,6 @@ class CreateProjectFormik extends Component {
           {({
             handleSubmit,
             handleChange,
-            handleBlur,
             values,
             touched,
             errors,
@@ -174,8 +168,8 @@ class CreateProjectFormik extends Component {
                 </p>
                 <Form id='formCreateProject' onSubmit={handleSubmit}>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Id del proyecto</Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId1'>
+                      <Form.Label>ID del proyecto</Form.Label>
                       <Form.Control
                         type='text'
                         name='projectId'
@@ -194,7 +188,7 @@ class CreateProjectFormik extends Component {
                       <Form.Control
                         type='text'
                         name='title'
-                        placeholder='Titulo del proyecto'
+                        placeholder='Ej. Control prenatal'
                         value={values.title}
                         onChange={handleChange}
                         isValid={touched.title && !errors.title}
@@ -206,7 +200,7 @@ class CreateProjectFormik extends Component {
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
+                    <Form.Group as={Col} md='4' controlId='inputId2'>
                       <Form.Label>Fecha registro</Form.Label>
                       <DatePicker
                         selected={values.registerDate}
@@ -223,8 +217,8 @@ class CreateProjectFormik extends Component {
                         {errors.registerDate}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha Inicio </Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId3'>
+                      <Form.Label>Fecha inicio</Form.Label>
                       <DatePicker
                         placeholderText='dd-mm-aaaa'
                         selected={values.startDate}
@@ -232,30 +226,30 @@ class CreateProjectFormik extends Component {
                         yearDropdownItemNumber={5}
                         showYearDropdown
                         locale='es'
-                        className='form-control'
                         name='registerDate'
-                        onChange={date => setFieldValue('startDate', date)}
-                        isValid={touched.startDate && !errors.startDate}
-                        isInvalid={!!errors.startDate}
-                      />
-                      <Form.Control
-                        type='text'
-                        name='startDate'
-                        hidden
-                        value={values.startDate}
-                        onChange={handleChange}
-                        isValid={
-                          touched.startDate &&
-                          !errors.startDate
+                        onChange={date =>
+                          setFieldValue('startDate', date === null ? '' : date)
                         }
-                        isInvalid={!!errors.endDate}
+                        className={
+                          'form-control ' +
+                          (touched.startDate && !errors.startDate
+                            ? 'is-valid'
+                            : '') +
+                          (!!errors.startDate ? 'is-invalid' : '')
+                        }
                       />
-                      <Form.Control.Feedback type='invalid'>
+                      <Form.Control.Feedback
+                        type='invalid'
+                        className={
+                          (touched.startDate && !errors.startDate
+                            ? 'd-none'
+                            : '') + (!!errors.startDate ? 'd-block' : '')
+                        }>
                         {errors.startDate}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Fecha Finalización </Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId4'>
+                      <Form.Label>Fecha finalización</Form.Label>
                       <DatePicker
                         placeholderText='dd-mm-aaaa'
                         selected={values.endDate}
@@ -264,32 +258,35 @@ class CreateProjectFormik extends Component {
                         minDate={values.startDate}
                         showYearDropdown
                         locale='es'
-                        className='form-control'
                         name='registerDate'
-                        onChange={date => setFieldValue('endDate', date)}
-                        isValid={touched.endDate && !errors.endDate}
-                        isInvalid={!!errors.endDate}
-                      />
-                      <Form.Control
-                        type='text'
-                        name='endDate'
-                        hidden
-                        value={values.endDate}
-                        onChange={handleChange}
-                        isValid={
-                          touched.endDate &&
-                          !errors.endDate
+                        onChange={date =>
+                          setFieldValue(
+                            'limitAccessDate',
+                            date === null ? '' : date
+                          )
                         }
-                        isInvalid={!!errors.endDate}
+                        className={
+                          'form-control ' +
+                          (touched.limitAccessDate && !errors.limitAccessDate
+                            ? 'is-valid'
+                            : '') +
+                          (!!errors.limitAccessDate ? 'is-invalid' : '')
+                        }
                       />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.endDate}
+                      <Form.Control.Feedback
+                        type='invalid'
+                        className={
+                          (touched.limitAccessDate && !errors.limitAccessDate
+                            ? 'd-none'
+                            : '') + (!!errors.limitAccessDate ? 'd-block' : '')
+                        }>
+                        {errors.limitAccessDate}
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
                   <Form.Row>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Responsable del Registro </Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId5'>
+                      <Form.Label>Responsable del registro</Form.Label>
                       <Form.Control
                         type='text'
                         disabled
@@ -307,8 +304,8 @@ class CreateProjectFormik extends Component {
                         {errors.responsibleInvestigator}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} md='4' controlId='inputId'>
-                      <Form.Label>Director de Proyecto</Form.Label>
+                    <Form.Group as={Col} md='4' controlId='inputId6'>
+                      <Form.Label>Director del proyecto</Form.Label>
                       <Autocomplete
                         id='combo-box-demo'
                         options={this.props.usersInfo}
@@ -370,7 +367,7 @@ class CreateProjectFormik extends Component {
                   Cancelar
                 </Button>
                 <Button form='formCreateProject' type='submit'>
-                  Crear Proyecto
+                  Crear proyecto
                 </Button>
               </Modal.Footer>
             </>

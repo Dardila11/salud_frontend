@@ -15,17 +15,20 @@ import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 
 const schema = Yup.object({
+  userId: Yup.string()
+    .min(4, 'Mínimo 4 caracteres')
+    .required('Campo requerido'),
   firstName: Yup.string()
-    .min(3, 'Nombre debe tener minimo 3 caracteres')
+    .min(2, 'Mínimo 2 caracteres')
     .required('Campo requerido'),
   lastName: Yup.string()
-    .min(3, 'Apellido debe tener minimo 3 caracteres')
+    .min(4, 'Mínimo 4 caracteres')
     .required('Campo requerido'),
   email: Yup.string()
-    .email('Email Invalido')
+    .email('Correo inválido')
     .required('Campo requerido'),
   confEmail: Yup.string()
-    .email('Correo invalido')
+    .email('Correo inválido')
     .oneOf([Yup.ref('email'), null], 'Correo no coincide')
     .required('Campo requerido'),
   myCenter: Yup.number().positive('Campo requerido'),

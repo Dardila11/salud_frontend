@@ -40,23 +40,23 @@ class ListCenters extends Component {
         {
           Header: 'Id',
           accessor: 'center_id',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100,
+          width: 75,
+          maxWidth: 100,
+          minWidth: 75,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['id'] }),
+            matchSorter(rows, filter.value, { keys: ['center_id'] }),
           filterAll: true
         },
         {
           Header: 'Nombre',
           accessor: 'center_id__name',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100,
+          width: 200,
+          maxWidth: 250,
+          minWidth: 200,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['id'] }),
+            matchSorter(rows, filter.value, { keys: ['center_id__name'] }),
           filterAll: true,
-          Cell: props => props.value
+          Cell: props => <span className="cap">{props.value}</span>
         },
         {
           Header: 'Acciones',
@@ -144,6 +144,11 @@ class ListCenters extends Component {
         defaultPageSize={5}
         noDataText={'No existen cuestionarios'}
         filterable
+        previousText='Atras'
+        nextText='Siguiente'
+        pageText='Página'
+        ofText='de'
+        rowsText='filas'
       />
     );
     return table;
@@ -163,6 +168,11 @@ class ListCenters extends Component {
             columns={this.state.columns}
             defaultPageSize={5}
             NoDataComponent={NoDataConst}
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'
           />
         ) : (
           <this.renderCenters />

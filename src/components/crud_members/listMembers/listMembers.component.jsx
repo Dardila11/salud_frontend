@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-
 import { Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Loader from 'react-loader-spinner';
 import matchSorter from 'match-sorter';
 import ReactTable from 'react-table';
 import Capitalize from 'react-capitalize';
-import "./listMembers.styles.css";
+import './listMembers.styles.css';
 /**
  * hallar mejor forma para colocar en mayuscula la primera letra
  */
@@ -69,8 +68,9 @@ class ListMembers extends Component {
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['user_id__email'] }),
-          filterAll: true
+            matchSorter(rows, filter.value, { keys: ['user_id__first_name'] }),
+          filterAll: true,
+          Cell: props => <span className='cap'>{props.value}</span>
         },
         {
           Header: 'Apellidos',
@@ -79,9 +79,9 @@ class ListMembers extends Component {
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['user_id__email'] }),
+            matchSorter(rows, filter.value, { keys: ['user_id__last_name'] }),
           filterAll: true,
-          Cell: props => <Capitalize lowerRest>{props.value}</Capitalize>
+          Cell: props => <span className='cap'>{props.value}</span>
         } /*,
           {
             Header: 'Permisos',
@@ -106,7 +106,7 @@ class ListMembers extends Component {
               case 3:
                 return 'Tecnico';
               default:
-                return ''
+                return '';
             }
           },
           sortable: false,
@@ -186,9 +186,6 @@ class ListMembers extends Component {
     console.log(this.props.project);
     this.getMembers();
     this.getUsers();
-    
-    
-    
   }
   handleClose = () => {
     this.setState({
@@ -201,20 +198,19 @@ class ListMembers extends Component {
 
   handleCloseAddMember = () => {
     this.setState({ isVisibleCreate: false });
-    this.getUsersInfo()
-    this.getMembers()
+    this.getUsersInfo();
+    this.getMembers();
     this.setState({
       alertVariant: 'success',
       alertMessage: 'Integrante Agregado.'
     });
-    
-  }
+  };
 
   handleOpenCreate = () => {
     this.setState({ isVisibleCreate: true });
   };
   handleOpenView = () => {
-    console.log(this.state.memberInfo)
+    console.log(this.state.memberInfo);
     this.setState({ isVisibleView: true });
   };
   handleOpenUpdate = () => {
@@ -278,13 +274,12 @@ class ListMembers extends Component {
       )
       .then(response => {
         this.setState({ memberInfo: response.data }, () => {
-          console.log(this.typeModal)
-          if (this.typeModal===1) {
+          console.log(this.typeModal);
+          if (this.typeModal === 1) {
             this.handleOpenView();
-          } else if (this.typeModal===2) {
+          } else if (this.typeModal === 2) {
             this.handleOpenUpdate();
-          }
-          else if (this.typeModal===3) {
+          } else if (this.typeModal === 3) {
             this.handleOpenDelete();
           }
         });
@@ -323,9 +318,7 @@ class ListMembers extends Component {
         { cancelToken: this.source.token }
       )
       .then(response => {
-        this.setState({ info: response.data }, () => {
-         
-        });
+        this.setState({ info: response.data }, () => {});
       })
       .catch(error => {
         console.log('oh no, hubo un error!');
@@ -334,7 +327,7 @@ class ListMembers extends Component {
   };
 
   getUsersInfo = () => {
-    var incluido =false
+    var incluido = false;
     var usersInfoArray = [];
     for (let i = 0; i < this.state.info.length; i++) {
       var email = this.state.info[i].email;
@@ -342,20 +335,19 @@ class ListMembers extends Component {
       var lastName = this.state.info[i].last_name;
       var id = this.state.info[i].id;
 
-      console.log(this.state.membersInfo.length)
-      for (let j = 0; j < this.state.membersInfo.length; j++){
-        
-          if(this.state.info[i].id===this.state.membersInfo[j].user_id)
-              incluido=true
+      console.log(this.state.membersInfo.length);
+      for (let j = 0; j < this.state.membersInfo.length; j++) {
+        if (this.state.info[i].id === this.state.membersInfo[j].user_id)
+          incluido = true;
       }
-      
-      if(!incluido)
-          usersInfoArray.push({
-            userEmail: email,
-            userName: firstName + ' ' + lastName,
-            userId: id
-          });
-      incluido=false
+
+      if (!incluido)
+        usersInfoArray.push({
+          userEmail: email,
+          userName: firstName + ' ' + lastName,
+          userId: id
+        });
+      incluido = false;
     }
     this.setState({ usersInfo: usersInfoArray });
   };
@@ -376,18 +368,30 @@ class ListMembers extends Component {
           <ReactTable
             columns={this.state.columns}
             defaultPageSize={5}
-            NoDataComponent={NoDataConst}></ReactTable>
+            NoDataComponent={NoDataConst}
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'
+          />
         ) : (
           <ReactTable
             columns={this.state.columns}
             data={this.state.membersInfo}
             defaultPageSize={5}
             noDataText={'No existen usuarios'}
-            filterable></ReactTable>
+            filterable
+            previousText='Atras'
+            nextText='Siguiente'
+            pageText='Página'
+            ofText='de'
+            rowsText='filas'
+          />
         )}
 
         <Modal
-          dialogClassName="modal-90w"
+          dialogClassName='modal-90w'
           show={this.state.isVisibleCreate}
           onHide={this.handleClose}>
           {/* Agregar Miembro */}
@@ -398,8 +402,7 @@ class ListMembers extends Component {
             usersInfo={this.state.usersInfo}
           />
         </Modal>
-        <Modal 
-          show={this.state.isVisibleDelete} onHide={this.handleClose}>
+        <Modal show={this.state.isVisibleDelete} onHide={this.handleClose}>
           {/* Eliminar Usuario */}
           <DeleteMember
             handleCloseDelete={this.handleCloseDelete}
@@ -408,9 +411,10 @@ class ListMembers extends Component {
             is_active={this.state.memberInfo[0].is_active}
           />
         </Modal>
-        <Modal 
-          dialogClassName="modal-90w"
-          show={this.state.isVisibleView} onHide={this.handleClose}>
+        <Modal
+          dialogClassName='modal-90w'
+          show={this.state.isVisibleView}
+          onHide={this.handleClose}>
           {/* Eliminar Usuario */}
           <ViewMember
             handleCloseView={this.handleCloseView}
@@ -419,9 +423,10 @@ class ListMembers extends Component {
             memberInfo={this.state.memberInfo[0]}
           />
         </Modal>
-        <Modal 
-          dialogClassName="modal-90w"
-          show={this.state.isVisibleUpdate} onHide={this.handleClose}>
+        <Modal
+          dialogClassName='modal-90w'
+          show={this.state.isVisibleUpdate}
+          onHide={this.handleClose}>
           {/* Eliminar Usuario */}
           <UpdateMember
             handleCloseUpdate={this.handleCloseUpdate}

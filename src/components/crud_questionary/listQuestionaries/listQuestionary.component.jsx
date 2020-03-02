@@ -44,17 +44,17 @@ class ListQuestionaries extends Component {
           maxWidth: 200,
           minWidth: 100,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['id'] }),
+            matchSorter(rows, filter.value, { keys: ['code'] }),
           filterAll: true
         },
         {
           Header: 'Título',
           accessor: 'title',
-          width: 150,
-          maxWidth: 200,
-          minWidth: 100,
+          width: 200,
+          maxWidth: 250,
+          minWidth: 200,
           filterMethod: (filter, rows) =>
-            matchSorter(rows, filter.value, { keys: ['id'] }),
+            matchSorter(rows, filter.value, { keys: ['title'] }),
           filterAll: true,
           Cell: props => props.value
         },
@@ -155,6 +155,11 @@ class ListQuestionaries extends Component {
         defaultPageSize={5}
         noDataText={'No existen cuestionarios'}
         filterable
+        previousText='Atras'
+        nextText='Siguiente'
+        pageText='Página'
+        ofText='de'
+        rowsText='filas'
       />
     );
     return table;
