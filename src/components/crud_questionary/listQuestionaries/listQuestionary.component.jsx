@@ -8,6 +8,8 @@ import Loader from 'react-loader-spinner';
 import matchSorter from 'match-sorter';
 import ReactTable from 'react-table';
 import CreateQuestionary from '../createQuestionary/createQuestionary.component';
+import UpdateQuestionary from '../updateQuestionary/updateQuestionary.component';
+import DeleteQuestionary from '../deleteQuestionary/deleteQuestionary.component';
 
 import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
@@ -33,6 +35,9 @@ class ListQuestionaries extends Component {
       loading: false,
       listQuestionaries: [],
       isVisibleCreate: false,
+      isVisibleUpdate: false,
+      isVisibleDelete: false,
+      questionary: null,
       alertVariant: '',
       alertMessage: '',
       alertId: 'alert-listProjects',
@@ -59,6 +64,23 @@ class ListQuestionaries extends Component {
           Cell: props => props.value
         },
         {
+          id: 'is_active',
+          Header: 'Activo',
+          accessor: 'is_active',
+          sortable: false,
+          filterable: false,
+          width: 100,
+          maxWidth: 100,
+          minWidth: 100,
+          Cell: props => {
+            return props.value ? (
+              <div className='success'></div>
+            ) : (
+              <div className='remove'></div>
+            );
+          }
+        },
+        {
           Header: 'Acciones',
           sortable: false,
           filterable: false,
@@ -76,7 +98,7 @@ class ListQuestionaries extends Component {
                     className='update'
                     variant='outline-primary'
                     onClick={() => {
-                      this.updateRow(props.original.id);
+                      this.handleOpenUpdate(props.original.id);
                     }}></Button>
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -98,7 +120,7 @@ class ListQuestionaries extends Component {
                     className='ml-1 change'
                     variant='outline-danger'
                     onClick={() => {
-                      this.deleteRow(props.original.id);
+                      this.handleOpenDelete(props.original.id);
                     }}></Button>
                 </OverlayTrigger>
               </div>
@@ -113,11 +135,35 @@ class ListQuestionaries extends Component {
     this.setState({ isVisibleCreate: true });
   };
 
-  handleClose = () => {
-    this.setState({
-      isVisibleCreate: false
-    });
+  handleOpenUpdate = value => {
+    const headers = getHeader();
+    axios
+      .get(
+        URL + '/questionaries/get/' + value,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ questionary: response.data[0] }, () => {
+          this.setState({ isVisibleUpdate: true });
+        });
+      });
   };
+
+  handleOpenDelete = (value) => {
+    const headers = getHeader();
+    axios
+      .get(
+        URL + '/questionaries/get/' + value,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        this.setState({ questionary: response.data[0] }, () => {
+          this.setState({ isVisibleDelete: true });
+        });
+      });
+  }
 
   handleCloseCreate = () => {
     this.getQuestionaries();
@@ -127,6 +173,34 @@ class ListQuestionaries extends Component {
     });
     this.handleClose();
     showAlert(this.state.alertId);
+  };
+
+  handleCloseUpdate = () => {
+    this.getQuestionaries();
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Cuestionario actualizado.'
+    });
+    this.handleClose();
+    showAlert(this.state.alertId);
+  };
+
+  handleCloseDelete = () => {
+    this.getQuestionaries();
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Estado del cuestionario modificado.'
+    });
+    this.handleClose();
+    showAlert(this.state.alertId);
+  };
+
+  handleClose = () => {
+    this.setState({
+      isVisibleCreate: false,
+      isVisibleUpdate: false,
+      isVisibleDelete: false
+    });
   };
 
   getQuestionaries = () => {
@@ -179,7 +253,7 @@ class ListQuestionaries extends Component {
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
-          <span className='text text-white'>Agregar cuestionario</span>
+          <span className='text text-white'>Crear cuestionario</span>
         </button>
         {this.state.loading ? (
           <ReactTable
@@ -199,6 +273,30 @@ class ListQuestionaries extends Component {
             study={this.props.study}
             handleCloseCreate={this.handleCloseCreate}
             handleClose={this.handleClose}
+          />
+        </Modal>
+        <Modal
+          size='lg'
+          show={this.state.isVisibleUpdate}
+          onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
+          <UpdateQuestionary
+            study={this.props.study}
+            handleCloseUpdate={this.handleCloseUpdate}
+            handleClose={this.handleClose}
+            questionary={this.state.questionary}
+          />
+        </Modal>
+        <Modal
+          size='lg'
+          show={this.state.isVisibleDelete}
+          onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
+          <DeleteQuestionary
+            study={this.props.study}
+            handleCloseDelete={this.handleCloseDelete}
+            handleClose={this.handleClose}
+            questionary={this.state.questionary}
           />
         </Modal>
         <AlertComponent

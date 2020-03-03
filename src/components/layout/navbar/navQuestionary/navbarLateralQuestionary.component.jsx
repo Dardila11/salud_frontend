@@ -82,7 +82,7 @@ class NavBarLateralQuestionary extends Component {
           </a>
         </li>
         <hr className='sidebar-divider mb-0'></hr>
-        <li className='active nav-item'>
+        <li className='active nav-item hover'>
           <a className='nav-link' onClick={() => this.props.history.goBack()}>
             <i className='fas fa-caret-square-left'></i>
             <span>Retornar</span>

@@ -271,3 +271,7 @@ code {
 .cap {
   text-transform: capitalize;
 }
+
+.hover:hover {
+  cursor: pointer;
+}

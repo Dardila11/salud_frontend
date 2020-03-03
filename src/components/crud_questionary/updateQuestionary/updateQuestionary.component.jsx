@@ -30,7 +30,7 @@ const schema = Yup.object({
  * @description Este componente se encarga de la creacion de nuevos
  * proyectos de estudios
  */
-class CreateQuestionary extends Component {
+class UpdateQuestionary extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,13 +47,14 @@ class CreateQuestionary extends Component {
     this.props.handleClose();
   };
 
-  handleCloseCreate = () => {
-    this.props.handleCloseCreate();
+  handleCloseUpdate = () => {
+    this.props.handleCloseUpdate();
   };
 
-  save = values => {
+  update = values => {
     const headers = Utils.getHeader();
     var json = {
+      questionary_id: this.props.questionary.pk,
       questionary: {
         code: values.code,
         title: values.title,
@@ -65,27 +66,29 @@ class CreateQuestionary extends Component {
         study_id: this.props.study
       }
     };
+    console.log(json);
     this.setState({ progress: true }, () => {
       axios
-        .post(URL + '/questionaries/', json, {
+        .put(URL + '/questionaries/', json, {
           headers: headers
         })
         .then(() => {
           this.setState({ progress: false });
-          this.handleCloseCreate();
+          this.handleCloseUpdate();
         })
-        .catch(error => {
+        .catch(() => {
           this.setState({
             progress: false,
             alertVariant: 'danger',
-            alertMessage: 'No se pudo crear.'
+            alertMessage: 'No se pudo actualizar.'
           });
           Utils.showAlert(this.state.alertId);
         });
     });
   };
+
   componentDidMount() {
-    console.log(this.props.usersInfo);
+    console.log(this.props.questionary);
   }
 
   render() {
@@ -106,20 +109,19 @@ class CreateQuestionary extends Component {
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            code: '',
-            title: '',
-            description: '',
-            num_minRegistry: 0,
-            num_maxRegistry: 0,
-            is_read: false,
-            is_accessExternal: false
+            code: this.props.questionary.fields.code,
+            title: this.props.questionary.fields.title,
+            description: this.props.questionary.fields.description,
+            num_minRegistry: this.props.questionary.fields.num_minRegistry,
+            num_maxRegistry: this.props.questionary.fields.num_maxRegistry,
+            is_read: this.props.questionary.fields.is_read,
+            is_accessExternal: this.props.questionary.fields.is_accessExternal
           }}
           validationSchema={schema}
-          onSubmit={this.save}>
+          onSubmit={this.update}>
           {({
             handleSubmit,
             handleChange,
-            handleBlur,
             values,
             touched,
             errors
@@ -127,7 +129,7 @@ class CreateQuestionary extends Component {
             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Crear cuestionario
+                  Actualizar cuestionario
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
@@ -249,7 +251,7 @@ class CreateQuestionary extends Component {
                   Cancelar
                 </Button>
                 <Button form='formCreateProject' type='submit'>
-                  Crear cuestionario
+                  Actualizar cuestionario
                 </Button>
               </Modal.Footer>
             </>
@@ -265,4 +267,4 @@ class CreateQuestionary extends Component {
   }
 }
 
-export default CreateQuestionary;
+export default UpdateQuestionary;
