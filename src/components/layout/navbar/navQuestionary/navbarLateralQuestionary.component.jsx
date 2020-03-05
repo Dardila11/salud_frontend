@@ -102,7 +102,7 @@ class NavBarLateralQuestionary extends Component {
           <Collapse in={this.state.isCollapseTittle}>
             <div className='bg-white py-2 collapse-inner rounded'>
               <h6 className='collapse-header'>Formatos:</h6>
-              <div className='collapse-item'>Normal</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(1)}}>Normal</div>
             </div>
           </Collapse>
         </li>
@@ -118,8 +118,26 @@ class NavBarLateralQuestionary extends Component {
           <Collapse in={this.state.isCollapseText}>
             <div className='bg-white py-2 collapse-inner rounded'>
               <h6 className='collapse-header'>Formatos:</h6>
-              <div className='collapse-item active'>Texto 250 caracteres</div>
+              <div className='collapse-item active' onClick={()=>{this.props.idElement(2)}}>Texto 250 caracteres</div>
               <div className='collapse-item'>Texto libre</div>
+            </div>
+          </Collapse>
+        </li>
+        <li className={isActive === 0 ? 'active nav-item' : 'nav-item'}>
+          <div
+            role='button'
+            className='nav-link'
+            data-toggle='collapse'
+            onClick={this.handleCollapseTittle}>
+            <i className='fas fa-spell-check'></i>
+            <span>Entrada Texto</span>
+          </div>
+          <Collapse in={this.state.isCollapseTittle}>
+            <div className='bg-white py-2 collapse-inner rounded'>
+              <h6 className='collapse-header'>Formatos:</h6>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(3)}}>Normal</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(4)}}>TextArea</div>
+              
             </div>
           </Collapse>
         </li>
@@ -130,13 +148,13 @@ class NavBarLateralQuestionary extends Component {
             data-toggle='collapse'
             onClick={this.handleCollapseNum}>
             <i className='fas fa-sort-numeric-up-alt'></i>
-            <span>Númerico</span>
+            <span>Entrada Númerica</span>
           </div>
           <Collapse in={this.state.isCollapseNum}>
             <div className='bg-white py-2 collapse-inner rounded'>
               <h6 className='collapse-header'>Formatos:</h6>
-              <div className='collapse-item'>Entero</div>
-              <div className='collapse-item'>Decimal</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(5)}}>Entero</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(6)}}>Decimal</div>
               <div className='collapse-item'>Calculado</div>
             </div>
           </Collapse>
@@ -153,14 +171,16 @@ class NavBarLateralQuestionary extends Component {
           <Collapse in={this.state.isCollapseSpecial}>
             <div className='bg-white py-2 collapse-inner rounded'>
               <h6 className='collapse-header'>Formatos:</h6>
-              <div className='collapse-item'>Opcion unica</div>
-              <div className='collapse-item'>Opcion multiple</div>
-              <div className='collapse-item'>Fecha</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(7)}}>Opcion unica</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(8)}}>Opcion multiple</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(9)}}>Select</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(10)}}>Fecha</div>
               <div className='collapse-item'>Hora</div>
               <div className='collapse-item'>URL</div>
               <div className='collapse-item'>Email</div>
               <div className='collapse-item'>Matriz</div>
-              <div className='collapse-item'>Adjuntar ficheros</div>
+              <div className='collapse-item'>Imagen</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(11)}}>Adjuntar ficheros</div>
             </div>
           </Collapse>
         </li>

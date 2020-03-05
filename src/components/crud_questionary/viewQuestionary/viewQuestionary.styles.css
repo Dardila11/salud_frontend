@@ -10,9 +10,34 @@
 
 .custom-section {
     overflow-y: auto;
-    height: 200px;
+    height: 10em;
 }
 
 .custom-subsection {
-    height: 300px;
+    height: 10em;
 }
+
+
+.Contenedor{
+  
+    width: 45em !important;
+    height: 10em !important;
+    border: 5px solid #61dafb !important;
+    border: ridge  !important;
+  }
+
+  .element{
+
+    display: flex;
+    width:11em;
+    min-width: 11em;
+    max-width: 40em !important;
+    height: auto !important;
+    max-height: 100%;
+    padding: 1em;
+    border-color: black !important;
+    border-style: ridge  !important;
+  }
+  .rowCuestionarie{
+    height: 100% !important;
+  }
