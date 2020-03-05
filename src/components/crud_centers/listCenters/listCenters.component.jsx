@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Loader from 'react-loader-spinner';
 import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
@@ -10,6 +10,7 @@ import { getHeader, showAlert } from '../../utils/utils';
 import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 import AddCenter from '../addCenter/addCenter.component';
+import DeleteCenter from '../deleteCenter/deleteCenter.component';
 
 import 'react-table/react-table.css';
 
@@ -32,6 +33,8 @@ class ListCenters extends Component {
     super(props);
     this.state = {
       loading: false,
+      center: -1,
+      isVisibleDelete: false,
       listCenters: [],
       alertMessage: '',
       alertVariant: '',
@@ -56,7 +59,24 @@ class ListCenters extends Component {
           filterMethod: (filter, rows) =>
             matchSorter(rows, filter.value, { keys: ['center_id__name'] }),
           filterAll: true,
-          Cell: props => <span className="cap">{props.value}</span>
+          Cell: props => <span className='cap'>{props.value}</span>
+        },
+        {
+          id: 'is_active',
+          Header: 'Activo',
+          accessor: 'is_active',
+          sortable: false,
+          filterable: false,
+          width: 100,
+          maxWidth: 100,
+          minWidth: 100,
+          Cell: props => {
+            return props.value ? (
+              <div className='success'></div>
+            ) : (
+              <div className='remove'></div>
+            );
+          }
         },
         {
           Header: 'Acciones',
@@ -76,7 +96,10 @@ class ListCenters extends Component {
                     className='ml-1 change'
                     variant='outline-danger'
                     onClick={() => {
-                      this.deleteRow(props.original.id);
+                      this.deleteCenter(
+                        props.original.id,
+                        props.original.is_active
+                      );
                     }}></Button>
                 </OverlayTrigger>
               </div>
@@ -118,6 +141,12 @@ class ListCenters extends Component {
       });
   };
 
+  deleteCenter = (center_id, is_active) => {
+    this.setState({ center: center_id, is_active: is_active }, () =>
+      this.setState({ isVisibleDelete: true })
+    );
+  };
+
   getCenters = () => {
     const headers = getHeader();
     this.setState({ loading: true }, () =>
@@ -134,6 +163,22 @@ class ListCenters extends Component {
           this.setState({ loading: false });
         })
     );
+  };
+
+  handleCloseDelete = () => {
+    this.getCenters();
+    this.setState({
+      alertVariant: 'success',
+      alertMessage: 'Estado del centro modificado.'
+    });
+    this.handleClose();
+    showAlert(this.state.alertId);
+  };
+
+  handleClose = () => {
+    this.setState({
+      isVisibleDelete: false
+    });
   };
 
   renderCenters = () => {
@@ -177,6 +222,18 @@ class ListCenters extends Component {
         ) : (
           <this.renderCenters />
         )}
+        <Modal
+          size='lg'
+          show={this.state.isVisibleDelete}
+          onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
+          <DeleteCenter
+            center={this.state.center}
+            is_active={this.state.is_active}
+            handleCloseDelete={this.handleCloseDelete}
+            handleClose={this.handleClose}
+          />
+        </Modal>
         <AlertComponent
           alertId={this.state.alertId}
           alertVariant={this.state.alertVariant}

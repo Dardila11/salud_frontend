@@ -112,25 +112,34 @@ export default class ViewProject extends Component {
           { cancelToken: this.source.token }
         )
         .then(response => {
-          this.setState({
-            studyInfo: response.data,
-            loading: false
-          }, () => this.setState({initialValues: {
-            is_test: this.state.studyInfo[0].fields.is_studyTest,
-            typeStudy: this.state.studyInfo[0].fields.type_study,
-            numParticipants: this.state.studyInfo[0].fields.num_participants,
-            is_traceability: this.state.studyInfo[0].fields.trazability,
-            is_doubleIn: this.state.studyInfo[0].fields.double_in,
-            is_duplicity: this.state.studyInfo[0].fields.control_double,
-            is_random: this.state.studyInfo[0].fields.is_random,
-            autoNum: this.state.studyInfo[0].fields.autonum,
-            blindStudy: this.state.studyInfo[0].fields.blind_study,
-            is_criterionInclusion: this.state.studyInfo[0].fields.is_criterInclusion,
-            filterAccess: this.state.studyInfo[0].fields.filter_access,
-            dataParticipants: this.state.studyInfo[0].fields.data_participant,
-            is_accessData: this.state.studyInfo[0].fields.is_habeasdata,
-            participantsID: this.state.studyInfo[0].fields.participant_id
-          }}));
+          this.setState(
+            {
+              studyInfo: response.data,
+              loading: false
+            },
+            () =>
+              this.setState({
+                initialValues: {
+                  is_test: this.state.studyInfo[0].fields.is_studyTest,
+                  typeStudy: this.state.studyInfo[0].fields.type_study,
+                  numParticipants: this.state.studyInfo[0].fields
+                    .num_participants,
+                  is_traceability: this.state.studyInfo[0].fields.trazability,
+                  is_doubleIn: this.state.studyInfo[0].fields.double_in,
+                  is_duplicity: this.state.studyInfo[0].fields.control_double,
+                  is_random: this.state.studyInfo[0].fields.is_random,
+                  autoNum: this.state.studyInfo[0].fields.autonum,
+                  blindStudy: this.state.studyInfo[0].fields.blind_study,
+                  is_criterionInclusion: this.state.studyInfo[0].fields
+                    .is_criterInclusion,
+                  filterAccess: this.state.studyInfo[0].fields.filter_access,
+                  dataParticipants: this.state.studyInfo[0].fields
+                    .data_participant,
+                  is_accessData: this.state.studyInfo[0].fields.is_habeasdata,
+                  participantsID: this.state.studyInfo[0].fields.participant_id
+                }
+              })
+          );
         })
         .catch(() => this.setState({ loading: false }))
     );
@@ -463,7 +472,10 @@ export default class ViewProject extends Component {
               <hr />
               <div className='row d-flex justify-content-center'>
                 <div className=''>
-                  <Button className='mr-1' variant='secondary' onClick={() => resetForm(this.state.initialValues)}>
+                  <Button
+                    className='mr-1'
+                    variant='secondary'
+                    onClick={() => resetForm(this.state.initialValues)}>
                     Restaurar
                   </Button>
                   <Button className='ml-1' type='submit'>

@@ -15,8 +15,9 @@ function App() {
   return (
     <BrowserRouter>
       <div className='App'>
-        <Switch>
+        <Switch>          
           <Route exact path='/' component={SignIn} />
+          <Route exact path='/admin/profile' component={AdminDashboard} />
           <Route exact path='/admin/users' component={AdminDashboard} />
           <Route exact path='/admin/studies' component={AdminDashboard} />
           <Route exact path='/admin/centers/:study' component={AdminDashboard} />

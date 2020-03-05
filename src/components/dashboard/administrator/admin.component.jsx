@@ -21,6 +21,8 @@ import ListQuestionaries from '../../crud_questionary/listQuestionaries/listQues
 import ListCenters from '../../crud_centers/listCenters/listCenters.component';
 import ViewQuestionary from '../../crud_questionary/viewQuestionary/viewQuestionary.component';
 
+import ViewProfile from '../../layout/view_profile/viewProfile.component';
+
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
 import '../../../css/sb-admin-2.min.css';
@@ -112,6 +114,8 @@ class AdminDashboard extends Component {
       return <ListUsers />;
     } else if (path.endsWith('/studies') || path.endsWith('/users/')) {
       return <ListProjects />;
+    } else if (path.startsWith('/admin/profile')) {
+      return <ViewProfile />;
     } else if (path.startsWith('/admin/users/')) {
       return <ViewUser email={this.props.match.params.user} />;
     } else if (path.startsWith('/admin/studies/members/')) {
@@ -121,7 +125,9 @@ class AdminDashboard extends Component {
     } else if (path.startsWith('/admin/centers/')) {
       return <ListCenters project={this.props.match.params.study} />;
     } else if (path.startsWith('/admin/questionary/')) {
-      return <ViewQuestionary questionary={this.props.match.params.questionary} />;
+      return (
+        <ViewQuestionary questionary={this.props.match.params.questionary} />
+      );
     } else if (path.startsWith('/admin/questionaries/')) {
       return <ListQuestionaries study={this.props.match.params.study} />;
     }
@@ -151,7 +157,8 @@ class AdminDashboard extends Component {
       );
     else if (
       path.startsWith('/admin/users') ||
-      path.startsWith('/admin/studies')
+      path.startsWith('/admin/studies') ||
+      path.startsWith('/admin/profile')
     )
       bar = (
         <NavbarLateralAdmin

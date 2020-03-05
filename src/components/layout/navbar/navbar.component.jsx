@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 import { closeSession } from '../../utils/handleLocalStorage';
 import { getHeader } from '../../utils/utils';
@@ -28,6 +28,8 @@ class NavBar extends Component {
     });
   };
 
+  openProfile = () => {};
+
   render() {
     if (!this.state.isLogged) {
       return <Redirect to='/' />;
@@ -37,8 +39,7 @@ class NavBar extends Component {
         <button
           id='sidebarToggleTop'
           className='btn btn-link d-md-none rounded-circle mr-3'
-          onClick={this.props.handleToogle}
-        >
+          onClick={this.props.handleToogle}>
           <i className='fa fa-bars'></i>
         </button>
         <form className='d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search'>
@@ -48,8 +49,7 @@ class NavBar extends Component {
               className='form-control bg-light border-0 small'
               placeholder='Buscar...'
               aria-label='Search'
-              aria-describedby='basic-addon2'
-            ></input>
+              aria-describedby='basic-addon2'></input>
             <div className='input-group-append'>
               <button className='btn btn-primary' type='button'>
                 <i className='fas fa-search fa-sm'></i>
@@ -122,10 +122,16 @@ class NavBar extends Component {
                 {this.email}
               </span>
             </div>
-            <DropdownButton className='doctor dropdown-doctor' alignRight title='' id='profile'>
+            <DropdownButton
+              className='doctor dropdown-doctor'
+              alignRight
+              title=''
+              id='profile'>
               <Dropdown.Item as='button'>
-                <i className='fas fa-user fa-sm fa-fw mr-2 text-gray-400'></i>
-                Perfil
+                <Link to="/admin/profile">
+                  <i className='fas fa-user fa-sm fa-fw mr-2 text-gray-400'></i>
+                  Perfil
+                </Link>
               </Dropdown.Item>
               <Dropdown.Item as='button'>
                 <i className='fas fa-list fa-sm fa-fw mr-2 text-gray-400'></i>

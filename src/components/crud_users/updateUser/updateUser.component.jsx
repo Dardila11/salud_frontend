@@ -15,9 +15,6 @@ import { URL } from '../../utils/URLSever';
 import AlertComponent from '../../layout/alert/alert.component';
 
 const schema = Yup.object({
-  userId: Yup.string()
-    .min(4, 'Mínimo 4 caracteres')
-    .required('Campo requerido'),
   firstName: Yup.string()
     .min(2, 'Mínimo 2 caracteres')
     .required('Campo requerido'),
@@ -64,7 +61,7 @@ class UpdateUserFormik extends Component {
    * @function updateUserInfo
    * @description Se encarga de guardar los datos modificados del usuario
    */
-  updateUserInfo = async values => {
+  updateUserInfo = values => {
     const headers = getHeader();
     const data = {
       email_instance: this.props.email,

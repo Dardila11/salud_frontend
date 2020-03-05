@@ -81,6 +81,17 @@ class CreateUserFormik extends Component {
         { name: 'view_user' }
       );
     }
+    if (values.createProjects === true) {
+      data.permissions.push(
+        { name: 'add_study' },
+        { name: 'change_study' },
+        { name: 'view_study' }
+      );
+    }
+    data.permissions.push(
+      { name: 'view_studycenters' },
+      { name: 'view_studyusers' }
+    );
     this.setState({ progress: true }, () =>
       axios
         .post(URL + '/users/', data, {
@@ -94,7 +105,7 @@ class CreateUserFormik extends Component {
           this.setState({
             progress: false,
             alertVariant: 'danger',
-            alertMessage: JSON.parse(error.request.response).detail
+            alertMessage: 'No se pudo crear el usuario'
           });
           showAlert(this.state.alertId);
         })
@@ -335,15 +346,15 @@ class CreateUserFormik extends Component {
                         value={values.createUsers}
                         onChange={handleChange}
                       />
-                      {/* <Form.Check
-                        disabled
+                      <Form.Check
+                        disabled={values.type === '1' ? false : true}
                         name='createProjects'
                         type='checkbox'
-                        label='Proyectos Clinicos'
+                        label='Proyectos clinicos'
                         id='checkProjects'
-                        value={values.createCenters}
+                        value={values.createProjects}
                         onChange={handleChange}
-                      /> */}
+                      />
                     </Form.Group>
                   </Form.Row>
                 </Form>

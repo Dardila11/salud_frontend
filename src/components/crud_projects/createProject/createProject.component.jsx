@@ -70,7 +70,7 @@ class CreateProjectFormik extends Component {
   handleCloseCreate = () => {
     this.props.handleCloseCreate();
   };
-  saveNewProjectInfo = async values => {
+  saveNewProjectInfo = values => {
     const headers = Utils.getHeader();
     var json = {
       study: {
@@ -210,12 +210,7 @@ class CreateProjectFormik extends Component {
                         className='form-control'
                         name='registerDate'
                         onChange={date => setFieldValue('registerDate', date)}
-                        isValid={touched.registerDate && !errors.registerDate}
-                        isInvalid={!!errors.registerDate}
                       />
-                      <Form.Control.Feedback type='invalid'>
-                        {errors.registerDate}
-                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md='4' controlId='inputId3'>
                       <Form.Label>Fecha inicio</Form.Label>
@@ -261,26 +256,26 @@ class CreateProjectFormik extends Component {
                         name='registerDate'
                         onChange={date =>
                           setFieldValue(
-                            'limitAccessDate',
+                            'endDate',
                             date === null ? '' : date
                           )
                         }
                         className={
                           'form-control ' +
-                          (touched.limitAccessDate && !errors.limitAccessDate
+                          (touched.endDate && !errors.endDate
                             ? 'is-valid'
                             : '') +
-                          (!!errors.limitAccessDate ? 'is-invalid' : '')
+                          (!!errors.endDate ? 'is-invalid' : '')
                         }
                       />
                       <Form.Control.Feedback
                         type='invalid'
                         className={
-                          (touched.limitAccessDate && !errors.limitAccessDate
+                          (touched.endDate && !errors.endDate
                             ? 'd-none'
-                            : '') + (!!errors.limitAccessDate ? 'd-block' : '')
+                            : '') + (!!errors.endDate ? 'd-block' : '')
                         }>
-                        {errors.limitAccessDate}
+                        {errors.endDate}
                       </Form.Control.Feedback>
                     </Form.Group>
                   </Form.Row>
