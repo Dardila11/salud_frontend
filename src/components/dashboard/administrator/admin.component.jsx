@@ -21,6 +21,8 @@ import ListQuestionaries from '../../crud_questionary/listQuestionaries/listQues
 import ListCenters from '../../crud_centers/listCenters/listCenters.component';
 import ViewQuestionary from '../../crud_questionary/viewQuestionary/viewQuestionary.component';
 
+import ViewProfile from '../../layout/view_profile/viewProfile.component';
+
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import './admin.styles.css';
 import '../../../css/sb-admin-2.min.css';
@@ -31,13 +33,13 @@ class AdminDashboard extends Component {
 
   constructor(props) {
     super(props);
-    this.refComponent=React.createRef()
+    this.refComponent = React.createRef();
     this.state = {
       loading: true,
       isAuthenticated: true,
       projectBar: false,
       isToogle: false,
-      idComponent:0
+      idComponent: 0
     };
   }
 
@@ -116,6 +118,8 @@ class AdminDashboard extends Component {
       return <ListProjects />;
     } else if (path.startsWith('/admin/users/')) {
       return <ViewUser email={this.props.match.params.user} />;
+    } else if (path.startsWith('/admin/profile')) {
+      return <ViewProfile />;
     } else if (path.startsWith('/admin/studies/members/')) {
       return <ListMembers project={this.props.match.params.study} />;
     } else if (path.startsWith('/admin/studies/')) {
@@ -123,7 +127,12 @@ class AdminDashboard extends Component {
     } else if (path.startsWith('/admin/centers/')) {
       return <ListCenters project={this.props.match.params.study} />;
     } else if (path.startsWith('/admin/questionary/')) {
-      return <ViewQuestionary questionary={this.props.match.params.questionary} ref={this.refComponent}/>;
+      return (
+        <ViewQuestionary
+          questionary={this.props.match.params.questionary}
+          ref={this.refComponent}
+        />
+      );
     } else if (path.startsWith('/admin/questionaries/')) {
       return <ListQuestionaries study={this.props.match.params.study} />;
     }
@@ -136,10 +145,10 @@ class AdminDashboard extends Component {
   componentWillUnmount() {
     this.source.cancel('cancel request');
   }
-  idElement=(id)=>{
+  idElement = id => {
     this.setState({ idComponent: id });
     this.refComponent.current.newHandler(id);
-}
+  };
   render() {
     var bar;
     const path = this.props.match.path;
@@ -156,7 +165,8 @@ class AdminDashboard extends Component {
       );
     else if (
       path.startsWith('/admin/users') ||
-      path.startsWith('/admin/studies')
+      path.startsWith('/admin/studies') ||
+      path.startsWith('/admin/profile')
     )
       bar = (
         <NavbarLateralAdmin
