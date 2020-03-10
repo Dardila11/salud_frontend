@@ -236,7 +236,6 @@ class ViewQuestionary extends Component {
 
 }
 Cambio=(i,j)=>{
-  alert(''+i+'-'+j)
   let paginas=this.refContainer.current.childNodes[2].childNodes
   let pagina=0
   let seccionId='0-0'
@@ -252,9 +251,12 @@ Cambio=(i,j)=>{
   newSectionVAlue=secciones[j].childNodes[0].childNodes[0].childNodes[0].childNodes[1].
   childNodes[0].childNodes[0].value
   if(newSectionVAlue.length>0)
+  {
     secciones[j].childNodes[0].childNodes[0].childNodes[0].childNodes[0].
-      childNodes[0].data=newSectionVAlue
-
+    childNodes[0].data=newSectionVAlue
+  }
+    
+  
    
   
 }
