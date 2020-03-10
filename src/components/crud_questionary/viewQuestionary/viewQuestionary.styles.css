@@ -1,43 +1,67 @@
 .custom-col {
-    border: 1px solid black;
-    word-wrap: break-word;
-    height: 100px;
+  border: 1px solid black;
+  word-wrap: break-word;
+  height: 100px;
 }
 
 .card {
-    position: inherit !important;
+  position: inherit !important;
 }
 
 .custom-section {
-    overflow-y: auto;
-    height: 10em;
+  overflow-y: auto;
+  height: 10em;
+  
 }
 
 .custom-subsection {
-    height: 10em;
+  height: 10em;
 }
 
 
 .Contenedor{
+
+  width: 45em !important;
+  height: 10em !important;
+  border: 5px solid #61dafb !important;
+  border: ridge  !important;
+}
+
+.element{
+
+  width:11em;
+  min-width: 11em;
+  max-width: 40em !important;
+  max-height: 100%;
+  padding: 1em;
+  border-color: black !important;
+  border-style: ridge  !important;
+  background-color: crimson;
+}
+.rowCuestionarie{
+  height: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+.nameSection{
+  flex: auto;
+  color:rgb(0, 123, 255);
   
-    width: 45em !important;
-    height: 10em !important;
-    border: 5px solid #61dafb !important;
-    border: ridge  !important;
-  }
+}
 
-  .element{
 
-    display: flex;
-    width:11em;
-    min-width: 11em;
-    max-width: 40em !important;
-    height: auto !important;
-    max-height: 100%;
-    padding: 1em;
-    border-color: black !important;
-    border-style: ridge  !important;
-  }
-  .rowCuestionarie{
-    height: 100% !important;
-  }
+.flex-container {
+padding: 1em;
+margin: 0;
+list-style: none;
+display: flex;
+}
+
+.flex-start { 
+justify-content: flex-start; 
+}
+.flex-item {
+padding: 5px;
+margin: 5px;
+line-height: 50px;
+}

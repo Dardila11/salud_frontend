@@ -12,7 +12,8 @@ import {
   Row,
   Col,
   Tab,
-  Tabs
+  Tabs,
+  Form
 } from 'react-bootstrap';
 
 import './viewQuestionary.styles.css';
@@ -34,7 +35,8 @@ class ViewQuestionary extends Component {
       listFields:[],
       pageActive:0,
       countPages:0,
-      countSection:0
+      countSection:0,
+      nameSection:''
     };
   }
   newPage = () => {
@@ -62,9 +64,15 @@ class ViewQuestionary extends Component {
       if(paginas[i].className.length>20)
        pagina=i
     }
+    
     const data = {
-      id: this.state.countSection+1,
-      name: 'Sección '+(pagina+1)+(this.state.countSection+1),
+      id: ''+(pagina)+(this.refContainer.current.childNodes[3].childNodes[pagina]
+        .childNodes[0].childNodes.length),
+      name: 'Sección '+(pagina)+(this.refContainer.current.childNodes[3].childNodes[pagina]
+        .childNodes[0].childNodes.length),
+      i:pagina,
+      j:this.refContainer.current.childNodes[3].childNodes[pagina]
+      .childNodes[0].childNodes.length,
       page_id_id:pagina+1,
       pos_y: 1
     };
@@ -227,6 +235,29 @@ class ViewQuestionary extends Component {
 
 
 }
+Cambio=(i,j)=>{
+  alert(''+i+'-'+j)
+  let paginas=this.refContainer.current.childNodes[2].childNodes
+  let pagina=0
+  let seccionId='0-0'
+  for (let i = 0; i < paginas.length; i++) {
+    if(paginas[i].className.length>20)
+    pagina=i
+  }
+  let secciones=this.refContainer.current.childNodes[3].childNodes[i]
+  .childNodes[0].childNodes
+  console.log(secciones)
+
+  let newSectionVAlue=''
+  newSectionVAlue=secciones[j].childNodes[0].childNodes[0].childNodes[0].childNodes[1].
+  childNodes[0].childNodes[0].value
+  if(newSectionVAlue.length>0)
+    secciones[j].childNodes[0].childNodes[0].childNodes[0].childNodes[0].
+      childNodes[0].data=newSectionVAlue
+
+   
+  
+}
 ensayo=()=>{
   alert()
 
@@ -252,9 +283,29 @@ ensayo=()=>{
                 this.state.listRefsSections.push(tuple);
               card = (
                 <Card key={j}>
-                  <Card.Header>
+                  <Card.Header >
                     <Accordion.Toggle as={Button} variant='link' eventKey={j} >
-                      {section.name} 
+                      <ul className="flex-container flex-start">
+                        <li className="flex-item">
+                        {section.name} 
+                        </li>
+                        <li className="flex-item">
+                        <Form id={'fsection '+i+'-'+j} onSubmit={(e) => {
+                          e.preventDefault();
+                          this.Cambio(section.i,section.j)}}> 
+                        <Form.Control
+                            as='input'
+                            placeholder='Cambiar nombre...'
+                            id={'nsection '+i+'-'+j}
+                        >
+                              
+                        </Form.Control>
+  
+                        </Form>
+                        </li>
+                      </ul>
+                      
+                      
                     </Accordion.Toggle>
                   </Card.Header>
                   <Accordion.Collapse eventKey={j} >
@@ -310,7 +361,8 @@ ensayo=()=>{
       <div ref = { this.refContainer}>
         <button
           className='btn btn-primary btn-icon-split float-right ml-1 p-0'
-          onClick={this.newSection}>
+          onClick={this.newSection}
+          type='button'>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
           </span>
@@ -318,6 +370,7 @@ ensayo=()=>{
         </button>
         <button
           className='btn btn-primary btn-icon-split float-right p-0'
+          type='button'
           onClick={this.newPage}>
           <span className='icon text-white-50'>
             <i className='fas fa-plus-square'></i>
