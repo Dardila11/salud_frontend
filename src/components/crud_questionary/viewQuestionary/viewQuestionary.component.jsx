@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Rnd } from "react-rnd";
 import { getHeader } from '../../utils/utils';
-import { URL } from '../../utils/URLSever';
+import { URL } from '../../utils/URLSever'
+import { Resizable, ResizableBox } from 'react-resizable';
 
 import {
   Accordion,
@@ -13,10 +14,12 @@ import {
   Col,
   Tab,
   Tabs,
+  Modal,
   Form
 } from 'react-bootstrap';
 
 import './viewQuestionary.styles.css';
+import { UpdateQuestion } from '../crud_question/updateQuestion.component';
 
 class ViewQuestionary extends Component {
   CancelToken = axios.CancelToken;
@@ -36,7 +39,12 @@ class ViewQuestionary extends Component {
       pageActive:0,
       countPages:0,
       countSection:0,
-      nameSection:''
+      nameSection:'',
+      actualRef:0,
+      iSecc:0,
+      jSecc:0,
+      kSecc:0,
+      isVisibleUpdate:false
     };
   }
   newPage = () => {
@@ -58,20 +66,20 @@ class ViewQuestionary extends Component {
     //console.log(this.refContainer.current.childNodes[3].
       //childNodes[0].childNodes[0])
       //*************************************i */
-    let paginas=this.refContainer.current.childNodes[2].childNodes
+    let paginas=this.refContainer.current.childNodes[1].childNodes
     let pagina=0
     for (let i = 0; i < paginas.length; i++) {
       if(paginas[i].className.length>20)
        pagina=i
     }
-    
+    console.log(this.refContainer.current.childNodes)
     const data = {
-      id: ''+(pagina)+(this.refContainer.current.childNodes[3].childNodes[pagina]
+      id: ''+(pagina)+(this.refContainer.current.childNodes[2].childNodes[pagina]
         .childNodes[0].childNodes.length),
-      name: 'Sección '+(pagina)+(this.refContainer.current.childNodes[3].childNodes[pagina]
+      name: 'Sección '+(pagina)+(this.refContainer.current.childNodes[2].childNodes[pagina]
         .childNodes[0].childNodes.length),
       i:pagina,
-      j:this.refContainer.current.childNodes[3].childNodes[pagina]
+      j:this.refContainer.current.childNodes[2].childNodes[pagina]
       .childNodes[0].childNodes.length,
       page_id_id:pagina+1,
       pos_y: 1
@@ -117,7 +125,10 @@ class ViewQuestionary extends Component {
         )
         .then(response => {
           //console.log(response);
-          this.setState({ listSections: response.data, loading: false });
+          this.setState({ listSections: response.data, loading: false }, () => {
+            this.pagesEmpty();
+        });
+
         })
         .catch(() => {
           this.setState({ loading: false });
@@ -127,14 +138,14 @@ class ViewQuestionary extends Component {
   newHandler = (type) => {
     if(this.state.listSections.length>0)
     {
-        let paginas=this.refContainer.current.childNodes[2].childNodes
+        let paginas=this.refContainer.current.childNodes[1].childNodes
         let pagina=0
         let seccionId='0-0'
         for (let i = 0; i < paginas.length; i++) {
           if(paginas[i].className.length>20)
           pagina=i
         }
-        let secciones=this.refContainer.current.childNodes[3].childNodes[pagina]
+        let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
         .childNodes[0].childNodes
         console.log(secciones)
         for (let i = 0; i <secciones.length; i++) {
@@ -143,17 +154,40 @@ class ViewQuestionary extends Component {
               childNodes[0].childNodes[0].id
         }
         var arreglo=this.state.listFields;  
-        var ele=React.createElement(Rnd, 
+
+        var referencia=React.createRef()
+        var keyElement=seccionId+'-'+Date.now()
+        if(type==1)
         {
-            key:seccionId+'-'+Date.now(),
-            //ref :referencia,
-            bounds:'parent',
-            resizeGrid: [100,100],
-            dragGrid: [50,50],
-            className:'element'       
+          var ele=React.createElement(ResizableBox, 
+            {
+              key:keyElement,
+              id:keyElement,
+              ref :referencia,
+              bounds:'parent',
+              width:300,
+              className:'element',
+              onDoubleClick:this.handleClick.bind(this,keyElement),
+              axis:"x"        
+            }
+            ,this.newElement(type)
+            )
         }
-        , this.newElement(type)
+        else{
+        var ele=React.createElement(ResizableBox, 
+        {
+          key:keyElement,
+          id:keyElement,
+          ref :referencia,
+          bounds:'parent',
+          width:300,
+          className:'element',
+          onDoubleClick:this.handleClick.bind(this,keyElement),
+          axis:"x"        
+        }
+        , [React.createElement('span',{className:'spanElement'},'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?'),this.newElement(type)]
           )
+      }
 
           arreglo.push(ele)
           this.setState(prevState => ({
@@ -165,7 +199,7 @@ class ViewQuestionary extends Component {
   newElement=(type)=>{
     switch (type) {
         case 1: 
-          return React.createElement('h1', {}, 'Titulo');
+          return React.createElement('h1', {}, 'Separador');
           break;
         case 2:
             return React.createElement('p', {
@@ -193,8 +227,8 @@ class ViewQuestionary extends Component {
                       case 7:
                         return React.createElement('div',{},[
                                         React.createElement('div',{},
-                                        [React.createElement('input',{type:'radio',id:'opcion1',value:'Opcion 1',checked:true,name:'opciones'}),
-                                        React.createElement('label',{htmlFor:'opcion1'},' Opcion 1')]),
+                                        [ React.createElement('label',{htmlFor:'opcion1'},' Opcion 1')]),React.createElement('input',{type:'radio',id:'opcion1',value:'Opcion 1',checked:true,name:'opciones'}),
+                                       ,
                                         React.createElement('div',{},
                                         [React.createElement('input',{type:'radio',id:'opcion2',value:'Opcion 2',name:'opciones'}),
                                         React.createElement('label',{htmlFor:'opcion2'},' Opcion 2')]),
@@ -236,14 +270,14 @@ class ViewQuestionary extends Component {
 
 }
 Cambio=(i,j)=>{
-  let paginas=this.refContainer.current.childNodes[2].childNodes
+  let paginas=this.refContainer.current.childNodes[1].childNodes
   let pagina=0
   let seccionId='0-0'
   for (let i = 0; i < paginas.length; i++) {
     if(paginas[i].className.length>20)
     pagina=i
   }
-  let secciones=this.refContainer.current.childNodes[3].childNodes[i]
+  let secciones=this.refContainer.current.childNodes[2].childNodes[i]
   .childNodes[0].childNodes
   console.log(secciones)
 
@@ -260,10 +294,65 @@ Cambio=(i,j)=>{
    
   
 }
+pagesEmpty(){
+  if(this.state.listPages.length===0){
+    this.newPage()
+  }
+}
+handleClick(keyElement){
+  let paginas=this.refContainer.current.childNodes[1].childNodes
+  let pagina=0
+  let seccionId='0-0'
+  let ii,jj,kk
+  for (let i = 0; i < paginas.length; i++) {
+    if(paginas[i].className.length>20)
+    pagina=i
+  }
+  let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
+  .childNodes[0].childNodes
+  console.log(secciones)
+  for (let i = 0; i <secciones.length; i++) {
+    if(secciones[i].childNodes[1].className.length>8)
+    {
+        seccionId=secciones[i].childNodes[1].childNodes[0].
+        childNodes[0].childNodes[0].childNodes[0].childNodes
+        ii=i
+    }
+  }
+  for (let i = 0; i <seccionId.length; i++) {
+        if(seccionId[i].id===keyElement)
+            jj=i
+            
+  }
+  //let ntabs=this.refContainer.current.childNodes[2].childNodes.length-1
+  
+  //let secciones=this.refContainer.current.childNodes[2].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[i].id
+  //              this.refContainer.current.childNodes[2].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent
+   // let secciones=this.refContainer.current.childNodes[2].childNodes[i].childNodes[j].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent
+//console.log(      this.refContainer.current.childNodes[2].childNodes[ii].childNodes[0].childNodes[jj-ii])
+  //console.log(ii+' '+jj+' ')
+  // console.log(secciones)
+ //seccionId=secciones[i].childNodes[1].childNodes[0].
+ //childNodes[0].childNodes[0].id
+ 
+  this.setState({
+    actualRef:this.refContainer,
+    isVisibleUpdate:true,
+    jSecc:jj,
+    iSecc:ii,
+    kSecc:pagina
+  });
+  
+}
 ensayo=()=>{
   alert()
 
 }
+handleClose = () => {
+  this.setState({
+    isVisibleUpdate: false
+  });
+};
   renderQuestionary = () => {
     const render = this.state.listPages.map((page, i) => (
       <Tab key={i} eventKey={page.id} title={page.name} ref = { this.refContainer }>
@@ -284,6 +373,7 @@ ensayo=()=>{
               if (this.state.listRefsSections.length === 0)
                 this.state.listRefsSections.push(tuple);
               card = (
+                
                 <Card key={j}>
                   <Card.Header >
                     <Accordion.Toggle as={Button} variant='link' eventKey={j} >
@@ -349,7 +439,7 @@ ensayo=()=>{
     );
   };
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.getPages();
     this.getSections();
   }
@@ -362,15 +452,6 @@ ensayo=()=>{
     return (
       <div ref = { this.refContainer}>
         <button
-          className='btn btn-primary btn-icon-split float-right ml-1 p-0'
-          onClick={this.newSection}
-          type='button'>
-          <span className='icon text-white-50'>
-            <i className='fas fa-plus-square'></i>
-          </span>
-          <span className='text text-white'>Sección</span>
-        </button>
-        <button
           className='btn btn-primary btn-icon-split float-right p-0'
           type='button'
           onClick={this.newPage}>
@@ -380,6 +461,35 @@ ensayo=()=>{
           <span className='text text-white'>Página</span>
         </button>
         <this.renderQuestionary />
+        <button
+          className='btn btn-primary btn-icon-split float-right ml-1 p-0'
+          onClick={this.newSection}
+          type='button'>
+          <span className='icon text-white-50'>
+            <i className='fas fa-plus-square'></i>
+          </span>
+          <span className='text text-white'>Sección</span>
+        </button>
+
+        <Modal
+          size='lg'
+          show={this.state.isVisibleUpdate}
+          onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
+          <UpdateQuestion
+             handleCloseCreate={this.handleCloseCreate}
+             handleClose={this.handleClose}
+             actualRef={this.state.actualRef}  
+             ii={this.state.iSecc}  
+             jj={this.state.jSecc} 
+             kk={this.state.kSecc}        
+            
+          />
+        </Modal>
+
+
+
+
       </div>
     );
   }

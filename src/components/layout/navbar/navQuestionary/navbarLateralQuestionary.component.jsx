@@ -97,7 +97,7 @@ class NavBarLateralQuestionary extends Component {
             data-toggle='collapse'
             onClick={this.handleCollapseTittle}>
             <i className='fas fa-spell-check'></i>
-            <span>Titulo</span>
+            <span>Separador</span>
           </div>
           <Collapse in={this.state.isCollapseTittle}>
             <div className='bg-white py-2 collapse-inner rounded'>

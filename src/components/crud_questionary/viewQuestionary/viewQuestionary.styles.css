@@ -26,17 +26,23 @@
   border: 5px solid #61dafb !important;
   border: ridge  !important;
 }
-
+.menu{
+  width:11em;
+  height: 11em;
+  border-color: black !important;
+  border-style: ridge  !important;
+}
 .element{
 
-  width:11em;
   min-width: 11em;
-  max-width: 40em !important;
-  max-height: 100%;
+  max-width: 50em !important;
+  min-height: 100%;
   padding: 1em;
   border-color: black !important;
   border-style: ridge  !important;
   background-color:lightblue;
+
+  margin: 1em;
 }
 .rowCuestionarie{
   height: 100% !important;
@@ -64,4 +70,83 @@ justify-content: flex-start;
 padding: 5px;
 margin: 5px;
 line-height: 50px;
+}
+.react-resizable {
+  position: relative;
+  
+}
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  padding: 0 3px 3px 0;
+  
+}
+.react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+  transform: rotate(90deg);
+}
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+  transform: rotate(180deg);
+}
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+  transform: rotate(270deg);
+}
+.react-resizable-handle-w,
+.react-resizable-handle-e {
+  top: 50%;
+  margin-top: -10px;
+  cursor: ew-resize;
+}
+.react-resizable-handle-w {
+  left: 0;
+  transform: rotate(135deg);
+}
+.react-resizable-handle-e {
+  right: 0;
+  transform: rotate(315deg);
+}
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  left: 50%;
+  margin-left: -10px;
+  cursor: ns-resize;
+}
+.react-resizable-handle-n {
+  top: 0;
+  transform: rotate(225deg);
+}
+.react-resizable-handle-s {
+  bottom: 0;
+  transform: rotate(45deg);
+}
+textarea { 
+  /* will prevent resizing horizontally */
+  width:90% !important;
+  max-width:90% !important;
+  max-height:90% !important;
+  resize:horizontal !important;
+}
+input { 
+  /* will prevent resizing horizontally */
+  width:90% !important;
+}
+spanElement{
+  margin: 1em;
 }

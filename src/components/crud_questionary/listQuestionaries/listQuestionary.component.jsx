@@ -199,7 +199,8 @@ class ListQuestionaries extends Component {
     this.setState({
       isVisibleCreate: false,
       isVisibleUpdate: false,
-      isVisibleDelete: false
+      isVisibleDelete: false,
+      isVisibleView: false
     });
   };
 

@@ -215,7 +215,9 @@ class AdminDashboard extends Component {
               <this.contentAdmin />
             </div>
           </div>
+          
         </div>
+        
       </section>
     );
   }
