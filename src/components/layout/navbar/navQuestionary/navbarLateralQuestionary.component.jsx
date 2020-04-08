@@ -179,7 +179,7 @@ class NavBarLateralQuestionary extends Component {
               <div className='collapse-item'>URL</div>
               <div className='collapse-item'>Email</div>
               <div className='collapse-item'>Matriz</div>
-              <div className='collapse-item'>Imagen</div>
+              <div className='collapse-item' onClick={()=>{this.props.idElement(12)}}>Imagen </div>
               <div className='collapse-item' onClick={()=>{this.props.idElement(11)}}>Adjuntar ficheros</div>
             </div>
           </Collapse>

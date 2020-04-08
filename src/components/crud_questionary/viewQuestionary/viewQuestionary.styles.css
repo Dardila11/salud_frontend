@@ -36,11 +36,10 @@
 
   min-width: 11em;
   max-width: 50em !important;
-  min-height: 100%;
   padding: 1em;
   border-color: black !important;
   border-style: ridge  !important;
-  background-color:lightblue;
+  background-color:white;
 
   margin: 1em;
 }
@@ -147,6 +146,15 @@ input {
   /* will prevent resizing horizontally */
   width:90% !important;
 }
-spanElement{
+.spanElement{
   margin: 1em;
+}
+.tagback{
+
+background-color: white;
+max-width: 50em !important;
+max-width: 100%;
+
+font-weight: 900 !important;
+
 }

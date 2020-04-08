@@ -14,6 +14,8 @@ import {
   Col,
   Tab,
   Tabs,
+  Image,  
+
   Modal,
   Form
 } from 'react-bootstrap';
@@ -24,7 +26,7 @@ import { UpdateQuestion } from '../crud_question/updateQuestion.component';
 class ViewQuestionary extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
-
+//Constructor
   constructor(props) {
     super(props);
     this.refContainer = React.createRef()
@@ -59,6 +61,7 @@ class ViewQuestionary extends Component {
     
 
   };
+  //Seccion
   newSection = () => {
     var arreglo = this.state.listSections;
     
@@ -94,7 +97,7 @@ class ViewQuestionary extends Component {
 
 
   };
-
+//AxioPaginas
   getPages = () => {
     const headers = getHeader();
     this.setState({ loading: true }, () =>
@@ -106,14 +109,16 @@ class ViewQuestionary extends Component {
         )
         .then(response => {
           //console.log(response.data);
-          this.setState({ listPages: response.data, loading: false });
+          this.setState({ listPages: response.data, loading: false }, () => {
+            this.pagesEmpty();
+        });
         })
         .catch(() => {
           this.setState({ loading: false });
         })
     );
   };
-
+//AxioSecciones
   getSections = () => {
     const headers = getHeader();
     this.setState({ loading: true }, () =>
@@ -125,9 +130,7 @@ class ViewQuestionary extends Component {
         )
         .then(response => {
           //console.log(response);
-          this.setState({ listSections: response.data, loading: false }, () => {
-            this.pagesEmpty();
-        });
+          this.setState({ listSections: response.data, loading: false });
 
         })
         .catch(() => {
@@ -135,6 +138,7 @@ class ViewQuestionary extends Component {
         })
     );
   };
+//Campo Crear
   newHandler = (type) => {
     if(this.state.listSections.length>0)
     {
@@ -185,7 +189,7 @@ class ViewQuestionary extends Component {
           onDoubleClick:this.handleClick.bind(this,keyElement),
           axis:"x"        
         }
-        , [React.createElement('span',{className:'spanElement'},'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?'),this.newElement(type)]
+        , [React.createElement(Row,{className:'tagback'},React.createElement('span',{className:'spanElement'},'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?')),this.newElement(type)]
           )
       }
 
@@ -195,7 +199,8 @@ class ViewQuestionary extends Component {
           }))
     }
 
-  };  
+  };
+//Elemento crear  
   newElement=(type)=>{
     switch (type) {
         case 1: 
@@ -265,10 +270,19 @@ class ViewQuestionary extends Component {
                                     type:'file'
                                 });
                                 break;
+                              case 12:
+  
+                                return React.createElement(Image,{
+                                  src:'https://www.almudenaseguros.es/blog/wp-content/uploads/2018/03/e-salud.png',
+                                  fluid:true
+                                
+                                },
+                                  )
               }
 
 
 }
+//Seccion Nombre
 Cambio=(i,j)=>{
   let paginas=this.refContainer.current.childNodes[1].childNodes
   let pagina=0
@@ -295,10 +309,12 @@ Cambio=(i,j)=>{
   
 }
 pagesEmpty(){
-  if(this.state.listPages.length===0){
+  if(this.state.listPages.length===0 ||!this.state.listPages ){
     this.newPage()
   }
+  
 }
+//Doble Click
 handleClick(keyElement){
   let paginas=this.refContainer.current.childNodes[1].childNodes
   let pagina=0

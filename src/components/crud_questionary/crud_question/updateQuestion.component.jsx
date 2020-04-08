@@ -29,7 +29,7 @@ handleQuestion=()=>{
     .childNodes[0].childNodes
     let seccionId=secciones[this.props.ii].childNodes[1].childNodes[0].
     childNodes[0].childNodes[0].childNodes[0].childNodes
-    seccionId[this.props.jj].childNodes[0].textContent=this.state.question
+    seccionId[this.props.jj].childNodes[0].childNodes[0].textContent=this.state.question
     this.props.handleClose();
   }
     //this.props.actualRef.current.props.children[0].props.children=this.state.question
