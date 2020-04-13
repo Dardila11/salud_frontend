@@ -4,7 +4,8 @@ import { Rnd } from "react-rnd";
 import { getHeader } from '../../utils/utils';
 import { URL } from '../../utils/URLSever'
 import { Resizable, ResizableBox } from 'react-resizable';
-
+import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
+import { Link } from 'react-router-dom';
 import {
   Accordion,
   Card,
@@ -22,7 +23,8 @@ import {
 
 import './viewQuestionary.styles.css';
 import { UpdateQuestion } from '../crud_question/updateQuestion.component';
-
+import {UpdateSection} from '../crud_section/updateSection.component'
+import {UpdatePage} from '../crud_pages/updatePage.component'
 class ViewQuestionary extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
@@ -33,6 +35,7 @@ class ViewQuestionary extends Component {
     this.refFields = React.createRef()
     this.state = {
       listPages: [],
+      namePages:[],
       listSections: [],
       listPageNews: [],
       listSectionsNews: [],
@@ -46,7 +49,9 @@ class ViewQuestionary extends Component {
       iSecc:0,
       jSecc:0,
       kSecc:0,
-      isVisibleUpdate:false
+      isVisibleUpdate:false,
+      isVisibleSection:false,
+      isVisiblePage:false
     };
   }
   newPage = () => {
@@ -171,7 +176,7 @@ class ViewQuestionary extends Component {
               bounds:'parent',
               width:300,
               className:'element',
-              onDoubleClick:this.handleClick.bind(this,keyElement),
+              onDoubleClick:this.changeElement.bind(this,keyElement),
               axis:"x"        
             }
             ,this.newElement(type)
@@ -186,7 +191,7 @@ class ViewQuestionary extends Component {
           bounds:'parent',
           width:300,
           className:'element',
-          onDoubleClick:this.handleClick.bind(this,keyElement),
+          onDoubleClick:this.changeElement.bind(this,keyElement),
           axis:"x"        
         }
         , [React.createElement(Row,{className:'tagback'},React.createElement('span',{className:'spanElement'},'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?')),this.newElement(type)]
@@ -282,8 +287,35 @@ class ViewQuestionary extends Component {
 
 
 }
+
+pagesEmpty(){
+  if(this.state.listPages.length===0 ||!this.state.listPages ){
+    this.newPage()
+  }
+  
+}
 //Seccion Nombre
-Cambio=(i,j)=>{
+changePage=()=>{
+  
+  let paginas=this.refContainer.current.childNodes[1].childNodes
+  let namePages=[]
+  let pagina=0
+  let seccionId='0-0'
+  for (let i = 0; i < paginas.length; i++) {
+    namePages[i]=paginas[i].text    
+  }
+  console.log(namePages)
+  this.setState({
+    actualRef:this.refContainer,
+    isVisiblePage:true,
+    namePages:namePages
+  });
+     
+}
+
+//Seccion Nombre
+changeSection=(i,j)=>{
+  console.log(i+' '+' '+j)
   let paginas=this.refContainer.current.childNodes[1].childNodes
   let pagina=0
   let seccionId='0-0'
@@ -291,31 +323,17 @@ Cambio=(i,j)=>{
     if(paginas[i].className.length>20)
     pagina=i
   }
-  let secciones=this.refContainer.current.childNodes[2].childNodes[i]
-  .childNodes[0].childNodes
-  console.log(secciones)
-
-  let newSectionVAlue=''
-  newSectionVAlue=secciones[j].childNodes[0].childNodes[0].childNodes[0].childNodes[1].
-  childNodes[0].childNodes[0].value
-  if(newSectionVAlue.length>0)
-  {
-    secciones[j].childNodes[0].childNodes[0].childNodes[0].childNodes[0].
-    childNodes[0].data=newSectionVAlue
-  }
-    
-  
-   
-  
+  this.setState({
+    actualRef:this.refContainer,
+    isVisibleSection:true,
+    jSecc:j,
+    iSecc:i,
+    kSecc:pagina
+  });
+     
 }
-pagesEmpty(){
-  if(this.state.listPages.length===0 ||!this.state.listPages ){
-    this.newPage()
-  }
-  
-}
-//Doble Click
-handleClick(keyElement){
+//Elemento Nombre
+changeElement(keyElement){
   let paginas=this.refContainer.current.childNodes[1].childNodes
   let pagina=0
   let seccionId='0-0'
@@ -366,12 +384,35 @@ ensayo=()=>{
 }
 handleClose = () => {
   this.setState({
-    isVisibleUpdate: false
+    isVisibleUpdate: false,
+    isVisibleSection:false,
+    isVisiblePage:false
   });
 };
+
+ CustomToggle=({ children, eventKey })=> {
+  const decoratedOnClick = useAccordionToggle(eventKey, () =>
+    console.log('totally custom!'),
+  );
+  var i=parseInt(children.substring(children.length-1,children.length))
+  var j=parseInt(children.substring(children.length-5,children.length-4))
+  console.log('[['+children.substring(children.length-1,children.length)+' '+children.substring(children.length-5,children.length-4))
+  
+
+  return (
+    <Link
+      onClick={decoratedOnClick}
+      onDoubleClick={(e) => {
+        e.preventDefault();
+        this.changeSection(i,j)}}>
+    
+      {children}
+    </Link>
+  );
+}
   renderQuestionary = () => {
     const render = this.state.listPages.map((page, i) => (
-      <Tab key={i} eventKey={page.id} title={page.name} ref = { this.refContainer }>
+      <Tab key={i} eventKey={page.id} title={page.name}  ref = { this.refContainer }>
         <Accordion defaultActiveKey='0' >
           {this.state.listSections.map((section, j) => {
             //console.log(section)
@@ -381,40 +422,12 @@ handleClose = () => {
             
             const tuple = { key: j, ref: ref };
             if (section.page_id_id === page.id) {
-              if (
-                this.state.listRefsSections.find(element => element.key === j)
-              )
-                console.log('');
-              else this.state.listRefsSections.push(tuple);
-              if (this.state.listRefsSections.length === 0)
-                this.state.listRefsSections.push(tuple);
+
               card = (
                 
                 <Card key={j}>
                   <Card.Header >
-                    <Accordion.Toggle as={Button} variant='link' eventKey={j} >
-                      <ul className="flex-container flex-start">
-                        <li className="flex-item">
-                        {section.name} 
-                        </li>
-                        <li className="flex-item">
-                        <Form id={'fsection '+i+'-'+j} onSubmit={(e) => {
-                          e.preventDefault();
-                          this.Cambio(section.i,section.j)}}> 
-                        <Form.Control
-                            as='input'
-                            placeholder='Cambiar nombre...'
-                            id={'nsection '+i+'-'+j}
-                        >
-                              
-                        </Form.Control>
-  
-                        </Form>
-                        </li>
-                      </ul>
-                      
-                      
-                    </Accordion.Toggle>
+                  <this.CustomToggle eventKey={j}>{section.name+'-'+i+'-'+j}</this.CustomToggle>
                   </Card.Header>
                   <Accordion.Collapse eventKey={j} >
                     <Card.Body >
@@ -422,11 +435,7 @@ handleClose = () => {
                         <Container 
                           className='custom-subsection'
                           id={i + '-' + j}
-                          ref={
-                            this.state.listRefsSections.find(
-                              element => element.key === j
-                            ).ref
-                          }
+
                           >
                           <Row className='rowCuestionarie'>
                             {
@@ -449,7 +458,7 @@ handleClose = () => {
     ));
     
     return (
-      <Tabs defaultActiveKey='1' id='Page'>
+      <Tabs onDoubleClick={this.changePage} defaultActiveKey='1' id='Page'>
         {render}
       </Tabs>
     );
@@ -501,6 +510,34 @@ handleClose = () => {
              kk={this.state.kSecc}        
             
           />
+        </Modal>
+        <Modal
+          size='lg'
+          show={this.state.isVisibleSection}
+          onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
+          <UpdateSection
+             handleCloseCreate={this.handleCloseCreate}
+             handleClose={this.handleClose}
+             actualRef={this.state.actualRef}  
+             ii={this.state.iSecc}  
+             jj={this.state.jSecc} 
+             kk={this.state.kSecc}  
+          />
+
+        </Modal>
+        <Modal
+          size='lg'
+          show={this.state.isVisiblePage}
+          onHide={this.handleClose}>
+          {/* Actualizar Proyecto */}
+          <UpdatePage
+             handleCloseCreate={this.handleCloseCreate}
+             handleClose={this.handleClose}
+             actualRef={this.state.actualRef}  
+             namePages={this.state.namePages} 
+          />
+
         </Modal>
 
 
