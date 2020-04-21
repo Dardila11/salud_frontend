@@ -25,13 +25,16 @@ onChangeSection=(event)=>{
 }
 handleSection=()=>{
   if(this.state.section.length>0){
-
+/*
     let secciones=this.props.actualRef.current.childNodes[2].childNodes[this.props.kk]
-    .childNodes[0].childNodes
+    .childNodes[0].childNodes[0].childNodes
 
     
-    secciones[this.props.jj].childNodes[0].childNodes[0].childNodes[0].data=toCapitalizer(this.state.section)
-    this.props.handleClose();
+    secciones[this.props.jj].childNodes[0].childNodes[0].childNodes[0].text=toCapitalizer(this.state.section)
+    console.log('dato seccion')
+    console.log(secciones[this.props.jj].childNodes[0].childNodes[0].childNodes[0])
+    this.props.handleClose();*/
+    this.props.handleUpdateSection(toCapitalizer(this.state.section))
   }
     //this.props.actualRef.current.props.children[0].props.children=this.state.section
 }

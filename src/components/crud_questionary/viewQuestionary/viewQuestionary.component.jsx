@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, isValidElement } from 'react';
 import axios from 'axios';
 import { Rnd } from "react-rnd";
 import { getHeader } from '../../utils/utils';
@@ -6,6 +6,7 @@ import { URL } from '../../utils/URLSever'
 import { Resizable, ResizableBox } from 'react-resizable';
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 import { Link } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   Accordion,
   Card,
@@ -23,8 +24,55 @@ import {
 
 import './viewQuestionary.styles.css';
 import { UpdateQuestion } from '../crud_question/updateQuestion.component';
+import { CreateQuestion } from '../crud_question/createQuestion.component';
 import {UpdateSection} from '../crud_section/updateSection.component'
 import {UpdatePage} from '../crud_pages/updatePage.component'
+
+///////////////////
+// fake data generator
+const getItems = count =>
+  Array.from({ length: count }, (v, k) => k).map(k => ({
+    id: `item-${k}`,
+    content: `item ${k}`
+  }));
+
+// a little function to help us with reordering the result
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  /*console.log('Lista')
+  console.log(list)
+  console.log('start index '+startIndex+' endindex '+endIndex)
+  console.log('Resultado')
+  console.log(result)*/
+  return result;
+};
+
+const grid = 8;
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: "none",
+  padding: grid * 2,
+  margin: `0 0 ${grid}px 0`,
+
+  // change background colour if dragging
+  background: isDragging ? "lightgreen" : "grey",
+
+  // styles we need to apply on draggables
+  ...draggableStyle
+});
+
+const getListStyle = isDraggingOver => ({
+  background: isDraggingOver ? "lightblue" : "lightgrey",
+  padding: grid,
+  width: 250
+});
+///////////////////////////////////////////////////////////
+
+
+
 class ViewQuestionary extends Component {
   CancelToken = axios.CancelToken;
   source = this.CancelToken.source();
@@ -41,7 +89,10 @@ class ViewQuestionary extends Component {
       listSectionsNews: [],
       listRefsSections: [],
       listFields:[],
+      listElements:[],
       pageActive:0,
+      sectionActive:0,
+      elementActive:0,
       countPages:0,
       countSection:0,
       nameSection:'',
@@ -51,9 +102,58 @@ class ViewQuestionary extends Component {
       kSecc:0,
       isVisibleUpdate:false,
       isVisibleSection:false,
-      isVisiblePage:false
+      isVisiblePage:false,
+      ///
+      items: getItems(10)
     };
+    this.onDragEnd = this.onDragEnd.bind(this);
   }
+//AxioPaginas
+getPages = () => {
+  const headers = getHeader();
+  this.setState({ loading: true }, () =>
+    axios
+      .get(
+        URL + '/questionaries/pages/' + this.props.questionary,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        //console.log(response.data);
+        this.setState({ listPages: response.data, loading: false }, () => {
+          this.pagesEmpty();
+      });
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+      })
+  );
+};
+/////////////////////////////////////////////////////////////////
+//AxioSecciones
+getSections = () => {
+  const headers = getHeader();
+  this.setState({ loading: true }, () =>
+    axios
+      .get(
+        URL + '/questionaries/sections/' + this.props.questionary,
+        { headers: headers },
+        { cancelToken: this.source.token }
+      )
+      .then(response => {
+        //console.log(response);
+        this.setState({ listSections: response.data, loading: false });
+
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+      })
+  );
+};
+/////////////////////////////////////////////////////////////////
+
+
+
   newPage = () => {
     var arreglo = this.state.listPages;
     const data = {
@@ -69,26 +169,26 @@ class ViewQuestionary extends Component {
   //Seccion
   newSection = () => {
     var arreglo = this.state.listSections;
-    
 
-    //console.log(this.refContainer.current.childNodes[3].
-      //childNodes[0].childNodes[0])
-      //*************************************i */
     let paginas=this.refContainer.current.childNodes[1].childNodes
     let pagina=0
+
+//Ciclo que determina que pagina esta activa
     for (let i = 0; i < paginas.length; i++) {
       if(paginas[i].className.length>20)
        pagina=i
     }
-    console.log(this.refContainer.current.childNodes)
+    //console.log('i')
+    //console.log(pagina)
+    //console.log(this.refContainer.current.childNodes[2].childNodes[pagina]
+    //  .childNodes[0].childNodes[0].childNodes.length)
     const data = {
       id: ''+(pagina)+(this.refContainer.current.childNodes[2].childNodes[pagina]
-        .childNodes[0].childNodes.length),
-      name: 'Sección '+(pagina)+(this.refContainer.current.childNodes[2].childNodes[pagina]
-        .childNodes[0].childNodes.length),
+        .childNodes[0].childNodes[0].childNodes.length),
+      name: 'Sección ',
       i:pagina,
       j:this.refContainer.current.childNodes[2].childNodes[pagina]
-      .childNodes[0].childNodes.length,
+      .childNodes[0].childNodes[0].childNodes.length,
       page_id_id:pagina+1,
       pos_y: 1
     };
@@ -102,191 +202,50 @@ class ViewQuestionary extends Component {
 
 
   };
-//AxioPaginas
-  getPages = () => {
-    const headers = getHeader();
-    this.setState({ loading: true }, () =>
-      axios
-        .get(
-          URL + '/questionaries/pages/' + this.props.questionary,
-          { headers: headers },
-          { cancelToken: this.source.token }
-        )
-        .then(response => {
-          //console.log(response.data);
-          this.setState({ listPages: response.data, loading: false }, () => {
-            this.pagesEmpty();
-        });
-        })
-        .catch(() => {
-          this.setState({ loading: false });
-        })
-    );
-  };
-//AxioSecciones
-  getSections = () => {
-    const headers = getHeader();
-    this.setState({ loading: true }, () =>
-      axios
-        .get(
-          URL + '/questionaries/sections/' + this.props.questionary,
-          { headers: headers },
-          { cancelToken: this.source.token }
-        )
-        .then(response => {
-          //console.log(response);
-          this.setState({ listSections: response.data, loading: false });
-
-        })
-        .catch(() => {
-          this.setState({ loading: false });
-        })
-    );
-  };
 //Campo Crear
-  newHandler = (type) => {
-    if(this.state.listSections.length>0)
-    {
-        let paginas=this.refContainer.current.childNodes[1].childNodes
-        let pagina=0
-        let seccionId='0-0'
-        for (let i = 0; i < paginas.length; i++) {
-          if(paginas[i].className.length>20)
-          pagina=i
-        }
-        let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
-        .childNodes[0].childNodes
-        console.log(secciones)
-        for (let i = 0; i <secciones.length; i++) {
-          if(secciones[i].childNodes[1].className.length>8)
-              seccionId=secciones[i].childNodes[1].childNodes[0].
-              childNodes[0].childNodes[0].id
-        }
-        var arreglo=this.state.listFields;  
-
-        var referencia=React.createRef()
-        var keyElement=seccionId+'-'+Date.now()
-        if(type==1)
-        {
-          var ele=React.createElement(ResizableBox, 
-            {
-              key:keyElement,
-              id:keyElement,
-              ref :referencia,
-              bounds:'parent',
-              width:300,
-              className:'element',
-              onDoubleClick:this.changeElement.bind(this,keyElement),
-              axis:"x"        
-            }
-            ,this.newElement(type)
-            )
-        }
-        else{
-        var ele=React.createElement(ResizableBox, 
-        {
-          key:keyElement,
-          id:keyElement,
-          ref :referencia,
-          bounds:'parent',
-          width:300,
-          className:'element',
-          onDoubleClick:this.changeElement.bind(this,keyElement),
-          axis:"x"        
-        }
-        , [React.createElement(Row,{className:'tagback'},React.createElement('span',{className:'spanElement'},'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?')),this.newElement(type)]
-          )
+newHandler = (type) => {
+  if(this.state.listSections.length>0)
+  {
+      let arrayElements=this.state.listElements 
+      let paginas=this.refContainer.current.childNodes[1].childNodes
+      let pagina=0
+      let seccionId='0-0'
+      //Ciclo que encuentra la Pagina Activa
+      for (let i = 0; i < paginas.length; i++) {
+        if(paginas[i].className.length>20)
+        pagina=i
       }
+      let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
+      .childNodes[0].childNodes[0].childNodes
+      //console.log(secciones)
+      for (let i = 0; i <secciones.length; i++) {
+        //Ciclo que encuentra la Seccion Activa
+        if(secciones[i].childNodes[1].className.length>8)
+            seccionId=secciones[i].childNodes[1].childNodes[0].
+            childNodes[0].childNodes[0].id
+      }
+      var arreglo=this.state.listFields;  
 
-          arreglo.push(ele)
-          this.setState(prevState => ({
-            listFields:arreglo
-          }))
-    }
+      var referencia=React.createRef()
+      var keyElement=seccionId+'-'+Date.now()
+      let elemento={
+        keyElement:keyElement,
+        idElement:keyElement,
+        pageElement:pagina,
+        sectionElement:seccionId,
+        widthElement:300,
+        typeElement:type,
+        refElement:referencia,
+        headerElement:'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?'
+      }
+      arrayElements.push(elemento)
+        this.setState(prevState => ({
+          listElements:arrayElements
+        }))
+  }
 
-  };
-//Elemento crear  
-  newElement=(type)=>{
-    switch (type) {
-        case 1: 
-          return React.createElement('h1', {}, 'Separador');
-          break;
-        case 2:
-            return React.createElement('p', {
-            },'*********************************************************************************************Este es un texto de prueba con una longitud de 250 caracteres*********************************************************************************************');
-            break;
-            case 3:
-                return React.createElement('input', {
-                    type:'text'
-                });
-                break;
-                case 4:
-                  return React.createElement('textarea', {
-                  });
-                  break;
-                  case 5:
-                    return React.createElement('input', {
-                      type:'number'
-                    });
-                    break;
-                    case 6:
-                      return React.createElement('input', {
-                        type:'float'
-                      });
-                      break;
-                      case 7:
-                        return React.createElement('div',{},[
-                                        React.createElement('div',{},
-                                        [ React.createElement('label',{htmlFor:'opcion1'},' Opcion 1')]),React.createElement('input',{type:'radio',id:'opcion1',value:'Opcion 1',checked:true,name:'opciones'}),
-                                       ,
-                                        React.createElement('div',{},
-                                        [React.createElement('input',{type:'radio',id:'opcion2',value:'Opcion 2',name:'opciones'}),
-                                        React.createElement('label',{htmlFor:'opcion2'},' Opcion 2')]),
-                                        React.createElement('div',{},
-                                        [React.createElement('input',{type:'radio',id:'opcion3',value:'Opcion 3',name:'opciones'}),
-                                        React.createElement('label',{htmlFor:'opcion3'},' Opcion 3')])
+};
 
-                        ]
-                                        )
-                        break;
-                        case 8:
-                          return React.createElement('div',{},
-                          [React.createElement('input',{type:'checkbox',id:"c1",value:"first"}),
-                          React.createElement('label',{htmlFor:'c1'},'Opcion 1'),
-                          React.createElement('input',{type:'checkbox',id:"c2",value:"second_checkbox"}),
-                          React.createElement('label',{htmlFor:'c2'},'Opcion 2')
-                          ])
-                          break;
-                          case 9:
-                            return React.createElement('select',{},
-                            [React.createElement('option',{value:'opcion1',selected:true},'Opcion 1'),
-                            React.createElement('option',{value:'opcion2'},'Opcion 2'),
-                            React.createElement('option',{value:'opcion3'},'Opcion 3'),
-                            React.createElement('option',{value:'opcion4'},'Opcion 4')
-                            ])
-                            break;
-                            case 10:
-                              return React.createElement('input', {
-                                  type:'date'
-                              });
-                              break;
-                              case 11:
-                                return React.createElement('input', {
-                                    type:'file'
-                                });
-                                break;
-                              case 12:
-  
-                                return React.createElement(Image,{
-                                  src:'https://www.almudenaseguros.es/blog/wp-content/uploads/2018/03/e-salud.png',
-                                  fluid:true
-                                
-                                },
-                                  )
-              }
-
-
-}
 
 pagesEmpty(){
   if(this.state.listPages.length===0 ||!this.state.listPages ){
@@ -304,7 +263,7 @@ changePage=()=>{
   for (let i = 0; i < paginas.length; i++) {
     namePages[i]=paginas[i].text    
   }
-  console.log(namePages)
+  //console.log(namePages)
   this.setState({
     actualRef:this.refContainer,
     isVisiblePage:true,
@@ -314,10 +273,10 @@ changePage=()=>{
 }
 
 //Seccion Nombre
-changeSection=(i,j)=>{
-  console.log(i+' '+' '+j)
+changeSection=(i,j,cont)=>{
+  //console.log(i+' '+' '+j)
   let paginas=this.refContainer.current.childNodes[1].childNodes
-  let pagina=0
+  let pagina=i
   let seccionId='0-0'
   for (let i = 0; i < paginas.length; i++) {
     if(paginas[i].className.length>20)
@@ -327,8 +286,9 @@ changeSection=(i,j)=>{
     actualRef:this.refContainer,
     isVisibleSection:true,
     jSecc:j,
-    iSecc:i,
-    kSecc:pagina
+    iSecc:j,
+    kSecc:i,
+    sectionActive:cont
   });
      
 }
@@ -338,127 +298,205 @@ changeElement(keyElement){
   let pagina=0
   let seccionId='0-0'
   let ii,jj,kk
-  for (let i = 0; i < paginas.length; i++) {
-    if(paginas[i].className.length>20)
-    pagina=i
-  }
-  let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
-  .childNodes[0].childNodes
-  console.log(secciones)
-  for (let i = 0; i <secciones.length; i++) {
-    if(secciones[i].childNodes[1].className.length>8)
-    {
-        seccionId=secciones[i].childNodes[1].childNodes[0].
-        childNodes[0].childNodes[0].childNodes[0].childNodes
-        ii=i
-    }
-  }
-  for (let i = 0; i <seccionId.length; i++) {
-        if(seccionId[i].id===keyElement)
-            jj=i
-            
-  }
-  //let ntabs=this.refContainer.current.childNodes[2].childNodes.length-1
-  
-  //let secciones=this.refContainer.current.childNodes[2].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[i].id
-  //              this.refContainer.current.childNodes[2].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent
-   // let secciones=this.refContainer.current.childNodes[2].childNodes[i].childNodes[j].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent
-//console.log(      this.refContainer.current.childNodes[2].childNodes[ii].childNodes[0].childNodes[jj-ii])
-  //console.log(ii+' '+jj+' ')
-  // console.log(secciones)
- //seccionId=secciones[i].childNodes[1].childNodes[0].
- //childNodes[0].childNodes[0].id
- 
-  this.setState({
-    actualRef:this.refContainer,
-    isVisibleUpdate:true,
-    jSecc:jj,
-    iSecc:ii,
-    kSecc:pagina
-  });
-  
-}
-ensayo=()=>{
-  alert()
+
+this.setState({
+  actualRef:this.refContainer,
+  isVisibleUpdate:true,
+  elementActive:keyElement
+});
+
+
 
 }
+ensayo=()=>{
+
+
+  console.log(this.state.listElements)
+
+}
+
+handleResizeElement = (keyElement,widthElement) => {
+  let arrayElements=this.state.listElements
+  for (let i = 0; i <arrayElements.length; i++) {
+    if(keyElement===arrayElements[i].keyElement)
+    {
+      arrayElements[i].widthElement=widthElement
+      console.log(keyElement)
+    }
+
+  }
+  this.setState(prevState => ({
+    listElements:arrayElements
+  })) 
+
+};
+
+
+
+handleUpdateQuestion = (name) => {
+  let paginas=this.refContainer.current.childNodes[1].childNodes
+  let namePages=[]
+  let pagina=this.state.elementActive[0]
+  let seccionId='0-0'
+  let arrayElements=this.state.listElements
+  let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
+  .childNodes[0].childNodes[0].childNodes
+
+
+  seccionId=secciones[this.state.elementActive[2]].childNodes[1].childNodes[0].
+  childNodes[0].childNodes[0].childNodes[0].childNodes
+  
+  //console.log('secciones id ')
+  //console.log(seccionId)
+  let indexElement=0
+  for (let i = 0; i <seccionId.length; i++) {
+        if(seccionId[i].id===this.state.elementActive)
+        {
+          indexElement=i
+        }
+            
+            
+  }
+  let indexElement2=0
+  for(let i=0;i<arrayElements.length;i++){
+      if(arrayElements[i].keyElement===this.state.elementActive)
+        indexElement2=i
+  }
+  arrayElements[indexElement2].widthElement=seccionId[indexElement].offsetWidth
+  arrayElements[indexElement2].headerElement=name
+  this.setState(prevState => ({
+    listElements:arrayElements
+  })) 
+  this.handleClose()
+};
+handleUpdateSection = (name) => {
+  let arraySections=this.state.listSections
+  arraySections[this.state.sectionActive].name=name
+  this.setState(prevState => ({
+    listSections:arraySections
+  }))
+  
+  this.handleClose()
+
+};
 handleClose = () => {
   this.setState({
     isVisibleUpdate: false,
     isVisibleSection:false,
     isVisiblePage:false
   });
+  //console.log(this.refContainer.current.childNodes)
 };
 
  CustomToggle=({ children, eventKey })=> {
-  const decoratedOnClick = useAccordionToggle(eventKey, () =>
-    console.log('totally custom!'),
+  const decoratedOnClick = useAccordionToggle(eventKey
+    
   );
-  var i=parseInt(children.substring(children.length-1,children.length))
-  var j=parseInt(children.substring(children.length-5,children.length-4))
-  console.log('[['+children.substring(children.length-1,children.length)+' '+children.substring(children.length-5,children.length-4))
-  
+  //var i=parseInt(children.substring(children.length-1,children.length))
+  //var j=parseInt(children.substring(children.length-5,children.length-4))
+  var i=parseInt(children[children.length-6])
+  var j=parseInt(children[children.length-5])
+  var cont=parseInt(children[children.length-1])
+  /*.log(cont)
+  console.log(i+' '+' '+j)
+  console.log(this.state.listSections)
+  */
 
   return (
     <Link
       onClick={decoratedOnClick}
       onDoubleClick={(e) => {
         e.preventDefault();
-        this.changeSection(i,j)}}>
+        this.changeSection(i,j,cont)}}>
     
       {children}
     </Link>
   );
 }
+
   renderQuestionary = () => {
     const render = this.state.listPages.map((page, i) => (
       <Tab key={i} eventKey={page.id} title={page.name}  ref = { this.refContainer }>
+        <DragDropContext onDragEnd={this.onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
         <Accordion defaultActiveKey='0' >
           {this.state.listSections.map((section, j) => {
-            //console.log(section)
-            let ref = React.createRef();
-          
-            let card;
-            
-            const tuple = { key: j, ref: ref };
+           
             if (section.page_id_id === page.id) {
-
-              card = (
-                
+                return(
                 <Card key={j}>
+                                  <Draggable key={i+'-'+j} draggableId={i+'-'+j} index={j}>
+                {(provided, snapshot) => (
+                <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                >
                   <Card.Header >
-                  <this.CustomToggle eventKey={j}>{section.name+'-'+i+'-'+j}</this.CustomToggle>
+                  <this.CustomToggle eventKey={j}>{section.name+' '+section.i+section.j+'-'+i+'-'+j}</this.CustomToggle>
                   </Card.Header>
+
+                </div>
+                                  )}
+                                  </Draggable>
                   <Accordion.Collapse eventKey={j} >
                     <Card.Body >
                       <div className='custom-section'>
                         <Container 
                           className='custom-subsection'
-                          id={i + '-' + j}
+                          id={section.i + '-' + section.j}
 
                           >
                           <Row className='rowCuestionarie'>
                             {
-                              this.state.listFields.filter(campo => campo.key.substring(0, campo.key.length - 14) === ''+i+'-'+j) 
-                             
-                           
+                              /*
+                              this.state.listElements.filter(campo => campo.keyElement.substring(0, campo.keyElement.length - 14) === ''+section.i+'-'+section.j)
+                               .map((element, j) => {
+                                 return(<this.renderElement element={element}/>)
+                               })
+                               */
+                               this.state.listElements.map((element, k) => {
+           
+                                    if (element.keyElement.substring(0, element.keyElement.length - 14) === ''+section.i+'-'+section.j) {
+                                        return(
+                                 <CreateQuestion
+                                 element={element}
+                                 onDoubleClickElement={this.changeElement.bind(this,element.keyElement)}
+                                 handleResizeElement={this.handleResizeElement}
+                                 />
+                                 
+                                 )
+                               }})                              
                             }
+                            
                           </Row>
                         </Container>
                       </div>
                     </Card.Body>
                   </Accordion.Collapse>
-                </Card>
-              );
-            }
-            return card;
-          })}
+                </Card>)
+              
+   } } )}
+          {provided.placeholder}
         </Accordion>
+        </div>
+          )}
+        </Droppable>
+      </DragDropContext>
       </Tab>
     ));
     
     return (
-      <Tabs onDoubleClick={this.changePage} defaultActiveKey='1' id='Page'>
+      <Tabs  onDoubleClick={
+        
+        
+        this.changePage
+      } defaultActiveKey='1' id='Page'>
         {render}
       </Tabs>
     );
@@ -473,6 +511,62 @@ handleClose = () => {
     this.source.cancel('cancel request');
   }
 
+///////
+orderElements=(listSections,indexSection)=>{
+  console.log(listSections[indexSection].id)
+
+
+  let pagina=listSections[indexSection].id[0]
+  let ii=0
+  let seccionId='0-0'
+  let arrayElements=this.state.listElements
+
+  let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
+  .childNodes[0].childNodes[0].childNodes
+  
+
+  //console.log(secciones)
+  for (let i = 0; i <secciones.length-1; i++) {
+    console.log(i)
+    //console.log(secciones[i])
+    console.log(
+    secciones[i].childNodes[1].childNodes[0].
+    childNodes[0].childNodes[0].childNodes[0].childNodes)
+  }
+  
+  this.setState(prevState => ({
+    listElements:arrayElements
+  })) 
+  
+
+
+} 
+
+//////
+
+///////////////////////////////////
+onDragEnd(result) {
+  // dropped outside the list
+  if (!result.destination) {
+    return;
+  }
+
+  const items = reorder(
+    this.state.listSections,
+    result.source.index,
+    result.destination.index
+  );
+  console.log('despues')
+  console.log(this.state.listElements)
+  //this.orderElements(items,result.destination.index)
+  
+  this.setState({
+    listSections:items
+  }); 
+}
+
+
+////////////////////////////////////
   render() {
     return (
       <div ref = { this.refContainer}>
@@ -504,10 +598,7 @@ handleClose = () => {
           <UpdateQuestion
              handleCloseCreate={this.handleCloseCreate}
              handleClose={this.handleClose}
-             actualRef={this.state.actualRef}  
-             ii={this.state.iSecc}  
-             jj={this.state.jSecc} 
-             kk={this.state.kSecc}        
+             handleUpdateQuestion={this.handleUpdateQuestion}      
             
           />
         </Modal>
@@ -518,11 +609,8 @@ handleClose = () => {
           {/* Actualizar Proyecto */}
           <UpdateSection
              handleCloseCreate={this.handleCloseCreate}
-             handleClose={this.handleClose}
-             actualRef={this.state.actualRef}  
-             ii={this.state.iSecc}  
-             jj={this.state.jSecc} 
-             kk={this.state.kSecc}  
+             handleClose={this.handleClose} 
+             handleUpdateSection={this.handleUpdateSection}  
           />
 
         </Modal>

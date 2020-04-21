@@ -25,12 +25,16 @@ onChangeQuestion=(event)=>{
 }
 handleQuestion=()=>{
   if(this.state.question.length>0){
+    /*
     let secciones=this.props.actualRef.current.childNodes[2].childNodes[this.props.kk]
-    .childNodes[0].childNodes
+    .childNodes[0].childNodes[0].childNodes
     let seccionId=secciones[this.props.ii].childNodes[1].childNodes[0].
     childNodes[0].childNodes[0].childNodes[0].childNodes
     seccionId[this.props.jj].childNodes[0].childNodes[0].textContent=this.state.question
+    console.log(seccionId[this.props.jj].childNodes[0].childNodes[0])
     this.props.handleClose();
+    */
+   this.props.handleUpdateQuestion(this.state.question)
   }
     //this.props.actualRef.current.props.children[0].props.children=this.state.question
 }
