@@ -18,7 +18,11 @@
   height: 10em;
 }
 
-
+.modal-90w{
+  min-width: 77% !important;
+  max-height: 100% !important;
+  overflow-y: auto;
+}
 .Contenedor{
 
   width: 45em !important;
@@ -148,6 +152,7 @@ input {
 }
 .spanElement{
   margin: 1em;
+  font-weight: bold ;
 }
 .tagback{
 
@@ -157,4 +162,10 @@ max-width: 100%;
 
 font-weight: 900 !important;
 
+}
+.tableTag{
+  text-align: center !important;
+}
+.rowHeader{
+  background-color: lightgray;
 }

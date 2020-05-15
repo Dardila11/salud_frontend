@@ -1,0 +1,140 @@
+.custom-col {
+    border: 1px solid black;
+    word-wrap: break-word;
+    height: 100px;
+  }
+  
+  .card {
+    position: inherit !important;
+  }
+  
+  .preview-subsection {
+    max-height: 100% !important;
+    height: 100% !important;
+  }
+  .preview-section {
+    max-height: 100% !important;
+    height: 100% !important;
+  }
+  
+.sectionTitle{
+
+    font-weight: bold ;
+    font-style: normal;
+    color: rgb(30, 102, 236);
+}
+.previewElement{
+
+    min-width: 11em;
+    max-width: 50em !important;
+    padding: 1em;
+    background-color:white;
+  
+    margin: 1em;
+  }
+ 
+
+  textarea { 
+    /* will prevent resizing horizontally */
+    width:90% !important;
+    max-width:90% !important;
+    max-height:90% !important;
+    resize:horizontal !important;
+  }
+  input { 
+    /* will prevent resizing horizontally */
+    width:90% !important;
+  }
+  .spanElement{
+    margin: 1em;
+  }
+  .tagback{
+  
+  background-color: white;
+  max-width: 50em !important;
+  max-width: 100%;
+  
+  font-weight: 900 !important;
+  
+  }
+
+.flex-container {
+    padding: 1em;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    }
+    
+    .flex-start { 
+    justify-content: flex-start; 
+    }
+    .flex-item {
+    padding: 5px;
+    margin: 5px;
+    line-height: 50px;
+    }
+    .react-resizable {
+      position: relative;
+      
+    }
+    .react-resizable-handle {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-repeat: no-repeat;
+      background-origin: content-box;
+      box-sizing: border-box;
+      padding: 0 3px 3px 0;
+      
+    }
+    .react-resizable-handle-sw {
+      bottom: 0;
+      left: 0;
+      cursor: sw-resize;
+      transform: rotate(90deg);
+    }
+    .react-resizable-handle-se {
+      bottom: 0;
+      right: 0;
+      cursor: se-resize;
+    }
+    .react-resizable-handle-nw {
+      top: 0;
+      left: 0;
+      cursor: nw-resize;
+      transform: rotate(180deg);
+    }
+    .react-resizable-handle-ne {
+      top: 0;
+      right: 0;
+      cursor: ne-resize;
+      transform: rotate(270deg);
+    }
+    .react-resizable-handle-w,
+    .react-resizable-handle-e {
+      top: 50%;
+      margin-top: -10px;
+      cursor: ew-resize;
+    }
+    .react-resizable-handle-w {
+      left: 0;
+      transform: rotate(135deg);
+    }
+    .react-resizable-handle-e {
+      right: 0;
+      transform: rotate(315deg);
+    }
+    .react-resizable-handle-n,
+    .react-resizable-handle-s {
+      left: 50%;
+      margin-left: -10px;
+      cursor: ns-resize;
+    }
+    .react-resizable-handle-n {
+      top: 0;
+      transform: rotate(225deg);
+    }
+    .react-resizable-handle-s {
+      bottom: 0;
+      transform: rotate(45deg);
+    }

@@ -5,7 +5,9 @@ import {
     Modal,
     Col,
     Row,
-    Form
+    Form,
+    InputGroup,
+    FormControl
   } from 'react-bootstrap';
 export class UpdateSection extends Component {
     constructor(props) {
@@ -47,28 +49,39 @@ handleClose = () => {
                             <>
               <Modal.Header closeButton>
                 <Modal.Title className='h3 text-gray-800 mb-0'>
-                  Actualizar cuestionario
+                  Actualizar Seccion
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
               <Form id='formCreateProject' onSubmit={(e) => {
                           e.preventDefault();
                           this.handleSection()}}>
-                
-                  <Form.Row>
-                    <Form.Group as={Col} md='3' controlId='inputId'>
-                      <Form.Label>
-                        Nuevo Nombre de Seccion 
-                      </Form.Label>
-                      <Form.Control
-                        type='text'
-                        name='code'
-                        placeholder='Nueva Nombre'
-                        value={this.state.section}
-                        onChange={this.onChangeSection}
-                      />
-                    </Form.Group>
+
+<Form.Row>
+                  <Col>
+                  <InputGroup className="mb-2">
+                                  <FormControl
+                                    placeholder="Nuevo Nombre"
+                                    aria-label="Recipient's username"
+                                    aria-describedby="basic-addon2"
+                                    placeholder='Nueva Pregunta'
+                                    value={this.state.section}
+                                    onChange={this.onChangeSection}
+                                  />
+                                  <InputGroup.Append>
+                                  <button
+                                  className='btn btn-primary btn-icon-split  ml-1 p-0'
+                                  type='submit'>
+                                  <span className='icon text-white-50'>
+                                    <i className='far fa-edit'></i>
+                                  </span>
+                                  <span className='text text-white'>Renombrar</span>
+                            </button>
+                                  </InputGroup.Append>
+                                </InputGroup>
+                                </Col>
                   </Form.Row>
+
                 </Form>
            
               </Modal.Body>
@@ -76,9 +89,7 @@ handleClose = () => {
                 <Button variant='secondary' onClick={this.handleClose}>
                   Cerrar
                 </Button>
-                <Button form='formCreateProject' type='submit'>
-                  Actualizar Seccion
-                </Button>
+
               </Modal.Footer>
             </>
             </div>

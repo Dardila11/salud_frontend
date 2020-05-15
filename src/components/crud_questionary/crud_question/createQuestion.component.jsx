@@ -12,10 +12,11 @@ import {
     Tab,
     Tabs,
     Image,  
-  
+    Table,
     Modal,
     Form
   } from 'react-bootstrap';
+import { FormRow } from 'react-bootstrap/Form';
 export class CreateQuestion extends Component {
     constructor(props) {
         super(props);
@@ -26,12 +27,13 @@ export class CreateQuestion extends Component {
           alertMessage: '',
           alertVariant: '',
           question:'',
+          element:props.element,
           alertId: 'alert-create-questionary',
           keyElement:props.element.keyElement
         };
       }
       onResize = (event, {element, size, handle}) => {
-        this.props.handleResizeElement(this.state.keyElement,size.width)
+        this.props.handleResizeElement(this.props.element.keyElement,size.width)
       };
 //Elemento crear  
 newElement=(type)=>{
@@ -63,19 +65,15 @@ newElement=(type)=>{
                       });
                       break;
                       case 7:
-                        return React.createElement('div',{},[
-                                        React.createElement('div',{},
-                                        [ React.createElement('label',{htmlFor:'opcion1'},' Opcion 1')]),React.createElement('input',{type:'radio',id:'opcion1',value:'Opcion 1',checked:true,name:'opciones'}),
-                                       ,
-                                        React.createElement('div',{},
-                                        [React.createElement('input',{type:'radio',id:'opcion2',value:'Opcion 2',name:'opciones'}),
-                                        React.createElement('label',{htmlFor:'opcion2'},' Opcion 2')]),
-                                        React.createElement('div',{},
-                                        [React.createElement('input',{type:'radio',id:'opcion3',value:'Opcion 3',name:'opciones'}),
-                                        React.createElement('label',{htmlFor:'opcion3'},' Opcion 3')])
+                        let radio=this.props.element.properties.options.map((radio,i)=>
+                        (
+                            React.createElement(Form.Check,{type:'radio',
+                            inline:this.state.element.properties.orientation,
+                            label:radio,
+                            name:'name'+this.props.element.keyElement})
+                        ))
+                        return radio
 
-                        ]
-                                        )
                         break;
                         case 8:
                           return React.createElement('div',{},
@@ -86,12 +84,16 @@ newElement=(type)=>{
                           ])
                           break;
                           case 9:
-                            return React.createElement('select',{},
-                            [React.createElement('option',{value:'opcion1',selected:true},'Opcion 1'),
-                            React.createElement('option',{value:'opcion2'},'Opcion 2'),
-                            React.createElement('option',{value:'opcion3'},'Opcion 3'),
-                            React.createElement('option',{value:'opcion4'},'Opcion 4')
-                            ])
+
+                            let options=this.props.element.properties.options.map((option,i) => {
+                              return <option value={i}>           
+                                  
+                                  {option}</option>
+                              })
+                            return React.createElement(Form.Control,{as:'select',
+                            className:'ml-1 p-0'},options)
+                            
+
                             break;
                             case 10:
                               return React.createElement('input', {
@@ -104,13 +106,52 @@ newElement=(type)=>{
                                 });
                                 break;
                               case 12:
-  
+ 
                                 return React.createElement(Image,{
-                                  src:'https://www.almudenaseguros.es/blog/wp-content/uploads/2018/03/e-salud.png',
+                                  src:this.props.element.properties.source,
                                   fluid:true
                                 
                                 },
                                   )
+                                  break;
+                              case 13:
+                                let headerH=this.props.element.properties.options.map((option,i) => {
+                                  return <td >           
+                                      <Form.Label inline >{option} </Form.Label>
+                                      </td>
+                                  })
+                                  
+                                let headerV=this.props.element.properties.optionsB.map((optionB,i) => {
+                                  return <tr >
+                                            <td>
+                                              <Form.Label inline>{optionB}</Form.Label>
+                                            </td>           
+                                            {this.props.element.properties.options.map((option,j) => {
+                                                       return <td as={Col}>           
+                                                      <Form.Check name={''+i} type="radio" aria-label="radio 1" />
+                                                       </td>
+                                                   })                       
+                                            }
+                                            
+                                          </tr>
+                                  })
+                                return React.createElement(Table,{responsive:true,className:'tableTag', bordered:true},
+                                [
+                                  React.createElement
+                                  ('tr',{},
+                                    [
+                                      React.createElement('td'),
+                                      headerH,
+  
+  
+                                    ]
+                                  ),
+                                  headerV
+                                ]
+                                
+                                )
+
+                                break
               }
 
 
@@ -154,13 +195,12 @@ handleChange2=()=>{
         axis:"x",
         onResize:this.onResize       
     }
-    , [React.createElement(Row,{className:'tagback'},React.createElement('span',{className:'spanElement'},''+this.props.element.headerElement+' : ')),this.newElement(this.props.element.typeElement)]
+    , [React.createElement(Row,{},React.createElement(Form.Label,{className:'spanElement'},''+this.props.element.headerElement)),this.newElement(this.props.element.typeElement)]
       )
   }
     return ele
 
- }   
-
+ } 
     render() {
         return (
             

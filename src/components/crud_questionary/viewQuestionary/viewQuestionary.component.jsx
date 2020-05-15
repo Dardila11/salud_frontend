@@ -27,6 +27,7 @@ import { UpdateQuestion } from '../crud_question/updateQuestion.component';
 import { CreateQuestion } from '../crud_question/createQuestion.component';
 import {UpdateSection} from '../crud_section/updateSection.component'
 import {UpdatePage} from '../crud_pages/updatePage.component'
+import {PreviewQuestionary} from '../previewQuestionary/previewQuestionary.component'
 
 ///////////////////
 // fake data generator
@@ -90,6 +91,7 @@ class ViewQuestionary extends Component {
       listRefsSections: [],
       listFields:[],
       listElements:[],
+      listNeighbors:[],
       pageActive:0,
       sectionActive:0,
       elementActive:0,
@@ -103,6 +105,7 @@ class ViewQuestionary extends Component {
       isVisibleUpdate:false,
       isVisibleSection:false,
       isVisiblePage:false,
+      isVisiblePreview:false,
       ///
       items: getItems(10)
     };
@@ -236,12 +239,24 @@ newHandler = (type) => {
         widthElement:300,
         typeElement:type,
         refElement:referencia,
-        headerElement:'Pregunta '+this.state.listFields.length+' : '+'Cuantos '+Date.now()+' tiene ?'
+        properties:{
+          min:0,
+          max:0,
+          defaultValue:'',
+          waterMark:'',
+          orientation:false,
+          text:{font:'',size:13,style:''},
+          options:['Opcion 1','Opcion 2','Opcion 3'],
+          source:'https://www.unicauca.edu.co/versionP/sites/default/files/images/Escudo_Unicauca1.png',
+          optionsB:['Opcion 1','Opcion 2','Opcion 3'],
+        },
+        headerElement:'Pregunta :'+this.state.listElements.length
       }
       arrayElements.push(elemento)
         this.setState(prevState => ({
           listElements:arrayElements
         }))
+        console.log(elemento.properties.options)
   }
 
 };
@@ -292,29 +307,148 @@ changeSection=(i,j,cont)=>{
   });
      
 }
+
+//Encontrar  elemento
+findElement(keyElement)
+{
+    for(let i=0;i<this.state.listElements.length;i++){
+        if(this.state.listElements[i].keyElement===keyElement)
+        {
+          
+          return this.state.listElements[i]
+        }
+      }
+}
 //Elemento Nombre
 changeElement(keyElement){
-  let paginas=this.refContainer.current.childNodes[1].childNodes
-  let pagina=0
-  let seccionId='0-0'
-  let ii,jj,kk
+  let neighbors=[]
+  for(let i=0;i<this.state.listElements.length;i++)
+  {
+    
+    if(this.state.listElements[i].idElement.substring(0,3)===keyElement.substring(0,3))
+    {
 
+      if(this.state.listElements[i].idElement!=keyElement)
+        {
+          if(this.state.listElements[i].headerElement.length>20)
+              neighbors.push({id:this.state.listElements[i].idElement,
+              header:this.state.listElements[i].headerElement.substring(0,20)}
+               
+                )
+          else
+              neighbors.push({id:this.state.listElements[i].idElement,
+                header:this.state.listElements[i].headerElement})
+        }
+    }
+  }
+
+console.log(neighbors)
 this.setState({
   actualRef:this.refContainer,
   isVisibleUpdate:true,
-  elementActive:keyElement
+  elementActive:keyElement,
+  listNeighbors:neighbors
 });
-
-
-
 }
+previewQuestionary=()=>{
+  this.setState({
+    isVisiblePreview:true
+  });
+}
+
+
 ensayo=()=>{
 
 
   console.log(this.state.listElements)
 
 }
+handleMoveElement = (move,position) => {
+  let movement=parseInt(move)
+  let arrayElements=this.state.listElements
+  console.log('Antes de')
+  console.log(arrayElements)
+  let newArray=[]
+  let indexStart=0
+  let indexObjective=0
+  if(movement>0 && position>0)
+  {
+    for(let i=0;i<arrayElements.length;i++)
+    {
+       if(arrayElements[i].keyElement===this.state.listNeighbors[position-1].id)
+          indexObjective=i
+       if(arrayElements[i].keyElement===this.state.elementActive)
 
+          indexStart=i
+       
+    }
+    if(movement===1)
+    {
+
+      
+
+        for(let i=0;i<arrayElements.length;i++)
+        {
+            if(i!=indexStart && i!=indexObjective)
+            {
+              newArray.push(arrayElements[i])
+            }
+            if(i===indexObjective)
+            {
+                newArray.push(arrayElements[indexStart])
+                newArray.push(arrayElements[i])
+
+            }
+        }
+      
+    }
+    if(movement===2)
+    {
+      for(let i=0;i<arrayElements.length;i++)
+      {
+          if(i===indexStart )
+          {
+            newArray.push(arrayElements[indexObjective])
+          }
+          else if(i===indexObjective)
+          {
+
+              newArray.push(arrayElements[indexStart])
+
+
+          }
+          else{
+            newArray.push(arrayElements[i])
+          }
+      }
+    }
+    if(movement===3)
+    {
+      for(let i=0;i<arrayElements.length;i++)
+      {
+          if(i!=indexStart && i!=indexObjective)
+          {
+            newArray.push(arrayElements[i])
+          }
+          if(i===indexObjective)
+          {
+              newArray.push(arrayElements[i])
+              newArray.push(arrayElements[indexStart])
+
+
+          }
+      }
+    }
+    console.log('despues de')
+    console.log(newArray)
+    this.setState(prevState => ({
+      listElements:newArray,
+      isVisibleUpdate:false
+    }))
+
+
+  }
+};
 handleResizeElement = (keyElement,widthElement) => {
   let arrayElements=this.state.listElements
   for (let i = 0; i <arrayElements.length; i++) {
@@ -330,39 +464,38 @@ handleResizeElement = (keyElement,widthElement) => {
   })) 
 
 };
+handleDeleteQuestion = (name) => {
+  let arrayElements=[]
+  let indexDelete=0
+  for(let i=0;i<this.state.listElements.length;i++){
+      if(this.state.listElements[i].keyElement!=this.state.elementActive)
+      {
+        arrayElements[i-indexDelete]=this.state.listElements[i]
+      }
+      else{
+        indexDelete=1
+      }
+  }
 
-
+  this.setState(prevState => ({
+    listElements:arrayElements
+  })) 
+  this.handleClose()
+};
 
 handleUpdateQuestion = (name) => {
-  let paginas=this.refContainer.current.childNodes[1].childNodes
-  let namePages=[]
-  let pagina=this.state.elementActive[0]
-  let seccionId='0-0'
+
   let arrayElements=this.state.listElements
-  let secciones=this.refContainer.current.childNodes[2].childNodes[pagina]
-  .childNodes[0].childNodes[0].childNodes
-
-
-  seccionId=secciones[this.state.elementActive[2]].childNodes[1].childNodes[0].
-  childNodes[0].childNodes[0].childNodes[0].childNodes
-  
-  //console.log('secciones id ')
-  //console.log(seccionId)
-  let indexElement=0
-  for (let i = 0; i <seccionId.length; i++) {
-        if(seccionId[i].id===this.state.elementActive)
-        {
-          indexElement=i
-        }
-            
-            
-  }
+ 
   let indexElement2=0
   for(let i=0;i<arrayElements.length;i++){
       if(arrayElements[i].keyElement===this.state.elementActive)
+      {
         indexElement2=i
+        break
+      }
   }
-  arrayElements[indexElement2].widthElement=seccionId[indexElement].offsetWidth
+
   arrayElements[indexElement2].headerElement=name
   this.setState(prevState => ({
     listElements:arrayElements
@@ -379,11 +512,22 @@ handleUpdateSection = (name) => {
   this.handleClose()
 
 };
+handleUpdatePage = (name,index) => {
+  let arrayPages=this.state.listPages
+  arrayPages[index].name=name
+  this.setState(prevState => ({
+    listPages:arrayPages
+  }))
+  
+  this.handleClose()
+
+};
 handleClose = () => {
   this.setState({
     isVisibleUpdate: false,
     isVisibleSection:false,
-    isVisiblePage:false
+    isVisiblePage:false,
+    isVisiblePreview:false
   });
   //console.log(this.refContainer.current.childNodes)
 };
@@ -569,6 +713,19 @@ onDragEnd(result) {
 ////////////////////////////////////
   render() {
     return (
+      <>
+      <div>
+
+      <button
+          className='btn btn-primary btn-icon-split p-0'
+          type='button'
+          onClick={this.previewQuestionary}>
+          <span className='icon text-white-50'>
+            <i className='far fa-eye'></i>
+          </span>
+          <span className='text text-white'>Previsualizar</span>
+        </button>
+      </div>
       <div ref = { this.refContainer}>
         <button
           className='btn btn-primary btn-icon-split float-right p-0'
@@ -598,7 +755,11 @@ onDragEnd(result) {
           <UpdateQuestion
              handleCloseCreate={this.handleCloseCreate}
              handleClose={this.handleClose}
-             handleUpdateQuestion={this.handleUpdateQuestion}      
+             handleUpdateQuestion={this.handleUpdateQuestion}  
+             handleDeleteQuestion={this.handleDeleteQuestion}
+             element={this.findElement(this.state.elementActive)}  
+             listNeighbors={this.state.listNeighbors}
+             handleMoveElement={this.handleMoveElement}  
             
           />
         </Modal>
@@ -611,6 +772,7 @@ onDragEnd(result) {
              handleCloseCreate={this.handleCloseCreate}
              handleClose={this.handleClose} 
              handleUpdateSection={this.handleUpdateSection}  
+             
           />
 
         </Modal>
@@ -622,8 +784,24 @@ onDragEnd(result) {
           <UpdatePage
              handleCloseCreate={this.handleCloseCreate}
              handleClose={this.handleClose}
-             actualRef={this.state.actualRef}  
-             namePages={this.state.namePages} 
+             handleUpdatePage={this.handleUpdatePage} 
+             listPages={this.state.listPages}
+          />
+
+        </Modal>
+        <Modal
+          size='lg'
+          show={this.state.isVisiblePreview}
+          onHide={this.handleClose}
+          dialogClassName={'modal-90w'}>
+          
+          {/* Actualizar Proyecto */}
+          <PreviewQuestionary
+             handleCloseCreate={this.handleClosePreview}
+             handleClose={this.handleClose}
+             listElements={this.state.listElements}  
+             listPages={this.state.listPages} 
+             listSections={this.state.listSections}  
           />
 
         </Modal>
@@ -632,6 +810,7 @@ onDragEnd(result) {
 
 
       </div>
+      </>
     );
   }
 }

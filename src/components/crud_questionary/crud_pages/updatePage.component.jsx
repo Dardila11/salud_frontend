@@ -30,9 +30,8 @@ onChangeName=(event)=>{
 }
 handlePage=()=>{
   if(this.state.page.length>0 && this.state.name.length>0){
-    let paginas=this.props.actualRef.current.childNodes[1].childNodes
-    paginas[this.state.name].text=toCapitalizer(this.state.page)    
- 
+    this.props.handleUpdatePage(toCapitalizer(''+this.state.page),this.state.name)
+      console.log(this.state.name)
   }
   
   this.props.handleClose();
@@ -44,10 +43,10 @@ handleClose = () => {
   this.props.handleClose();
 };
     render() {
-        var names=this.props.namePages.map((page,i) => {
+        var names=this.props.listPages.map((page,i) => {
         return <option value={i}>           
             
-            {page}</option>
+            {page.name}</option>
         }
         )
         return (
